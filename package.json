@@ -10,5 +10,11 @@
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-html2js": "^0.3.0"
+  },
+  "homepage": "https://github.com/pudo/angular-cubes",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pudo/angular-cubes.git"
   }
 }
