@@ -2,10 +2,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-html2js');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    connect: {
+      server: {
+        port: 3000,
+        base: '.'
+      }
+    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -19,7 +26,10 @@ module.exports = function(grunt) {
       dist: {
         options: {
           base: '.',
-          module: 'ngCubes.templates'
+          module: 'ngCubes.templates',
+          rename: function(name) {
+            return name.replace('templates', 'angular-cubes-templates');
+          }
         },
         src: ['templates/**/*.html'],
         dest: 'src/tmp/templates.js'
