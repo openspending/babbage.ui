@@ -9,7 +9,7 @@
 </head>
 <body ng-controller="DemoCtrl">
   <div class="container">
-    <cubes slicer="slicerUrl" cube="cube">
+    <cubes slicer="https://spendb-dev.herokuapp.com/api/slicer/" cube="{{cube}}">
       <cubes-table></cubes-table>
     </cubes>
   </div>
@@ -20,7 +20,6 @@
   <script>
     var demo = angular.module('demo', ['ngCubes']);
     demo.controller('DemoCtrl', function ($scope) {
-      $scope.slicerUrl = 'https://spendb-dev.herokuapp.com/api/slicer';
       $scope.cube = 'wb_contract_awards';
     });
   </script>
