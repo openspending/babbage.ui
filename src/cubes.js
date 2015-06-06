@@ -12,12 +12,13 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
     scope: {
       slicer: '@',
       cube: '@',
-      state: '='
+      state: '=',
+      changeState: '&'
     },
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: function($scope) {
       var self = this,
-          state = $scope.state || {},
+          state = $scope.state || {q: {}},
           api = $scope.slicer.slice(),
           api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
           api = api + '/cube/' + $scope.cube;
@@ -25,27 +26,34 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.dataUpdate = makeSignal();
       self.modelUpdate = makeSignal();
 
-      self.reset = function() {
+      self.init = function() {
         $http.get(api + '/model').then(function(res) {
           $rootScope.$broadcast(self.modelUpdate, res.data);
         });
-        self.update({});
       };
 
       self.getQuery = function() {
-        return state.query;
+        return state.q;
       };
 
-      self.update = function(newQuery) {
-        state.query = newQuery;
-        var reqQuery = angular.copy(newQuery);
-        $http.get(api + '/aggregate').then(function(res) {
-          $rootScope.$broadcast(self.dataUpdate, res.data, reqQuery);
+      self.notifyState = function(state) {
+        if ($scope.changeState) {
+          $scope.changeState(state);
+        }
+      };
+
+      self.updateQuery = function(newQuery) {
+        var req = angular.copy(newQuery);
+        state.q = newQuery;
+        self.notifyState(state);
+        $http.get(api + '/aggregate', {params: state.q}).then(function(res) {
+          $rootScope.$broadcast(self.dataUpdate, res.data, req);
         });
       };
     }
   };
 }]);
+
 
 ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
   return {
@@ -54,7 +62,7 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
     scope: {
       drilldown: '='
     },
-    templateUrl: 'angular-cubes-templates/cubes-table.html',
+    templateUrl: 'angular-cubes-templates/table.html',
     link: function(scope, element, attrs, cubesCtrl) {
       scope.model = {};
       scope.query = {};
@@ -68,9 +76,11 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
       $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, query) {
         scope.query = query;
         scope.data = data;
+        console.log(query, data);
       });
 
-      cubesCtrl.reset();
+      cubesCtrl.init();
+      cubesCtrl.updateQuery(cubesCtrl.getQuery());
     }
   };
 }]);
