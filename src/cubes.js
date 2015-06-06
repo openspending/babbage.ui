@@ -5,6 +5,12 @@ var makeSignal = function(name) {
   return 'cubes_' + Math.random().toString(36).replace(/[^a-z]+/g, '');
 };
 
+ngCubes.filter('numeric', function() {
+  return function(val) {
+    return numeral(val).format('0,0');
+  };
+})
+
 ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
   return {
     restrict: 'E',

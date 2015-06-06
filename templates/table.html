@@ -11,7 +11,12 @@
   </tr>
   <tr ng-repeat="row in table">
     <td ng-repeat="c in columns" ng-class="c.type">
-      {{row[c.column]}}
+      <span ng-if="c.type == 'numeric'">
+        {{ row[c.column] | numeric }}
+      </span>
+      <span ng-if="c.type != 'numeric'">
+        {{ row[c.column] }}
+      </span>
     </td>
   </tr>
 </table>
