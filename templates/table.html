@@ -1,5 +1,19 @@
-<table class="table table-condensed">
-
+<table class="table table-bordered table-condensed table-cubes">
+  <tr>
+    <th ng-repeat="h in headers" colspan="{{h.colspan}}">
+      {{h.label}}
+    </th>
+  </tr>
+  <tr>
+    <th ng-repeat="c in columns">
+      {{c.name}}
+    </th>
+  </tr>
+  <tr ng-repeat="row in table">
+    <td ng-repeat="c in columns" ng-class="c.type">
+      {{row[c.column]}}
+    </td>
+  </tr>
 </table>
 
 {{data.total_cell_count}}
