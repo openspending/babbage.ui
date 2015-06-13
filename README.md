@@ -12,7 +12,7 @@ The library provides a DSL, query frontend and visualisation functions running a
 ### Imagined use
 
 ```html
-<cubes slicer-url="http://host.org/slicer" cube="sales">
+<cubes slicer="http://host.org/slicer" cube="sales">
     <div class="row">    
         <div class="col-md-4">
             <cubes-filter-panel></cubes-filter-panel>
@@ -27,7 +27,7 @@ The library provides a DSL, query frontend and visualisation functions running a
 Or, with inline config:
 
 ```html
-<cubes slicer-url="http://host.org/slicer" cube="sales">
+<cubes slicer="http://host.org/slicer" cube="sales">
     <cubes-treemap drilldown="region" measure="sales_usd" cut="time.year:2015">
     </cubes-treemap>
 </cubes>
