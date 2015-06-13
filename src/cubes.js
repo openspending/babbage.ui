@@ -24,12 +24,13 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: function($scope) {
       var self = this,
-          state = $scope.state || {q: {}},
+          state = $scope.state || {},
           api = $scope.slicer.slice(),
           api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
           api = api + '/cube/' + $scope.cube;
 
       self.dataUpdate = makeSignal();
+      self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
 
       self.init = function() {
@@ -38,26 +39,30 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
         });
       };
 
-      self.getQuery = function() {
-        return state.q;
+      self.getState = function() {
+        return state;
       };
 
-      self.notifyState = function(state) {
+      self.setState = function(s) {
+        state = s;
+        $rootScope.$broadcast(self.stateUpdate, state);
         if ($scope.changeState) {
           $scope.changeState(state);
         }
       };
 
-      self.updateQuery = function(newQuery) {
-        var req = angular.copy(newQuery);
-        state.q = newQuery;
-        state.q.page = 0;
-        state.q.pagesize = 20;
-        self.notifyState(state);
-        $http.get(api + '/aggregate', {params: state.q}).then(function(res) {
-          $rootScope.$broadcast(self.dataUpdate, res.data, req);
-        });
-      };
+      // self.updateQuery = function(newQuery) {
+      //   var req = angular.copy(newQuery);
+      //   state.q = newQuery;
+      //   state.q.page = 0;
+      //   state.q.pagesize = 20;
+      //   self.notifyState(state);
+      //   $http.get(api + '/aggregate', {params: state.q}).then(function(res) {
+      //     $rootScope.$broadcast(self.dataUpdate, res.data, req);
+      //   });
+      // };
+
+      self.init();
     }
   };
 }]);
