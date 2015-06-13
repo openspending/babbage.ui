@@ -1,2 +1,27 @@
 
-I'm the panel.
+<div class="panel panel-default" ng-if="model">
+  <div class="panel-heading">Values</div>
+  <table class="table">
+    <tr ng-repeat="a in getSelectedAggregates()">
+      <td>{{a.label}}</td>
+      <td>
+        <button class="btn btn-default"
+          ng-click="removeAggregate(a)">Remove</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <select name="aggregates" class="form-control"
+          ng-model="create.aggregate"
+          ng-options="a.name as a.label for a in getAvailableAggregates()"
+          ng-init="getAvailableAggregates()">
+        </select>
+      </td>
+      <td>
+        <button class="btn btn-default"
+          ng-disabled="!create.aggregate"
+          ng-click="addAggregate()">Add</button>
+      </td>
+    </tr>
+  </table>
+</div>

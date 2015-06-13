@@ -13,6 +13,10 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
       scope.headers = [];
       scope.table = [];
 
+      cubesCtrl.registerQueryProcessor(function(q, state) {
+        return q;
+      });
+
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, m) {
         model = m;
       });

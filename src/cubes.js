@@ -25,6 +25,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
     controller: function($scope) {
       var self = this,
           state = $scope.state || {},
+          queryProcessors = [],
           api = $scope.slicer.slice(),
           api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
           api = api + '/cube/' + $scope.cube;
@@ -36,7 +37,9 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.init = function() {
         $http.get(api + '/model').then(function(res) {
           $rootScope.$broadcast(self.modelUpdate, res.data);
+          $rootScope.$broadcast(self.stateUpdate, state);
         });
+        self.query();
       };
 
       self.getState = function() {
@@ -51,16 +54,41 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
         }
       };
 
-      // self.updateQuery = function(newQuery) {
-      //   var req = angular.copy(newQuery);
-      //   state.q = newQuery;
-      //   state.q.page = 0;
-      //   state.q.pagesize = 20;
-      //   self.notifyState(state);
-      //   $http.get(api + '/aggregate', {params: state.q}).then(function(res) {
-      //     $rootScope.$broadcast(self.dataUpdate, res.data, req);
-      //   });
-      // };
+      self.registerQueryProcessor = function(f) {
+        queryProcessors.push(f);
+      };
+
+      self.getQuery = function() {
+        var q = {
+          drilldown: [],
+          cut: [],
+          page: 0,
+          pagesize: 20,
+          order: []
+        };
+        for (var i in queryProcessors) {
+          var f = queryProcessors[i];
+          q = f(q, state);
+        }
+
+        // join arguments and remove empty arguments
+        for (var k in q) {
+          if (angular.isArray(q[k])) {
+            q[k] = q[k].join('|');
+          }
+          if (!q[k].length) {
+            delete q[k];
+          }
+        }
+        return q;
+      };
+ 
+      self.query = function() {
+        var q = self.getQuery();
+        $http.get(api + '/aggregate', {params: q}).then(function(res) {
+          $rootScope.$broadcast(self.dataUpdate, res.data, q);
+        });
+      };
 
       self.init();
     }

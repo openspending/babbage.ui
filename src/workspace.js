@@ -46,7 +46,6 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
       };
 
       scope.updateState = function(state) {
-        //$location.search(pack({}, state, null));
         $location.search(state);
       };
 
