@@ -1,26 +1,29 @@
 
 <div class="panel panel-default" ng-if="model">
-  <div class="panel-heading">Values</div>
+  <div class="panel-heading">
+    Values
+
+    <div class="btn-group" dropdown ng-show="getAvailableAggregates().length">
+      &mdash;
+      <a dropdown-toggle>Add value</a>
+      <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="a in getAvailableAggregates()">
+          <a ng-click="addAggregate(a)">{{a.label}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
   <table class="table">
     <tr ng-repeat="a in getSelectedAggregates()">
-      <td>{{a.label}}</td>
-      <td>
-        <button class="btn btn-default"
-          ng-click="removeAggregate(a)">Remove</button>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <select name="aggregates" class="form-control"
-          ng-model="create.aggregate"
-          ng-options="a.name as a.label for a in getAvailableAggregates()"
-          ng-init="getAvailableAggregates()">
-        </select>
-      </td>
-      <td>
-        <button class="btn btn-default"
-          ng-disabled="!create.aggregate"
-          ng-click="addAggregate()">Add</button>
+      <td colspan="2">
+        <span class="pull-right">
+          <a ng-click="removeAggregate(a)">
+            <i class="fa fa-times"></i>
+          </a>
+        </span>
+
+        {{a.label}}
+
       </td>
     </tr>
   </table>
