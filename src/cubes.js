@@ -25,7 +25,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       changeState: '&'
     },
     templateUrl: 'angular-cubes-templates/cubes.html',
-    controller: function($scope) {
+    controller: ['$scope', function($scope) {
       var self = this,
           state = $scope.state || {},
           queryProcessors = [],
@@ -96,7 +96,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
         });
       };
-    }
+    }]
   };
 }]);
 
