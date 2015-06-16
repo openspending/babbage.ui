@@ -7,6 +7,9 @@ var makeSignal = function(name) {
 
 ngCubes.filter('numeric', function() {
   return function(val) {
+    if (isNaN(parseFloat(val))) {
+      return '-';
+    }
     return numeral(val).format('0,0');
   };
 })

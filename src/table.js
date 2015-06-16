@@ -21,6 +21,17 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
 
         var multiplier = Math.max((state.rows.length + 1) * (state.columns.length + 1), 1);
         q.pagesize = q.pagesize * multiplier;
+
+        q.order = asArray(q.order);
+        var drilldowns = state.rows.concat(state.columns);
+        for (var i in drilldowns) {
+            var dd = drilldowns[i];
+            // TODO: sorting?
+            if (q.order.indexOf(dd) == -1) {
+                q.order.push(dd);
+            }
+        }
+        q.order = q.order.join(',');
         return q;
       });
 
@@ -33,8 +44,10 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
 
         state.rows = asArray(state.rows);
         state.columns = asArray(state.columns);
-        //state.aggregates = asArray(state.aggregates);
-        //var aggregates = state.aggregates ? state.aggregates : data.aggregates;
+
+        var aggregates = model.aggregates.filter(function(agg) {
+            return data.aggregates.indexOf(agg.ref) != -1;
+        });
 
         // following code inspired by: 
         // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
@@ -46,23 +59,29 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
             var pick = function(k) { return cell[k]; };
             var cell = data.cells[i],
                 row_values = state.rows.map(pick),
-                column_values = state.columns.map(pick),
                 row_set = row_values.join(VAL_KEY),
-                column_set = column_values.join(VAL_KEY);
+                all_column_values = state.columns.map(pick);
 
-            if (row_keys.indexOf(row_set) == -1) {
-                row_keys.push(row_set);
-                row_values.key = row_set;
-                row_headers.push(row_values);
+            for (var k in aggregates) {
+                var agg = aggregates[k],
+                    label = agg.label || agg.name,
+                    column_values = all_column_values.concat([label]);
+                    column_set = column_values.join(VAL_KEY)
+
+                if (row_keys.indexOf(row_set) == -1) {
+                    row_keys.push(row_set);
+                    row_values.key = row_set;
+                    row_headers.push(row_values);
+                }
+
+                if (column_keys.indexOf(column_set) == -1) {
+                    column_keys.push(column_set);
+                    column_headers.push(column_values);
+                }
+
+                var key = [row_set, column_set].join(POS_KEY);
+                matrix[key] = cell[agg.name];
             }
-
-            if (column_keys.indexOf(column_set) == -1) {
-                column_keys.push(column_set);
-                column_headers.push(column_values);
-            }
-
-            var key = [row_set, column_set].join(POS_KEY);
-            matrix[key] = data.aggregates.map(pick);
         }
 
         for (var i in row_keys) {
@@ -78,13 +97,10 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
         
         // console.log(row_headers);
         // console.log(column_headers);
-
+ 
         scope.rows = row_headers;
         scope.columns = column_headers;
-
-        // console.log(scope.columns);
         scope.table = table;
-
       });
 
       cubesCtrl.init({

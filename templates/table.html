@@ -1,9 +1,9 @@
 <table class="table table-bordered table-condensed table-cubes">
   <thead>
-    <tr ng-repeat="c in columns[0]">
-      <th ng-repeat="c in rows[0]"></th>
+    <tr ng-repeat="x in columns[0]">
+      <th ng-repeat="r in rows[0]"></th>
       <th ng-repeat="c in columns">
-        {{c[0]}}
+        {{c[$parent.$index]}}
       </th>
     </tr>
   </thead>
@@ -12,8 +12,8 @@
       <th ng-repeat="r in row">
         {{r}}
       </th>
-      <td ng-repeat="val in table[$index]">
-        {{val}}
+      <td ng-repeat="val in table[$index]" class="numeric">
+        {{val | numeric}}
       </td>
     </tr>
   </tbody>
