@@ -33,13 +33,15 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.dataUpdate = makeSignal();
       self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
+      self.queryModel = {};
 
-      self.init = function() {
+      self.init = function(queryModel) {
+        self.queryModel = queryModel;
         $http.get(api + '/model').then(function(res) {
           $rootScope.$broadcast(self.modelUpdate, res.data);
           $rootScope.$broadcast(self.stateUpdate, state);
+          self.query();
         });
-        self.query();
       };
 
       self.getState = function() {
@@ -89,8 +91,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           $rootScope.$broadcast(self.dataUpdate, res.data, q);
         });
       };
-
-      self.init();
     }
   };
 }]);

@@ -56,6 +56,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
         $scope.model = model;
+        $scope.queryModel = cubesCtrl.queryModel;
       });
 
       $rootScope.$on(cubesCtrl.stateUpdate, function(event, state) {

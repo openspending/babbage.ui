@@ -1,7 +1,39 @@
 
+<div class="panel panel-default" ng-repeat="(axis, spec) in queryModel">
+  <div class="panel-heading">
+    <strong>{{spec.label}}</strong>
+
+    <!--div class="btn-group" dropdown ng-show="getAvailableAggregates().length">
+      &mdash;
+      <a dropdown-toggle>Add value</a>
+      <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="a in getAvailableAggregates()">
+          <a ng-click="addAggregate(a)">{{a.label}}</a>
+        </li>
+      </ul>
+    </div-->
+  </div>
+  <table class="table">
+    <!--tr ng-repeat="a in getSelectedAggregates()">
+      <td colspan="2">
+        <span class="pull-right">
+          <a ng-click="removeAggregate(a)">
+            <i class="fa fa-times"></i>
+          </a>
+        </span>
+
+        {{a.label}}
+
+      </td>
+    </tr-->
+  </table>
+</div>
+
+
+
 <div class="panel panel-default" ng-if="model">
   <div class="panel-heading">
-    Values
+    <strong>Values</strong>
 
     <div class="btn-group" dropdown ng-show="getAvailableAggregates().length">
       &mdash;
