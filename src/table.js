@@ -38,30 +38,51 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
 
         // following code inspired by: 
         // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
-        var matrix = {}, table = [], row_headers = [], column_headers = [];
-
-        var pick = function(cell) { return function(key) { return cell[key]; }};
+        var matrix = {}, table = [],
+            row_headers = [], column_headers = [],
+            row_keys = [], column_keys = [];
 
         for (var i in data.cells) {
+            var pick = function(k) { return cell[k]; };
             var cell = data.cells[i],
-                row_values = state.rows.map(pick(cell)),
-                column_values = cell_rows = state.columns.map(pick(cell)),
+                row_values = state.rows.map(pick),
+                column_values = state.columns.map(pick),
                 row_set = row_values.join(VAL_KEY),
                 column_set = column_values.join(VAL_KEY);
 
-            if (row_headers.indexOf(row_set) == -1) {
-                row_headers.push(row_set);
+            if (row_keys.indexOf(row_set) == -1) {
+                row_keys.push(row_set);
+                row_values.key = row_set;
+                row_headers.push(row_values);
             }
 
-            if (column_headers.indexOf(column_set) == -1) {
-                column_headers.push(column_set);
+            if (column_keys.indexOf(column_set) == -1) {
+                column_keys.push(column_set);
+                column_headers.push(column_values);
             }
 
             var key = [row_set, column_set].join(POS_KEY);
-            matrix[key] = data.aggregates.map(pick(cell));
+            matrix[key] = data.aggregates.map(pick);
         }
 
-        console.log(matrix);
+        for (var i in row_keys) {
+            var row_key = row_keys[i];
+            var row = [];
+            for (var j in column_keys) {
+                var column_key = column_keys[j];
+                var key = [row_key, column_key].join(POS_KEY);
+                row.push(matrix[key] || data.aggregates.map(function(a) { return undefined; }));
+            }
+            table.push(row);
+        }
+        
+        // console.log(row_headers);
+        // console.log(column_headers);
+
+        scope.rows = row_headers;
+        scope.columns = column_headers;
+
+        // console.log(scope.columns);
         scope.table = table;
 
       });
