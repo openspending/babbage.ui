@@ -90,7 +90,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.query = function() {
         var q = self.getQuery();
         $http.get(api + '/aggregate', {params: q}).then(function(res) {
-          $rootScope.$broadcast(self.dataUpdate, res.data, q);
+          $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
         });
       };
     }

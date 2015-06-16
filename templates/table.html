@@ -1,22 +1,12 @@
 <table class="table table-bordered table-condensed table-cubes">
   <tr>
-    <th ng-repeat="h in headers" colspan="{{h.colspan}}">
-      {{h.label}}
-    </th>
-  </tr>
-  <tr>
     <th ng-repeat="c in columns">
-      {{c.name}}
+      {{c}}
     </th>
   </tr>
   <tr ng-repeat="row in table">
-    <td ng-repeat="c in columns" ng-class="c.type">
-      <span ng-if="c.type == 'numeric'">
-        {{ row[c.column] | numeric }}
-      </span>
-      <span ng-if="c.type != 'numeric'">
-        {{ row[c.column] }}
-      </span>
+    <td ng-repeat="c in columns">
+      -
     </td>
   </tr>
 </table>
