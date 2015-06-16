@@ -63,6 +63,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.getQuery = function() {
         var q = {
           drilldown: [],
+          aggregates: [],
           cut: [],
           page: 0,
           pagesize: 20,
@@ -78,6 +79,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           if (angular.isArray(q[k])) {
             q[k] = q[k].join('|');
           }
+          q[k] = q[k] + '';
           if (!q[k].length) {
             delete q[k];
           }

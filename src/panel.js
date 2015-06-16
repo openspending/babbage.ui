@@ -132,6 +132,15 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
         $scope.state = state;
       });
+
+      cubesCtrl.registerQueryProcessor(function(q, state) {
+        q.aggregates = q.aggregates.concat(state.aggregates);
+        for (var axis in $scope.queryModel) {
+          q.drilldown = q.drilldown.concat(state[axis]);  
+        }
+        return q;
+      });
+
     }
   };
 }]);
