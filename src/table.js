@@ -14,6 +14,11 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
       scope.table = [];
 
       cubesCtrl.registerQueryProcessor(function(q, state) {
+        state.rows = asArray(state.rows);
+        state.columns = asArray(state.columns);
+
+        var multiplier = Math.max((state.rows.length + 1) * (state.columns.length + 1), 1);
+        q.pagesize = q.pagesize * multiplier;
         return q;
       });
 
