@@ -28,19 +28,21 @@
 
     .table {
         table-layout: fixed;
-        width: 100%;
+        width: inherit;
         border-collapse: collapse;
         margin-bottom: 0;
 
         td, th {
-            min-width: 10em;
+            max-width: 14em;
             border-right: 2px solid @table-border-color;
-        }
-
-        td {
             overflow: hidden;
             white-space: nowrap;
         }
+
+        // td {
+        //     overflow: hidden;
+        //     white-space: nowrap;
+        // }
 
         td.numeric {
             text-align: right;

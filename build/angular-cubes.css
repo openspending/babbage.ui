@@ -17,16 +17,14 @@
 }
 .table-cubes .table {
   table-layout: fixed;
-  width: 100%;
+  width: inherit;
   border-collapse: collapse;
   margin-bottom: 0;
 }
 .table-cubes .table td,
 .table-cubes .table th {
-  min-width: 10em;
+  max-width: 14em;
   border-right: 2px solid #dddddd;
-}
-.table-cubes .table td {
   overflow: hidden;
   white-space: nowrap;
 }
