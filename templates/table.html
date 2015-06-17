@@ -1,4 +1,4 @@
-<div class="table-cubes">
+<div class="table-cubes" ng-show="rows.length">
   <table class="table table-bordered table-condensed table-cubes">
     <thead>
       <tr ng-repeat="x in columns[0]">
@@ -19,4 +19,9 @@
       </tr>
     </tbody>
   </table>
+</div>
+
+<div class="alert alert-info" ng-hide="rows.length">
+  <strong>You have not selected any data.</strong> Please choose a set of rows 
+  and columns to generate a cross-table.
 </div>
