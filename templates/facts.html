@@ -1,0 +1,23 @@
+<div class="table-cubes" ng-show="data">
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th ng-repeat="c in columns">
+          {{ c.label }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in data">
+        <td ng-repeat="c in columns" ng-class="{'numeric': c.numeric}">
+          <span ng-if="c.numeric">
+            {{ row[c.ref] | numeric }}
+          </span>
+          <span ng-if="!c.numeric">
+            {{ row[c.ref] }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

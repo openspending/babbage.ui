@@ -70,8 +70,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           cut: [],
           page: 0,
           pagesize: 20,
-          order: []
+          order: [],
+          endpoint: 'aggregate'
         };
+
         for (var i in queryProcessors) {
           var f = queryProcessors[i];
           q = f(q, state);
@@ -91,8 +93,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       };
  
       self.query = function() {
-        var q = self.getQuery();
-        $http.get(api + '/aggregate', {params: q}).then(function(res) {
+        var q = self.getQuery(),
+            endpoint = q.endpoint;
+        delete q['endpoint'];
+        $http.get(api + '/' + endpoint, {params: q}).then(function(res) {
           $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
         });
       };
