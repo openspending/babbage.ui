@@ -1,14 +1,14 @@
 var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
-ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
   return {
     restrict: 'EA',
     require: '^cubes',
     scope: {
       drilldown: '='
     },
-    templateUrl: 'angular-cubes-templates/table.html',
+    templateUrl: 'angular-cubes-templates/crosstab.html',
     link: function(scope, element, attrs, cubesCtrl) {
       var model = null, query = {};
       scope.columns = [];
@@ -94,9 +94,6 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
             }
             table.push(row);
         }
-        
-        // console.log(row_headers);
-        // console.log(column_headers);
  
         scope.rows = row_headers;
         scope.columns = column_headers;
