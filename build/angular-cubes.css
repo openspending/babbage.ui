@@ -24,7 +24,6 @@
 }
 .table-cubes .table td,
 .table-cubes .table th {
-  max-width: 14em;
   min-width: 8em;
   border-right: 2px solid #dddddd;
   overflow: hidden;

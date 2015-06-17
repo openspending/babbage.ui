@@ -2,8 +2,13 @@
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
+        <th ng-repeat="c in columns" ng-if="c.span" colspan="{{c.span}}">
+          {{ c.header }}
+        </th>
+      </tr>
+      <tr>
         <th ng-repeat="c in columns">
-          {{ c.label }}
+          <span ng-hide="c.hide">{{ c.label }}</span>
         </th>
       </tr>
     </thead>

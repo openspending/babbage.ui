@@ -8,7 +8,9 @@
       <a dropdown-toggle>Add {{spec.label.toLowerCase()}}</a>
       <ul class="dropdown-menu" role="menu">
         <li ng-repeat="(ref, a) in getAvailableAttributes()">
-          <a ng-click="addAttribute(axis, ref)">{{a.label}}</a>
+          <a ng-click="addAttribute(axis, ref)">
+            <strong>{{a.dimension.label}}</strong> {{a.label}}
+          </a>
         </li>
       </ul>
     </div>
@@ -21,7 +23,7 @@
             <i class="fa fa-times"></i>
           </a>
         </span>
-        {{a.label}}
+        <strong>{{a.dimension.label}}</strong> {{a.label}}
       </td>
     </tr>
   </table>
