@@ -28,7 +28,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
     controller: ['$scope', function($scope) {
       var self = this,
           state = $scope.state || {},
-          queryProcessors = [],
           api = $scope.slicer.slice(),
           api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
           api = api + '/cube/' + $scope.cube;
@@ -37,9 +36,11 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
-
-      self.init = function(queryModel) {
+      self.queryProcessor = null,
+      
+      self.init = function(queryModel, queryProcessor) {
         self.queryModel = queryModel;
+        self.queryProcessor = queryProcessor;
         $http.get(api + '/model').then(function(res) {
           $rootScope.$broadcast(self.modelUpdate, res.data);
           $rootScope.$broadcast(self.stateUpdate, state);
@@ -59,9 +60,9 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
         }
       };
 
-      self.registerQueryProcessor = function(f) {
-        queryProcessors.push(f);
-      };
+      // self.registerQueryProcessor = function(f) {
+      //   queryProcessors.push(f);
+      // };
 
       self.getQuery = function() {
         var q = {
@@ -74,9 +75,8 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           endpoint: 'aggregate'
         };
 
-        for (var i in queryProcessors) {
-          var f = queryProcessors[i];
-          q = f(q, state);
+        if (self.queryProcessor) {
+          q = self.queryProcessor(q, state);
         }
 
         // join arguments and remove empty arguments

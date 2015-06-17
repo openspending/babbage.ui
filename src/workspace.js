@@ -7,14 +7,35 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
       cube: '@'
     },
     templateUrl: 'angular-cubes-templates/workspace.html',
-    link: function(scope, element, attrs, cubesCtrl) {
+    link: function(scope, element, attrs) {
       scope.state = {};
+      //scope.view = null;
 
       var loadState = function() {
         scope.state = $location.search();
+        if (!scope.state.view) {
+          scope.state.view = 'facts';
+          scope.updateState();
+        }
+      };
+
+      var getCubesCtrl = function() {
+        var els = element[0].querySelectorAll('cubes');
+        for (var i in els) {
+          var el = els[i];
+          return angular.element(el).controller('cubes');
+        }
+      };
+
+      scope.setView = function(view) {
+        var ctrl = getCubesCtrl(),
+            state = ctrl.getState();
+        state.view = view;
+        ctrl.setState(state);
       };
 
       scope.updateState = function(state) {
+        scope.state = state;
         $location.search(state);
       };
 

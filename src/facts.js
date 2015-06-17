@@ -14,14 +14,13 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
         scope.data = [];
         scope.columns = [];
 
-        cubesCtrl.registerQueryProcessor(function(q, state) {
+        var queryProcessor = function(q, state) {
             q.endpoint = 'facts';
             q.page = scope.page;
             return q;
-        });
+        };
 
-        $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
-            // scope.model = model;
+        var unsubModel = $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
             for (var i in model.measures) {
                 var agg = model.measures[i];
                 refs[agg.ref] = {
@@ -36,7 +35,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
                     var lvl = dim.levels[li];
                     for (var ai in lvl.attributes) {
                         var attr = lvl.attributes[ai];
-                        // attr.dimension = dim;
                         refs[attr.ref] = {
                             ref: attr.ref,
                             label: attr.label || attr.name
@@ -44,10 +42,10 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
                     }
                 }
             }
-            // console.log(refs);
         });
 
-        $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
+        var unsubData = $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
+            console.log('facts received data');
             scope.data = data;
             if (!data.length) return;
 
@@ -59,8 +57,14 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
             scope.columns = columns;
         });
 
+        console.log('facts init');
         cubesCtrl.init({
             columns: {label: 'Columns', multiple: true},
+        }, queryProcessor);
+
+        scope.$on('$destroy', function() {
+            unsubModel();
+            unsubData();
         });
     }
   };
