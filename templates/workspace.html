@@ -1,6 +1,31 @@
 <cubes slicer="{{slicer}}" cube="{{cube}}" state="state" change-state="updateState(state)">
   <div class="row">
     <div class="col-md-9">
+      &nbsp;
+    </div>
+    <div class="col-md-3">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default disabled" tooltip-placement="bottom"  tooltip="Table">
+          <i class="fa fa-table"></i>
+        </button>
+        <button type="button" class="btn btn-default active" tooltip-placement="bottom"  tooltip="Crosstab">
+          <i class="fa fa-cubes"></i>
+        </button>
+        <button type="button" class="btn btn-default disabled">
+          <i class="fa fa-bar-chart"></i>
+        </button>
+        <button type="button" class="btn btn-default disabled">
+          <i class="fa fa-line-chart"></i>
+        </button>
+        <button type="button" class="btn btn-default disabled">
+          <i class="fa fa-th-large"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-9">
       <cubes-table></cubes-table>
     </div>
     <div class="col-md-3">
