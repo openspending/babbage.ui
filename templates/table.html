@@ -12,7 +12,7 @@
       <th ng-repeat="r in row">
         {{r}}
       </th>
-      <td ng-repeat="val in table[$index]" class="numeric">
+      <td ng-repeat="val in table[$index] track by $index" class="numeric">
         {{val | numeric}}
       </td>
     </tr>
