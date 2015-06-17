@@ -1,10 +1,50 @@
 
-body {
-}
+.table-cubes {
+    overflow-x: scroll;
 
-.table.table-cubes {
-    td.numeric {
-        text-align: right;
+    &::-webkit-scrollbar {
+        -webkit-appearance: none;
     }
 
+    &::-webkit-scrollbar:horizontal {
+        height: 11px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        //border: 2px solid white;
+        background-color: rgba(0, 0, 0, .5);
+    }
+
+    &::-webkit-scrollbar-track { 
+        background-color: #fff; 
+        border-radius: 8px; 
+    }
+
+    //border: 1px solid @table-border-color;
+    //border-right: 1px solid @table-border-color;
+    //border-left: 1px solid @table-border-color;
+    //border-bottom: 2px solid @table-border-color;
+
+    .table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+
+        td, th {
+            min-width: 10em;
+            border-right: 2px solid @table-border-color;
+        }
+
+        td {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        td.numeric {
+            text-align: right;
+        }
+
+    }
 }

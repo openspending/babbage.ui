@@ -1,3 +1,35 @@
-.table.table-cubes td.numeric {
+.table-cubes {
+  overflow-x: scroll;
+}
+.table-cubes::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+.table-cubes::-webkit-scrollbar:horizontal {
+  height: 11px;
+}
+.table-cubes::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.table-cubes::-webkit-scrollbar-track {
+  background-color: #fff;
+  border-radius: 8px;
+}
+.table-cubes .table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+.table-cubes .table td,
+.table-cubes .table th {
+  min-width: 10em;
+  border-right: 2px solid #dddddd;
+}
+.table-cubes .table td {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.table-cubes .table td.numeric {
   text-align: right;
 }

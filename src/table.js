@@ -19,7 +19,7 @@ ngCubes.directive('cubesTable', ['$rootScope', function($rootScope) {
         state.rows = asArray(state.rows);
         state.columns = asArray(state.columns);
 
-        var multiplier = Math.max((state.rows.length + 1) * (state.columns.length + 1), 1);
+        var multiplier = 1000; //Math.max((state.rows.length + 1) * (state.columns.length + 1), 1);
         q.pagesize = q.pagesize * multiplier;
 
         q.order = asArray(q.order);
