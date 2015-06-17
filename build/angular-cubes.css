@@ -18,6 +18,7 @@
 .table-cubes .table {
   table-layout: fixed;
   width: inherit;
+  min-width: 100%;
   border-collapse: collapse;
   margin-bottom: 0;
 }
