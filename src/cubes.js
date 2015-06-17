@@ -1,10 +1,6 @@
 
 var ngCubes = angular.module('ngCubes', ['ngCubes.templates']);
 
-var makeSignal = function(name) {
-  return 'cubes_' + Math.random().toString(36).replace(/[^a-z]+/g, '');
-};
-
 ngCubes.filter('numeric', function() {
   return function(val) {
     if (isNaN(parseFloat(val))) {
@@ -59,10 +55,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           $scope.changeState(state);
         }
       };
-
-      // self.registerQueryProcessor = function(f) {
-      //   queryProcessors.push(f);
-      // };
 
       self.getQuery = function() {
         var q = {
