@@ -15,7 +15,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
         scope.state = $location.search();
         if (!scope.state.view) {
           scope.state.view = 'facts';
-          scope.updateState();
+          scope.updateState(scope.state);
         }
       };
 
