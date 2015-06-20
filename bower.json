@@ -1,0 +1,30 @@
+{
+  "name": "angular-cubes",
+  "version": "0.1.0",
+  "homepage": "https://github.com/pudo/angular-cubes",
+  "authors": ["Friedrich Lindenberg <friedrich@pudo.org>"],
+  "description": "Data analysis tools for the Python cubes API",
+  "main": "build/angular-cubes.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "olap",
+    "data",
+    "api",
+    "crosstab",
+    "pivot",
+    "table"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": ">=1.2.0"
+  }
+}
