@@ -6,7 +6,7 @@ ngCubes.filter('numeric', function() {
     if (isNaN(parseFloat(val))) {
       return '-';
     }
-    return numeral(val).format('0,0');
+    return val.toString();
   };
 })
 

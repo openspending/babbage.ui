@@ -1,31 +1,6 @@
 <cubes slicer="{{slicer}}" cube="{{cube}}" state="state" change-state="updateState(state)">
   <div class="row">
     <div class="col-md-9">
-      &nbsp;
-    </div>
-    <div class="col-md-3">
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default"
-          tooltip-placement="bottom" tooltip="Table"
-          ng-class="{'active': state.view == 'facts'}"
-          ng-click="setView('facts')">
-          <i class="fa fa-table"></i> Line items
-        </button>
-        <button type="button" class="btn btn-default"
-          tooltip-placement="bottom" tooltip="Crosstab"
-          ng-class="{'active': state.view == 'crosstab'}"
-          ng-click="setView('crosstab')">
-          <i class="fa fa-cubes"></i> Crosstab
-        </button>
-        <button type="button" class="btn btn-default disabled">
-          <i class="fa fa-bar-chart"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  <br>
-  <div class="row">
-    <div class="col-md-9">
       <div ng-if="state.view == 'crosstab'">
         <cubes-crosstab></cubes-crosstab>
       </div>
@@ -34,6 +9,23 @@
       </div>
     </div>
     <div class="col-md-3">
+      <div class="btn-group spaced" role="group">
+        <a class="btn btn-default"
+          tooltip-placement="bottom" tooltip="Table"
+          ng-class="{'active': state.view == 'facts'}"
+          ng-click="setView('facts')">
+          <i class="fa fa-table"></i> Line items
+        </a>
+        <a class="btn btn-default"
+          tooltip-placement="bottom" tooltip="Crosstab"
+          ng-class="{'active': state.view == 'crosstab'}"
+          ng-click="setView('crosstab')">
+          <i class="fa fa-cubes"></i> Crosstab
+        </a>
+        <!--a type="button" class="btn btn-default disabled">
+          <i class="fa fa-bar-chart"></i>
+        </a-->
+      </div>
       <cubes-panel></cubes-panel>
     </div>
   </div>

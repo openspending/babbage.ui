@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html2js');
 
   grunt.initConfig({
@@ -22,6 +23,17 @@ module.exports = function(grunt) {
               'src/panel.js', 'src/workspace.js', 'src/cubes.js', 'src/tmp/templates.js'],
         dest: 'build/<%= pkg.name %>.min.js'
       }
+    },
+    concat: {
+      options: {
+        stripBanners: true,
+        separator: ';'
+      },
+      dist: {
+        src: ['src/util.js', 'src/cubes.js', 'src/crosstab.js', 'src/facts.js',
+              'src/panel.js', 'src/workspace.js', 'src/cubes.js', 'src/tmp/templates.js'],
+        dest: 'build/<%= pkg.name %>.js'
+      },
     },
     html2js: {
       dist: {
@@ -54,7 +66,7 @@ module.exports = function(grunt) {
       },
       js: {
         files: ['src/**/*.js'],
-        tasks: ['uglify']  
+        tasks: ['concat', 'uglify']  
       },
       style: {
         files: ['less/**/*.less'],
@@ -63,5 +75,5 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('default', ['less', 'html2js', 'uglify']);
+  grunt.registerTask('default', ['less', 'html2js', 'concat', 'uglify']);
 };
