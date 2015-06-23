@@ -35,6 +35,10 @@ ngCubes.filter('numeric', function() {
   };
 })
 
+ngCubes.service('cubesModel', ['$http', function($http) {
+  return {};
+});
+
 ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, $rootScope, $location) {
   return {
     restrict: 'E',
