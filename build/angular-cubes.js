@@ -35,42 +35,58 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.service('cubesModel', ['$http', function($http) {
-  return {};
-});
+ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
+  var cache = {};
 
-ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, $rootScope, $location) {
+  var getUrl = function(slicer, cube, endpoint) {
+    var api = slicer.slice(),
+        api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
+        api = api + '/cube/' + cube + '/' + endpoint;
+    return api;
+  };
+
+  var getModel = function(slicer, cube) {
+    var url = getUrl(slicer, cube, 'model');
+    if (!angular.isDefined(cache[url])) {
+      cache[url] = $http.get(url);
+    } 
+    return cache[url];
+  };
+
+  var flush = function() {
+    cache = {};
+  };
+
+  return {
+    getUrl: getUrl,
+    getModel: getModel,
+    flush: flush
+  };
+}]);
+
+ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
+    function($http, $rootScope, $location, cubesApi) {
   return {
     restrict: 'E',
     transclude: true,
     scope: {
       slicer: '@',
       cube: '@',
-      state: '=',
-      changeState: '&'
+      state: '='
     },
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: ['$scope', function($scope) {
       var self = this,
-          state = $scope.state || {},
-          state = angular.extend({}, state, $location.search()),
-          api = $scope.slicer.slice(),
-          api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
-          api = api + '/cube/' + $scope.cube;
+          state = angular.extend({}, $scope.state || {}, $location.search());
 
       self.dataUpdate = makeSignal();
-      // self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
-      self.queryProcessor = null,
       
-      self.init = function(queryModel, queryProcessor) {
+      self.init = function(queryModel) {
         self.queryModel = queryModel;
-        self.queryProcessor = queryProcessor;
-        $http.get(api + '/model').then(function(res) {
-          $rootScope.$broadcast(self.modelUpdate, res.data);
-          $rootScope.$broadcast(self.stateUpdate, state);
-          self.query();
+        cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
+          $rootScope.$broadcast(self.modelUpdate, res.data, state);
         });
       };
 
@@ -82,42 +98,45 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
         $location.search(s);
       };
 
+      self.getApiUrl = function(endpoint) {
+        return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
+      };
+
       self.getQuery = function() {
         var q = {
           drilldown: [],
           aggregates: [],
-          cut: [],
-          page: 0,
-          pagesize: 20,
-          order: [],
-          endpoint: 'aggregate'
+          cut: state.cut || [],
+          page: state.page || 0,
+          pagesize: state.pagesize || 20,
+          order: []
         };
+        return q;
+      };
 
-        if (self.queryProcessor) {
-          q = self.queryProcessor(q, state);
-        }
-
+      self.queryParams = function(q) {
         // join arguments and remove empty arguments
         for (var k in q) {
           if (angular.isArray(q[k])) {
-            q[k] = q[k].join('|');
+            var sep = k == 'order' ? ',' : '|'
+            q[k] = q[k].join(sep);
           }
           q[k] = q[k] + '';
           if (!q[k].length) {
             delete q[k];
           }
         }
-        return q;
-      };
+        return {params: q};
+      }
  
-      self.query = function() {
-        var q = self.getQuery(),
-            endpoint = q.endpoint;
-        delete q['endpoint'];
-        $http.get(api + '/' + endpoint, {params: q}).then(function(res) {
-          $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
-        });
-      };
+      // self.query = function() {
+      //   var q = self.getQuery(),
+      //       endpoint = q.endpoint;
+      //   delete q['endpoint'];
+      //   $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
+      //     $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
+      //   });
+      // };
 
     }]
   };
@@ -126,7 +145,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
 ;var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
-ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -135,15 +154,18 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
   },
   templateUrl: 'angular-cubes-templates/crosstab.html',
   link: function(scope, element, attrs, cubesCtrl) {
-    var model = null, query = {};
+    //var model = null, query = {};
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
 
-    var queryProcessor = function(q, state) {
+    var query = function(model, state) {
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
+      // TODO: handle a case in which both sets contain the same
+      // ref.
 
+      var q = cubesCtrl.getQuery();
       q.aggregates = q.aggregates.concat(state.aggregates);
       q.drilldown = q.drilldown.concat(state.rows);
       q.drilldown = q.drilldown.concat(state.columns);
@@ -158,15 +180,14 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
           q.order.push(dd);
         }
       }
-      q.order = q.order.join(',');
-      return q;
+      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                          cubesCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, model, state);
+      });
     };
 
-    var unsubModel = $rootScope.$on(cubesCtrl.modelUpdate, function(event, m) {
-      model = m;
-    });
-
-    var unsubData = $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
+    var queryResult = function(data, q, model, state) {
       // console.log('crosstab received data');
       if (!model) return;
 
@@ -226,24 +247,24 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
+    };
+
+
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      query(model, state);
     });
 
     // console.log('crosstab init');
     cubesCtrl.init({
       rows: {label: 'Rows', multiple: true},
       columns: {label: 'Columns', multiple: true},
-    }, queryProcessor);
-
-    scope.$on('$destroy', function() {
-      unsubModel();
-      unsubData();
     });
   }
   };
 }]);
 
 ;
-ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $http) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -258,35 +279,22 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
     scope.data = [];
     scope.columns = [];
 
-    var queryProcessor = function(q, state) {
-      q.endpoint = 'facts';
-      q.page = scope.page;
-      return q;
+    var query = function(model, state) {
+      var q = cubesCtrl.getQuery();
+      
+      var dfd = $http.get(cubesCtrl.getApiUrl('facts'),
+                          cubesCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, state);
+      });
     };
 
-    var unsubModel = $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
-      for (var i in model.measures) {
-        var measure = model.measures[i];
-        measure.numeric = true;
-        refs[measure.ref] = measure;
-      }
-      for (var di in model.dimensions) {
-        var dim = model.dimensions[di];
-        for (var li in dim.levels) {
-          var lvl = dim.levels[li];
-          for (var ai in lvl.attributes) {
-            var attr = lvl.attributes[ai];
-            attr.dimension = dim;
-            refs[attr.ref] = attr;
-          }
-        }
-      }
-    });
-
-    var unsubData = $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
-      // console.log('facts received data');
-      scope.data = data;
-      if (!data.length) return;
+    var queryResult = function(data, q, state) {
+      if (!data.length) {
+        scope.columns = [];
+        scope.data = [];
+        return;
+      };
 
       var frst = data[0],
           keys = [];
@@ -314,16 +322,32 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
         columns.push(column);
       }
       scope.columns = columns;
+      scope.data = data;
+    };
+
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      for (var i in model.measures) {
+        var measure = model.measures[i];
+        measure.numeric = true;
+        refs[measure.ref] = measure;
+      }
+      for (var di in model.dimensions) {
+        var dim = model.dimensions[di];
+        for (var li in dim.levels) {
+          var lvl = dim.levels[li];
+          for (var ai in lvl.attributes) {
+            var attr = lvl.attributes[ai];
+            attr.dimension = dim;
+            refs[attr.ref] = attr;
+          }
+        }
+      }
+      query(model, state);
     });
 
     // console.log('facts init');
     cubesCtrl.init({
       columns: {label: 'Columns', multiple: true},
-    }, queryProcessor);
-
-    scope.$on('$destroy', function() {
-      unsubModel();
-      unsubData();
     });
   }
   };
@@ -346,7 +370,6 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
       var update = function() {
         cubesCtrl.setState($scope.state);
-        cubesCtrl.query();
       };
 
       $scope.getSelectedAggregates = function() {
@@ -424,7 +447,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         }
       };
 
-      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
+      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         $scope.model = model;
         $scope.queryModel = cubesCtrl.queryModel;
 
@@ -441,9 +464,6 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
           }
         }
 
-      });
-
-      $rootScope.$on(cubesCtrl.stateUpdate, function(event, state) {
         // get list of currently active aggregates.
         state.aggregates = asArray(state.aggregates);
         if ($scope.model && !state.aggregates.length) {
@@ -479,21 +499,11 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
       scope.state = {};
       scope.view = $location.search().view || 'facts';
 
-      var loadState = function() {
-        scope.state = $location.search();
-      };
-
       scope.setView = function(view) {
         var state = $location.search();
         state.view = view;
         $location.search(state);
       };
-
-      scope.updateState = function(state) {
-        //$location.search(state);
-      };
-
-      loadState();
     }
   };
 }]);
@@ -639,7 +649,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
 
 angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/workspace.html",
-    "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\" change-state=\"updateState(state)\">\n" +
+    "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-9\">\n" +
     "      <div ng-if=\"view == 'crosstab'\">\n" +
@@ -652,14 +662,12 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "    <div class=\"col-md-3\">\n" +
     "      <div class=\"btn-group spaced\" role=\"group\">\n" +
     "        <a class=\"btn btn-default\"\n" +
-    "          tooltip-placement=\"bottom\" tooltip=\"Table\"\n" +
-    "          ng-class=\"{'active': state.view == 'facts'}\"\n" +
+    "          ng-class=\"{'active': view == 'facts'}\"\n" +
     "          ng-click=\"setView('facts')\">\n" +
     "          <i class=\"fa fa-table\"></i> Line items\n" +
     "        </a>\n" +
     "        <a class=\"btn btn-default\"\n" +
-    "          tooltip-placement=\"bottom\" tooltip=\"Crosstab\"\n" +
-    "          ng-class=\"{'active': state.view == 'crosstab'}\"\n" +
+    "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "          ng-click=\"setView('crosstab')\">\n" +
     "          <i class=\"fa fa-cubes\"></i> Crosstab\n" +
     "        </a>\n" +

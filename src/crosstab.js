@@ -1,7 +1,7 @@
 var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
-ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -10,15 +10,18 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
   },
   templateUrl: 'angular-cubes-templates/crosstab.html',
   link: function(scope, element, attrs, cubesCtrl) {
-    var model = null, query = {};
+    //var model = null, query = {};
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
 
-    var queryProcessor = function(q, state) {
+    var query = function(model, state) {
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
+      // TODO: handle a case in which both sets contain the same
+      // ref.
 
+      var q = cubesCtrl.getQuery();
       q.aggregates = q.aggregates.concat(state.aggregates);
       q.drilldown = q.drilldown.concat(state.rows);
       q.drilldown = q.drilldown.concat(state.columns);
@@ -33,14 +36,14 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
           q.order.push(dd);
         }
       }
-      return q;
+      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                          cubesCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, model, state);
+      });
     };
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, m) {
-      model = m;
-    });
-
-    $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
+    var queryResult = function(data, q, model, state) {
       // console.log('crosstab received data');
       if (!model) return;
 
@@ -100,6 +103,11 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
+    };
+
+
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      query(model, state);
     });
 
     // console.log('crosstab init');

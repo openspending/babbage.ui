@@ -15,7 +15,6 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
       var update = function() {
         cubesCtrl.setState($scope.state);
-        cubesCtrl.query();
       };
 
       $scope.getSelectedAggregates = function() {

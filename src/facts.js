@@ -21,7 +21,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $ht
                           cubesCtrl.queryParams(q));
       dfd.then(function(res) {
         queryResult(res.data, q, state);
-      })
+      });
     };
 
     var queryResult = function(data, q, state) {
