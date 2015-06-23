@@ -57,18 +57,13 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
           state = angular.extend({}, $scope.state || {}, $location.search());
 
       self.dataUpdate = makeSignal();
-      self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
-      self.queryProcessor = null,
       
-      self.init = function(queryModel, queryProcessor) {
+      self.init = function(queryModel) {
         self.queryModel = queryModel;
-        self.queryProcessor = queryProcessor;
         cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
-          $rootScope.$broadcast(self.modelUpdate, res.data);
-          $rootScope.$broadcast(self.stateUpdate, state);
-          self.query();
+          $rootScope.$broadcast(self.modelUpdate, res.data, state);
         });
       };
 
@@ -88,38 +83,37 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         var q = {
           drilldown: [],
           aggregates: [],
-          cut: [],
-          page: 0,
-          pagesize: 20,
-          order: [],
-          endpoint: 'aggregate'
+          cut: state.cut || [],
+          page: state.page || 0,
+          pagesize: state.pagesize || 20,
+          order: []
         };
+        return q;
+      };
 
-        if (self.queryProcessor) {
-          q = self.queryProcessor(q, state);
-        }
-
+      self.queryParams = function(q) {
         // join arguments and remove empty arguments
         for (var k in q) {
           if (angular.isArray(q[k])) {
-            q[k] = q[k].join('|');
+            var sep = k == 'order' ? ',' : '|'
+            q[k] = q[k].join(sep);
           }
           q[k] = q[k] + '';
           if (!q[k].length) {
             delete q[k];
           }
         }
-        return q;
-      };
+        return {params: q};
+      }
  
-      self.query = function() {
-        var q = self.getQuery(),
-            endpoint = q.endpoint;
-        delete q['endpoint'];
-        $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
-          $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
-        });
-      };
+      // self.query = function() {
+      //   var q = self.getQuery(),
+      //       endpoint = q.endpoint;
+      //   delete q['endpoint'];
+      //   $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
+      //     $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
+      //   });
+      // };
 
     }]
   };

@@ -93,7 +93,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         }
       };
 
-      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model) {
+      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         $scope.model = model;
         $scope.queryModel = cubesCtrl.queryModel;
 
@@ -110,9 +110,6 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
           }
         }
 
-      });
-
-      $rootScope.$on(cubesCtrl.stateUpdate, function(event, state) {
         // get list of currently active aggregates.
         state.aggregates = asArray(state.aggregates);
         if ($scope.model && !state.aggregates.length) {

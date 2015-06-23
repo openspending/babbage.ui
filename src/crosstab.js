@@ -33,15 +33,14 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
           q.order.push(dd);
         }
       }
-      q.order = q.order.join(',');
       return q;
     };
 
-    var unsubModel = $rootScope.$on(cubesCtrl.modelUpdate, function(event, m) {
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, m) {
       model = m;
     });
 
-    var unsubData = $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
+    $rootScope.$on(cubesCtrl.dataUpdate, function(event, data, q, state) {
       // console.log('crosstab received data');
       if (!model) return;
 
@@ -107,11 +106,6 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', function($rootScope) {
     cubesCtrl.init({
       rows: {label: 'Rows', multiple: true},
       columns: {label: 'Columns', multiple: true},
-    }, queryProcessor);
-
-    scope.$on('$destroy', function() {
-      unsubModel();
-      unsubData();
     });
   }
   };
