@@ -18,11 +18,15 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     var query = function(model, state) {
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
+      state.aggregates = asArray(state.aggregates);
       // TODO: handle a case in which both sets contain the same
       // ref.
 
       var q = cubesCtrl.getQuery();
       q.aggregates = q.aggregates.concat(state.aggregates);
+      if (!q.aggregates.length) {
+        q.aggregates = defaultAggregates(model);
+      }
       q.drilldown = q.drilldown.concat(state.rows);
       q.drilldown = q.drilldown.concat(state.columns);
       q.pagesize = q.pagesize * 10000;
@@ -110,10 +114,42 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       query(model, state);
     });
 
+    var defaultAggregates = function(model) {
+      var aggs = [];
+      for (var i in model.aggregates) {
+        var agg = model.aggregates[i];
+        aggs.push(agg.ref);
+      }
+      return aggs;
+    };
+
     // console.log('crosstab init');
     cubesCtrl.init({
-      rows: {label: 'Rows', multiple: true},
-      columns: {label: 'Columns', multiple: true},
+      rows: {
+        label: 'Rows',
+        addLabel: 'add row',
+        types: ['attributes'],
+        defaults: [],
+        sortId: 0,
+        multiple: true
+      },
+      columns: {
+        label: 'Columns',
+        addLabel: 'add column',
+        types: ['attributes'],
+        defaults: [],
+        sortId: 1,
+        multiple: true
+      },
+      aggregates: {
+        label: 'Values',
+        addLabel: 'add value',
+        types: ['aggregates'],
+        defaults: defaultAggregates,
+        sortId: 2,
+        multiple: true
+      },
+
     });
   }
   };
