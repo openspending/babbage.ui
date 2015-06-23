@@ -118,8 +118,11 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         // join arguments and remove empty arguments
         for (var k in q) {
           if (angular.isArray(q[k])) {
-            var sep = k == 'order' ? ',' : '|'
-            q[k] = q[k].join(sep);
+            if (['order', 'fields'].indexOf(k) == -1) {
+              q[k] = q[k].join('|');
+            } else {
+              q[k] = q[k].join(',');
+            }
           }
           q[k] = q[k] + '';
           if (!q[k].length) {
@@ -343,8 +346,12 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
-      var aq = angular.copy(q);
+      q.fields = asArray(state.fields);
+      if (q.fields.length == 0) {
+        q.fields = defaultFields(model);
+      }
 
+      var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
       var facts = $http.get(cubesCtrl.getApiUrl('facts'),
@@ -399,6 +406,27 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       }
     };
 
+    var defaultFields = function(model) {
+      var defaults = [];
+      for (var i in model.measures) {
+        var mea = model.measures[i];
+        defaults.push(mea.ref);
+      }
+      for (var i in model.dimensions) {
+        var dim = model.dimensions[i];
+        for (var j in dim.levels) {
+          var lvl = dim.levels[j];
+          for (var k in lvl.attributes) {
+            var attr = lvl.attributes[k];
+            if (attr.name == lvl.label_attribute) {
+              defaults.push(attr.ref);
+            }
+          }
+        }
+      }
+      return defaults;
+    };
+
     $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
       for (var i in model.measures) {
         var measure = model.measures[i];
@@ -421,7 +449,14 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
     // console.log('facts init');
     cubesCtrl.init({
-      columns: {label: 'Columns', multiple: true},
+      fields: {
+        label: 'Columns',
+        addLabel: 'add column',
+        types: ['attributes', 'measures'],
+        defaults: defaultFields,
+        sortId: 0,
+        multiple: true
+      }
     });
   }
   };
@@ -437,95 +472,33 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
     },
     templateUrl: 'angular-cubes-templates/panel.html',
     link: function($scope, $element, attrs, cubesCtrl) {
-      $scope.model = null;
       $scope.state = {};
-
-      var attributes = {}, usedAttributes = [];
+      $scope.axes = {};
 
       var update = function() {
+        //$scope.state.page = 0;
         cubesCtrl.setState($scope.state);
       };
 
-      $scope.getSelectedAggregates = function() {
-        var aggregates = [];
-        var src = $scope.model ?  $scope.model.aggregates || [] : [];
-        for (var i in src) {
-          if ($scope.state.aggregates.indexOf(src[i].name) != -1) {
-            aggregates.push(src[i]);
-          }
-        }
-        return aggregates;
-      };
-
-      $scope.getAvailableAggregates = function() {
-        var aggregates = [];
-        var src = $scope.model ? $scope.model.aggregates || [] : [];
-        for (var i in src) {
-          if ($scope.state.aggregates.indexOf(src[i].name) == -1) {
-            aggregates.push(src[i]);
-          }
-        }
-        return aggregates;
-      };
-
-      $scope.addAggregate = function(agg) {
-        $scope.state.aggregates.push(agg.name);
-        update();
-      };
-
-      $scope.removeAggregate = function(agg) {
-        var i = $scope.state.aggregates.indexOf(agg.name);
-        if (i != -1) {
-          $scope.state.aggregates.splice(i, 1);
+      $scope.add = function(axis, ref) {
+        if (axis.selected.indexOf(ref) == -1) {
+          axis.selected.push(ref);
+          $scope.state[axis.name] = axis.selected;
           update();
         }
       };
 
-      $scope.getAvailableAttributes = function() {
-        var available = {};
-        for (var ref in attributes) {
-          if (usedAttributes.indexOf(ref) == -1) {
-            available[ref] = attributes[ref];
-          }
-        }
-        return available;
-      };
-
-      $scope.getSelectedAttributes = function(axis) {
-        var selected = {};
-        for (var ref in attributes) {
-          if ($scope.state[axis].indexOf(ref) != -1) {
-            selected[ref] = attributes[ref];
-          }
-        }
-        return selected;
-      };
-
-      $scope.hasAvailableAttributes = function() {
-        for (var i in $scope.getAvailableAttributes()) {
-          return true;
-        }
-        return false;
-      };
-
-      $scope.addAttribute = function(axis, ref) {
-        $scope.state[axis].push(ref);
-        update();
-      };
-
-      $scope.removeAttribute = function(axis, ref) {
-        var i = $scope.state[axis].indexOf(ref);
+      $scope.remove = function(axis, ref) {
+        var i = axis.selected.indexOf(ref);
         if (i != -1) {
-          $scope.state[axis].splice(i, 1);
+          axis.selected.splice(i, 1);
+          $scope.state[axis.name] = axis.selected;
           update();
         }
       };
 
-      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
-        $scope.model = model;
-        $scope.queryModel = cubesCtrl.queryModel;
-
-        attributes = {};
+      var makeOptions = function(model) {
+        var options = [];
         for (var di in model.dimensions) {
           var dim = model.dimensions[di];
           for (var li in dim.levels) {
@@ -533,29 +506,74 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
             for (var ai in lvl.attributes) {
               var attr = lvl.attributes[ai];
               attr.dimension = dim;
-              attributes[attr.ref] = attr;
+              attr.type = 'attributes';
+              if (attr.name != lvl.label_attribute) {
+                attr.sub_label = attr.label;
+              }
+              attr.label = dim.label;
+              options.push(attr);
             }
           }
         }
 
-        // get list of currently active aggregates.
-        state.aggregates = asArray(state.aggregates);
-        if ($scope.model && !state.aggregates.length) {
-          for (var j in $scope.model.aggregates) {
-            state.aggregates.push($scope.model.aggregates[j].name); 
-          }
+        for (var ai in model.aggregates) {
+          var agg = model.aggregates[ai];
+          agg.type = 'aggregates';
+          options.push(agg);
         }
 
-        // get list of currently used attributes
-        usedAttributes = [];
-        for (var axis in $scope.queryModel) {
-          state[axis] = asArray(state[axis]);
-          for (var i in state[axis]) {
-            usedAttributes.push(state[axis][i]);
-          }
+        for (var mi in model.measures) {
+          var mea = model.measures[mi];
+          mea.type = 'measures';
+          options.push(mea);
         }
 
+        return options;
+      }
+
+      var makeAxes = function(state, model) {
+        var axes = [],
+            options = makeOptions(model);
+
+        if (!cubesCtrl.queryModel) return [];
+
+        for (var name in cubesCtrl.queryModel) {
+          var axis = cubesCtrl.queryModel[name];
+          axis.name = name;
+          axis.sortId = axis.sortId || 1;
+          axis.available = [];
+          axis.active = [];
+
+          axis.selected = asArray(state[name]);
+          if (!axis.selected.length) {
+            if (angular.isFunction(axis.defaults)) {
+              axis.selected = axis.defaults(model);
+            } else {
+              axis.selected = asArray(axis.defaults);
+            }
+          }
+
+          for (var i in options) {
+            var opt = options[i];
+            if (axis.selected.indexOf(opt.ref) != -1) {
+              axis.active.push(opt);
+            } else if (axis.types.indexOf(opt.type) != -1) {
+              axis.available.push(opt);
+            }
+          }
+
+          //console.log(axis);
+          axes.push(axis);
+        }
+
+        return axes.sort(function(a, b) {
+          return a.sortId - b.sortId;
+        });
+      };
+
+      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         $scope.state = state;
+        $scope.axes = makeAxes(state, model);
       });
     }
   };
@@ -674,63 +692,33 @@ angular.module("angular-cubes-templates/pager.html", []).run(["$templateCache", 
 
 angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/panel.html",
-    "<div class=\"panel panel-default\" ng-repeat=\"(axis, spec) in queryModel\">\n" +
+    "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\">\n" +
     "  <div class=\"panel-heading\">\n" +
-    "    <strong>{{spec.label}}</strong>\n" +
+    "    <strong>{{axis.label}}</strong>\n" +
     "\n" +
-    "    <div class=\"btn-group\" dropdown ng-show=\"hasAvailableAttributes()\">\n" +
+    "    <div class=\"btn-group\" dropdown ng-show=\"axis.available.length\">\n" +
     "      &mdash;\n" +
-    "      <a dropdown-toggle>Add {{spec.label.toLowerCase()}}</a>\n" +
+    "      <a dropdown-toggle class=\"ng-link\">{{axis.addLabel}}</a>\n" +
     "      <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "        <li ng-repeat=\"(ref, a) in getAvailableAttributes()\">\n" +
-    "          <a ng-click=\"addAttribute(axis, ref)\">\n" +
-    "            <strong>{{a.dimension.label}}</strong> {{a.label}}\n" +
+    "        <li ng-repeat=\"opt in axis.available\">\n" +
+    "          <a ng-click=\"add(axis, opt.ref)\">\n" +
+    "            <strong>{{opt.label}}</strong>\n" +
+    "            {{opt.sub_label}}\n" +
     "          </a>\n" +
     "        </li>\n" +
     "      </ul>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <table class=\"table\">\n" +
-    "    <tr ng-repeat=\"(ref, a) in getSelectedAttributes(axis)\">\n" +
+    "    <tr ng-repeat=\"opt in axis.active\">\n" +
     "      <td colspan=\"2\">\n" +
     "        <span class=\"pull-right\">\n" +
-    "          <a ng-click=\"removeAttribute(axis, ref)\">\n" +
+    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link\">\n" +
     "            <i class=\"fa fa-times\"></i>\n" +
     "          </a>\n" +
     "        </span>\n" +
-    "        <strong>{{a.dimension.label}}</strong> {{a.label}}\n" +
-    "      </td>\n" +
-    "    </tr>\n" +
-    "  </table>\n" +
-    "</div>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "<div class=\"panel panel-default\" ng-if=\"model\">\n" +
-    "  <div class=\"panel-heading\">\n" +
-    "    <strong>Values</strong>\n" +
-    "\n" +
-    "    <div class=\"btn-group\" dropdown ng-show=\"getAvailableAggregates().length\">\n" +
-    "      &mdash;\n" +
-    "      <a dropdown-toggle>Add value</a>\n" +
-    "      <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "        <li ng-repeat=\"a in getAvailableAggregates()\">\n" +
-    "          <a ng-click=\"addAggregate(a)\">{{a.label}}</a>\n" +
-    "        </li>\n" +
-    "      </ul>\n" +
-    "    </div>\n" +
-    "  </div>\n" +
-    "  <table class=\"table\">\n" +
-    "    <tr ng-repeat=\"a in getSelectedAggregates()\">\n" +
-    "      <td colspan=\"2\">\n" +
-    "        <span class=\"pull-right\">\n" +
-    "          <a ng-click=\"removeAggregate(a)\">\n" +
-    "            <i class=\"fa fa-times\"></i>\n" +
-    "          </a>\n" +
-    "        </span>\n" +
-    "\n" +
-    "        {{a.label}}\n" +
-    "\n" +
+    "        <strong>{{opt.label}}</strong>\n" +
+    "        {{opt.sub_label}}\n" +
     "      </td>\n" +
     "    </tr>\n" +
     "  </table>\n" +

@@ -95,8 +95,11 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         // join arguments and remove empty arguments
         for (var k in q) {
           if (angular.isArray(q[k])) {
-            var sep = k == 'order' ? ',' : '|'
-            q[k] = q[k].join(sep);
+            if (['order', 'fields'].indexOf(k) == -1) {
+              q[k] = q[k].join('|');
+            } else {
+              q[k] = q[k].join(',');
+            }
           }
           q[k] = q[k] + '';
           if (!q[k].length) {

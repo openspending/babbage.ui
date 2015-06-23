@@ -17,8 +17,12 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
-      var aq = angular.copy(q);
+      q.fields = asArray(state.fields);
+      if (q.fields.length == 0) {
+        q.fields = defaultFields(model);
+      }
 
+      var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
       var facts = $http.get(cubesCtrl.getApiUrl('facts'),
@@ -73,6 +77,27 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       }
     };
 
+    var defaultFields = function(model) {
+      var defaults = [];
+      for (var i in model.measures) {
+        var mea = model.measures[i];
+        defaults.push(mea.ref);
+      }
+      for (var i in model.dimensions) {
+        var dim = model.dimensions[i];
+        for (var j in dim.levels) {
+          var lvl = dim.levels[j];
+          for (var k in lvl.attributes) {
+            var attr = lvl.attributes[k];
+            if (attr.name == lvl.label_attribute) {
+              defaults.push(attr.ref);
+            }
+          }
+        }
+      }
+      return defaults;
+    };
+
     $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
       for (var i in model.measures) {
         var measure = model.measures[i];
@@ -95,7 +120,14 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
     // console.log('facts init');
     cubesCtrl.init({
-      columns: {label: 'Columns', multiple: true},
+      fields: {
+        label: 'Columns',
+        addLabel: 'add column',
+        types: ['attributes', 'measures'],
+        defaults: defaultFields,
+        sortId: 0,
+        multiple: true
+      }
     });
   }
   };
