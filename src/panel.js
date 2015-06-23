@@ -43,8 +43,10 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               var attr = lvl.attributes[ai];
               attr.dimension = dim;
               attr.type = 'attributes';
+              attr.sortKey = '1.' + dim.name + '.';
               if (attr.name != lvl.label_attribute) {
-                attr.sub_label = attr.label;
+                attr.subLabel = attr.label;
+                attr.sortKey = attr.sortKey + attr.name;
               }
               attr.label = dim.label;
               options.push(attr);
@@ -55,16 +57,22 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         for (var ai in model.aggregates) {
           var agg = model.aggregates[ai];
           agg.type = 'aggregates';
+          agg.sortKey = '2..' + agg.name;
           options.push(agg);
         }
 
         for (var mi in model.measures) {
           var mea = model.measures[mi];
           mea.type = 'measures';
+          mea.sortKey = '3..' + mea.name;
           options.push(mea);
         }
 
         return options;
+      }
+
+      var sortOptions = function(a, b) {
+        return a.sortKey.localeCompare(b.sortKey);
       }
 
       var makeAxes = function(state, model) {
@@ -88,6 +96,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               axis.selected = asArray(axis.defaults);
             }
           }
+          axis.available = axis.available.sort(sortOptions);
+          axis.active = axis.active.sort(sortOptions);
 
           for (var i in options) {
             var opt = options[i];

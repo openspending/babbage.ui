@@ -10,7 +10,7 @@
         <li ng-repeat="opt in axis.available">
           <a ng-click="add(axis, opt.ref)">
             <strong>{{opt.label}}</strong>
-            {{opt.sub_label}}
+            <small>{{opt.subLabel}}</small>
           </a>
         </li>
       </ul>
@@ -25,7 +25,7 @@
           </a>
         </span>
         <strong>{{opt.label}}</strong>
-        {{opt.sub_label}}
+        <small>{{opt.subLabel}}</small>
       </td>
     </tr>
   </table>
