@@ -142,6 +142,67 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
   };
 }]);
 
+;
+ngCubes.directive('cubesPager', ['$timeout', '$location', function ($timeout, $location) {
+  return {
+    restrict: 'E',
+    scope: {
+      'context': '='
+    },
+    templateUrl: 'angular-cubes-templates/pager.html',
+    link: function (scope, element, attrs, model) {
+      scope.showPager = false;
+      scope.hasPrev = false;
+      scope.hasNext = false;
+      scope.pages = [];
+      scope.cur = 0;
+      scope.num = 0;
+        
+      scope.$watch('context', function(e) {
+        if (!scope.context || scope.context.total <= scope.context.pagesize) {
+          return;
+        }
+        scope.current = parseInt(scope.context.page, 10) || 0;
+        scope.num = Math.ceil(scope.context.total / scope.context.pagesize)
+        var pages = [],
+          num = scope.num,
+          range = 3,
+          low = scope.current - range,
+          high = scope.current + range;
+
+        if (low < 0) {
+          low = 0;
+          high = Math.min((2*range)+1, num);
+        }
+        if (high > num) {
+          high = num;
+          low = Math.max(1, num - (2*range)+1);
+        }
+
+        for (var page = low; page <= high; page++) {
+          // var offset = (page - 1) * scope.context.pagesize;
+          pages.push({
+            page: page,
+            current: page == scope.current,
+            //offset: offset
+          });
+        }
+        scope.hasPrev = scope.current > 0;
+        scope.hasNext = scope.current < num;
+        scope.showPager = num > 1;
+        scope.pages = pages;
+      });
+
+      scope.setPage = function(page) {
+        if (page >= 0 && page <= scope.num) {
+          var state = $location.search();
+          state.page = page;
+          $location.search(state);  
+        }
+      }
+    }
+  };
+}]);
 ;var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
@@ -264,7 +325,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
 }]);
 
 ;
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $http) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -278,21 +339,28 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $ht
     scope.page = 0;
     scope.data = [];
     scope.columns = [];
+    scope.pagerCtx = {};
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
-      
-      var dfd = $http.get(cubesCtrl.getApiUrl('facts'),
-                          cubesCtrl.queryParams(q));
-      dfd.then(function(res) {
-        queryResult(res.data, q, state);
+      var aq = angular.copy(q);
+
+      aq.drilldown = aq.fields = [];
+      aq.page = 0;
+      var facts = $http.get(cubesCtrl.getApiUrl('facts'),
+                            cubesCtrl.queryParams(q)),
+          aggs = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                            cubesCtrl.queryParams(aq));
+      $q.all([facts, aggs]).then(function(res) {
+        queryResult(res[0].data, res[1].data, q, state);
       });
     };
 
-    var queryResult = function(data, q, state) {
+    var queryResult = function(data, aggs, q, state) {
       if (!data.length) {
         scope.columns = [];
         scope.data = [];
+        scope.pagerCtx = {};
         return;
       };
 
@@ -323,6 +391,12 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $ht
       }
       scope.columns = columns;
       scope.data = data;
+      scope.pagerCtx = {
+        page: q.page,
+        pagesize: q.pagesize,
+        // FIXME: this is SpenDB-specific:
+        total: aggs.summary.fact_count
+      }
     };
 
     $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
@@ -507,7 +581,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     }
   };
 }]);
-;angular.module('ngCubes.templates', ['angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/workspace.html']);
+;angular.module('ngCubes.templates', ['angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/workspace.html']);
 
 angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/crosstab.html",
@@ -578,6 +652,23 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
+    "<cubes-pager context=\"pagerCtx\"></cubes-pager>\n" +
+    "");
+}]);
+
+angular.module("angular-cubes-templates/pager.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("angular-cubes-templates/pager.html",
+    "<ul ng-show=\"showPager\" class=\"pagination pagination-sm\">\n" +
+    "  <li ng-class=\"{'disabled': !hasPrev}\">\n" +
+    "    <a class=\"ng-link\" ng-click=\"setPage(current - 1)\">&laquo;</a>\n" +
+    "  </li>\n" +
+    "  <li ng-repeat=\"page in pages\" ng-class=\"{'active': page.current}\">\n" +
+    "    <a class=\"ng-link\" ng-click=\"setPage(page.page)\">{{page.page + 1}}</a>\n" +
+    "  </li>\n" +
+    "  <li ng-class=\"{'disabled': !hasNext}\">\n" +
+    "    <a class=\"ng-link\" ng-click=\"setPage(current + 1)\">&raquo;</a>\n" +
+    "  </li>\n" +
+    "</ul>\n" +
     "");
 }]);
 

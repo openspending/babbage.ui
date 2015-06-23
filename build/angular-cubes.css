@@ -1,8 +1,12 @@
 .spaced {
   margin-bottom: 20px;
 }
+.ng-link {
+  cursor: pointer;
+}
 .table-cubes {
   overflow-x: scroll;
+  min-height: 25em;
 }
 .table-cubes::-webkit-scrollbar {
   -webkit-appearance: none;
@@ -28,6 +32,7 @@
 .table-cubes .table td,
 .table-cubes .table th {
   min-width: 8em;
+  max-width: 25em;
   border-right: 2px solid #dddddd;
   overflow: hidden;
   white-space: nowrap;

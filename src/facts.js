@@ -1,5 +1,5 @@
 
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $http) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -13,21 +13,28 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $ht
     scope.page = 0;
     scope.data = [];
     scope.columns = [];
+    scope.pagerCtx = {};
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
-      
-      var dfd = $http.get(cubesCtrl.getApiUrl('facts'),
-                          cubesCtrl.queryParams(q));
-      dfd.then(function(res) {
-        queryResult(res.data, q, state);
+      var aq = angular.copy(q);
+
+      aq.drilldown = aq.fields = [];
+      aq.page = 0;
+      var facts = $http.get(cubesCtrl.getApiUrl('facts'),
+                            cubesCtrl.queryParams(q)),
+          aggs = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                            cubesCtrl.queryParams(aq));
+      $q.all([facts, aggs]).then(function(res) {
+        queryResult(res[0].data, res[1].data, q, state);
       });
     };
 
-    var queryResult = function(data, q, state) {
+    var queryResult = function(data, aggs, q, state) {
       if (!data.length) {
         scope.columns = [];
         scope.data = [];
+        scope.pagerCtx = {};
         return;
       };
 
@@ -58,6 +65,12 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', function($rootScope, $ht
       }
       scope.columns = columns;
       scope.data = data;
+      scope.pagerCtx = {
+        page: q.page,
+        pagesize: q.pagesize,
+        // FIXME: this is SpenDB-specific:
+        total: aggs.summary.fact_count
+      }
     };
 
     $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {

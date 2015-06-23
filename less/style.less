@@ -3,8 +3,13 @@
     margin-bottom: 20px;
 }
 
+.ng-link {
+    cursor: pointer;
+}
+
 .table-cubes {
     overflow-x: scroll;
+    min-height: 25em;
 
     &::-webkit-scrollbar {
         -webkit-appearance: none;
@@ -38,8 +43,8 @@
         margin-bottom: 0;
 
         td, th {
-            //max-width: 14em;
             min-width: 8em;
+            max-width: 25em;
             border-right: 2px solid @table-border-color;
             overflow: hidden;
             white-space: nowrap;
