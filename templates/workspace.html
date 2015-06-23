@@ -1,10 +1,10 @@
 <cubes slicer="{{slicer}}" cube="{{cube}}" state="state" change-state="updateState(state)">
   <div class="row">
     <div class="col-md-9">
-      <div ng-if="state.view == 'crosstab'">
+      <div ng-if="view == 'crosstab'">
         <cubes-crosstab></cubes-crosstab>
       </div>
-      <div ng-if="state.view == 'facts'">
+      <div ng-if="view == 'facts'">
         <cubes-facts></cubes-facts>
       </div>
     </div>

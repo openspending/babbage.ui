@@ -9,11 +9,15 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
 </head>
-<body ng-controller="DemoCtrl">
-  <div class="container-fluid">
-    <cubes-workspace slicer="https://spendb-dev.herokuapp.com/api/slicer/" cube="{{cube}}">
-    </cubes-workspace>
-  </div>
+<body>
+  <div ng-view></div>
+
+  <script type="text/ng-template" id="demo">
+    <div class="container-fluid">
+      <cubes-workspace slicer="https://spendb-dev.herokuapp.com/api/slicer/" cube="{{cube}}">
+      </cubes-workspace>
+    </div>
+  </script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
   <script src='//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.js'></script>
@@ -23,10 +27,23 @@
 
   <script src='build/angular-cubes.min.js'></script>
   <script>
-    var demo = angular.module('demo', ['ngCubes', 'ui.bootstrap']);
+    var demo = angular.module('demo', ['ngRoute', 'ngCubes', 'ui.bootstrap']);
+
+    demo.config(['$routeProvider',
+      function($routeProvider) {
+      $routeProvider.
+        when('/', {
+          templateUrl: 'demo.html',
+          controller: 'DemoCtrl',
+          reloadOnSearch: true
+        });
+    }]);
+
     demo.controller('DemoCtrl', function ($scope) {
       $scope.cube = 'wb_contract_awards';
+      console.log('huhu!');
     });
+
   </script>
 </body>
 </html>
