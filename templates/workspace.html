@@ -1,4 +1,4 @@
-<cubes slicer="{{slicer}}" cube="{{cube}}" state="state" change-state="updateState(state)">
+<cubes slicer="{{slicer}}" cube="{{cube}}" state="state">
   <div class="row">
     <div class="col-md-9">
       <div ng-if="view == 'crosstab'">
@@ -12,13 +12,13 @@
       <div class="btn-group spaced" role="group">
         <a class="btn btn-default"
           tooltip-placement="bottom" tooltip="Table"
-          ng-class="{'active': state.view == 'facts'}"
+          ng-class="{'active': view == 'facts'}"
           ng-click="setView('facts')">
           <i class="fa fa-table"></i> Line items
         </a>
         <a class="btn btn-default"
           tooltip-placement="bottom" tooltip="Crosstab"
-          ng-class="{'active': state.view == 'crosstab'}"
+          ng-class="{'active': view == 'crosstab'}"
           ng-click="setView('crosstab')">
           <i class="fa fa-cubes"></i> Crosstab
         </a>

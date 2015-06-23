@@ -14,7 +14,7 @@ ngCubes.filter('numeric', function() {
 
 ngCubes.service('cubesModel', ['$http', function($http) {
   return {};
-});
+}]);
 
 ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, $rootScope, $location) {
   return {
@@ -23,8 +23,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
     scope: {
       slicer: '@',
       cube: '@',
-      state: '=',
-      changeState: '&'
+      state: '='
     },
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: ['$scope', function($scope) {
@@ -36,7 +35,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
           api = api + '/cube/' + $scope.cube;
 
       self.dataUpdate = makeSignal();
-      // self.stateUpdate = makeSignal();
+      self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
       self.queryProcessor = null,
