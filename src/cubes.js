@@ -12,11 +12,37 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.service('cubesModel', ['$http', function($http) {
-  return {};
+ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
+  var cache = {};
+
+  var getUrl = function(slicer, cube, endpoint) {
+    var api = slicer.slice(),
+        api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
+        api = api + '/cube/' + cube + '/' + endpoint;
+    return api;
+  };
+
+  var getModel = function(slicer, cube) {
+    var url = getUrl(slicer, cube, 'model');
+    if (!angular.isDefined(cache[url])) {
+      cache[url] = $http.get(url);
+    } 
+    return cache[url];
+  };
+
+  var flush = function() {
+    cache = {};
+  };
+
+  return {
+    getUrl: getUrl,
+    getModel: getModel,
+    flush: flush
+  };
 }]);
 
-ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, $rootScope, $location) {
+ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
+    function($http, $rootScope, $location, cubesApi) {
   return {
     restrict: 'E',
     transclude: true,
@@ -28,11 +54,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: ['$scope', function($scope) {
       var self = this,
-          state = $scope.state || {},
-          state = angular.extend({}, state, $location.search()),
-          api = $scope.slicer.slice(),
-          api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
-          api = api + '/cube/' + $scope.cube;
+          state = angular.extend({}, $scope.state || {}, $location.search());
 
       self.dataUpdate = makeSignal();
       self.stateUpdate = makeSignal();
@@ -43,7 +65,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
       self.init = function(queryModel, queryProcessor) {
         self.queryModel = queryModel;
         self.queryProcessor = queryProcessor;
-        $http.get(api + '/model').then(function(res) {
+        cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
           $rootScope.$broadcast(self.modelUpdate, res.data);
           $rootScope.$broadcast(self.stateUpdate, state);
           self.query();
@@ -56,6 +78,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
 
       self.setState = function(s) {
         $location.search(s);
+      };
+
+      self.getApiUrl = function(endpoint) {
+        return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
       };
 
       self.getQuery = function() {
@@ -90,7 +116,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, 
         var q = self.getQuery(),
             endpoint = q.endpoint;
         delete q['endpoint'];
-        $http.get(api + '/' + endpoint, {params: q}).then(function(res) {
+        $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
           $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
         });
       };
