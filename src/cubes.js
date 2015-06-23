@@ -1,12 +1,14 @@
 
-var ngCubes = angular.module('ngCubes', ['ngCubes.templates']);
+var ngCubes = angular.module('ngCubes', ['ngCubes.templates']),
+    numberFormat = d3.format("0,000");
 
 ngCubes.filter('numeric', function() {
   return function(val) {
-    if (isNaN(parseFloat(val))) {
+    var fval = parseFloat(val)
+    if (isNaN(fval)) {
       return '-';
     }
-    return val.toString();
+    return numberFormat(Math.round(fval));
   };
 })
 

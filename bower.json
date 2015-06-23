@@ -27,9 +27,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": ">=1.2.0"
-  },
-  "devDependencies": {
-    "grunt-contrib-concat": "~0.5.1"
+    "angular": ">=1.2.28",
+    "d3": "~3.5.5"
   }
 }
