@@ -69,7 +69,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', function($rootScope) {
         }
         columns.push(column);
       }
-      console.log(columns);
       scope.columns = columns;
     });
 

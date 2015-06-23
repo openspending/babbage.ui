@@ -12,7 +12,7 @@
 <body>
   <div ng-view></div>
 
-  <script type="text/ng-template" id="demo">
+  <script type="text/ng-template" id="demo.html">
     <div class="container-fluid">
       <cubes-workspace slicer="https://spendb-dev.herokuapp.com/api/slicer/" cube="{{cube}}">
       </cubes-workspace>
@@ -41,13 +41,12 @@
         when('/', {
           templateUrl: 'demo.html',
           controller: 'DemoCtrl',
-          reloadOnSearch: false
+          reloadOnSearch: true
         });
     }]);
 
     demo.controller('DemoCtrl', function ($scope) {
       $scope.cube = 'wb_contract_awards';
-      console.log('huhu!');
     });
 
   </script>

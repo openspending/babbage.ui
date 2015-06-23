@@ -12,7 +12,7 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
+ngCubes.directive('cubes', ['$http', '$rootScope', '$location', function($http, $rootScope, $location) {
   return {
     restrict: 'E',
     transclude: true,
@@ -26,12 +26,13 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
     controller: ['$scope', function($scope) {
       var self = this,
           state = $scope.state || {},
+          state = angular.extend({}, state, $location.search()),
           api = $scope.slicer.slice(),
           api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
           api = api + '/cube/' + $scope.cube;
 
       self.dataUpdate = makeSignal();
-      self.stateUpdate = makeSignal();
+      // self.stateUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
       self.queryProcessor = null,
@@ -51,11 +52,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
       };
 
       self.setState = function(s) {
-        state = s;
-        $rootScope.$broadcast(self.stateUpdate, state);
-        if ($scope.changeState) {
-          $scope.changeState(state);
-        }
+        $location.search(s);
       };
 
       self.getQuery = function() {
@@ -94,6 +91,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', function($http, $rootScope) {
           $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
         });
       };
+
     }]
   };
 }]);
