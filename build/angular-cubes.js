@@ -45,12 +45,19 @@ ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
     return api;
   };
 
-  var getModel = function(slicer, cube) {
-    var url = getUrl(slicer, cube, 'model');
+  var getCached = function(url) {
     if (!angular.isDefined(cache[url])) {
       cache[url] = $http.get(url);
     } 
     return cache[url];
+  };
+
+  var getModel = function(slicer, cube) {
+    return getCached(getUrl(slicer, cube, 'model'));
+  };
+
+  var getDimensionMembers = function(slicer, cube, dimension) {
+    return getCached(getUrl(slicer, cube, 'members/' + dimension));
   };
 
   var flush = function() {
@@ -60,6 +67,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
   return {
     getUrl: getUrl,
     getModel: getModel,
+    getDimensionMembers: getDimensionMembers,
     flush: flush
   };
 }]);
@@ -101,6 +109,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       self.getApiUrl = function(endpoint) {
         return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
       };
+
+      self.getDimensionMembers = function(dimension) {
+        return getDimensionMembers($scope.slicer, $scope.cube, dimension);
+      }
 
       self.getQuery = function() {
         var q = {
@@ -509,7 +521,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
     templateUrl: 'angular-cubes-templates/panel.html',
     link: function($scope, $element, attrs, cubesCtrl) {
       $scope.state = {};
-      $scope.axes = {};
+      $scope.axes = [];
+      $scope.filters = [];
 
       var update = function() {
         //$scope.state.page = 0;
@@ -575,10 +588,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         return a.sortKey.localeCompare(b.sortKey);
       }
 
-      var makeAxes = function(state, model) {
-        var axes = [],
-            options = makeOptions(model);
-
+      var makeAxes = function(state, model, options) {
+        var axes = [];
         if (!cubesCtrl.queryModel) return [];
 
         for (var name in cubesCtrl.queryModel) {
@@ -617,9 +628,23 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         });
       };
 
+      var makeFilters = function(options) {
+        var filters = [];
+        for (var i in options) {
+          var opt = options[i];
+          if (opt.type == 'attributes') {
+            filters.push(opt);
+          }
+        }
+        return filters.sort(sortOptions);
+      };
+
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         $scope.state = state;
-        $scope.axes = makeAxes(state, model);
+
+        var options = makeOptions(model);
+        $scope.axes = makeAxes(state, model, options);
+        $scope.filters = makeFilters(options);
       });
     }
   };
@@ -769,6 +794,40 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "    </tr>\n" +
     "  </table>\n" +
     "</div>\n" +
+    "\n" +
+    "\n" +
+    "<div class=\"panel panel-default\">\n" +
+    "  <div class=\"panel-heading\">\n" +
+    "    <strong>Filters</strong>\n" +
+    "\n" +
+    "    <div class=\"btn-group\" dropdown ng-show=\"filters.length\">\n" +
+    "      &mdash;\n" +
+    "      <a dropdown-toggle class=\"ng-link\">add filter</a>\n" +
+    "      <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "        <li ng-repeat=\"filter in filters\">\n" +
+    "          <a ng-click=\"addFilter(filter)\">\n" +
+    "            <strong>{{filter.label}}</strong>\n" +
+    "            <small>{{filter.subLabel}}</small>\n" +
+    "          </a>\n" +
+    "        </li>\n" +
+    "      </ul>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <table class=\"table\">\n" +
+    "    <!--tr ng-repeat=\"opt in axis.active\">\n" +
+    "      <td colspan=\"2\">\n" +
+    "        <span class=\"pull-right\">\n" +
+    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link\">\n" +
+    "            <i class=\"fa fa-times\"></i>\n" +
+    "          </a>\n" +
+    "        </span>\n" +
+    "        <strong>{{opt.label}}</strong>\n" +
+    "        <small>{{opt.subLabel}}</small>\n" +
+    "      </td>\n" +
+    "    </tr-->\n" +
+    "  </table>\n" +
+    "</div>\n" +
+    "\n" +
     "");
 }]);
 

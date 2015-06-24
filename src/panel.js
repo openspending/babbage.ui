@@ -9,7 +9,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
     templateUrl: 'angular-cubes-templates/panel.html',
     link: function($scope, $element, attrs, cubesCtrl) {
       $scope.state = {};
-      $scope.axes = {};
+      $scope.axes = [];
+      $scope.filters = [];
 
       var update = function() {
         //$scope.state.page = 0;
@@ -75,10 +76,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         return a.sortKey.localeCompare(b.sortKey);
       }
 
-      var makeAxes = function(state, model) {
-        var axes = [],
-            options = makeOptions(model);
-
+      var makeAxes = function(state, model, options) {
+        var axes = [];
         if (!cubesCtrl.queryModel) return [];
 
         for (var name in cubesCtrl.queryModel) {
@@ -117,9 +116,23 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         });
       };
 
+      var makeFilters = function(options) {
+        var filters = [];
+        for (var i in options) {
+          var opt = options[i];
+          if (opt.type == 'attributes') {
+            filters.push(opt);
+          }
+        }
+        return filters.sort(sortOptions);
+      };
+
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         $scope.state = state;
-        $scope.axes = makeAxes(state, model);
+
+        var options = makeOptions(model);
+        $scope.axes = makeAxes(state, model, options);
+        $scope.filters = makeFilters(options);
       });
     }
   };

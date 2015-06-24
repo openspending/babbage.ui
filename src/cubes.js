@@ -22,12 +22,19 @@ ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
     return api;
   };
 
-  var getModel = function(slicer, cube) {
-    var url = getUrl(slicer, cube, 'model');
+  var getCached = function(url) {
     if (!angular.isDefined(cache[url])) {
       cache[url] = $http.get(url);
     } 
     return cache[url];
+  };
+
+  var getModel = function(slicer, cube) {
+    return getCached(getUrl(slicer, cube, 'model'));
+  };
+
+  var getDimensionMembers = function(slicer, cube, dimension) {
+    return getCached(getUrl(slicer, cube, 'members/' + dimension));
   };
 
   var flush = function() {
@@ -37,6 +44,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
   return {
     getUrl: getUrl,
     getModel: getModel,
+    getDimensionMembers: getDimensionMembers,
     flush: flush
   };
 }]);
@@ -78,6 +86,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       self.getApiUrl = function(endpoint) {
         return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
       };
+
+      self.getDimensionMembers = function(dimension) {
+        return getDimensionMembers($scope.slicer, $scope.cube, dimension);
+      }
 
       self.getQuery = function() {
         var q = {

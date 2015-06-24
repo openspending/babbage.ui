@@ -30,3 +30,37 @@
     </tr>
   </table>
 </div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <strong>Filters</strong>
+
+    <div class="btn-group" dropdown ng-show="filters.length">
+      &mdash;
+      <a dropdown-toggle class="ng-link">add filter</a>
+      <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="filter in filters">
+          <a ng-click="addFilter(filter)">
+            <strong>{{filter.label}}</strong>
+            <small>{{filter.subLabel}}</small>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <table class="table">
+    <!--tr ng-repeat="opt in axis.active">
+      <td colspan="2">
+        <span class="pull-right">
+          <a ng-click="remove(axis, opt.ref)" class="ng-link">
+            <i class="fa fa-times"></i>
+          </a>
+        </span>
+        <strong>{{opt.label}}</strong>
+        <small>{{opt.subLabel}}</small>
+      </td>
+    </tr-->
+  </table>
+</div>
+
