@@ -88,7 +88,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       };
 
       self.getDimensionMembers = function(dimension) {
-        return getDimensionMembers($scope.slicer, $scope.cube, dimension);
+        return cubesApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
       }
 
       self.getQuery = function() {
@@ -120,16 +120,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         }
         return {params: q};
       }
- 
-      // self.query = function() {
-      //   var q = self.getQuery(),
-      //       endpoint = q.endpoint;
-      //   delete q['endpoint'];
-      //   $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
-      //     $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
-      //   });
-      // };
-
     }]
   };
 }]);

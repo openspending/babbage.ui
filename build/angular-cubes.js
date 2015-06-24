@@ -111,7 +111,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       };
 
       self.getDimensionMembers = function(dimension) {
-        return getDimensionMembers($scope.slicer, $scope.cube, dimension);
+        return cubesApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
       }
 
       self.getQuery = function() {
@@ -143,16 +143,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         }
         return {params: q};
       }
- 
-      // self.query = function() {
-      //   var q = self.getQuery(),
-      //       endpoint = q.endpoint;
-      //   delete q['endpoint'];
-      //   $http.get(self.getApiUrl(endpoint), {params: q}).then(function(res) {
-      //     $rootScope.$broadcast(self.dataUpdate, res.data, q, state);
-      //   });
-      // };
-
     }]
   };
 }]);
@@ -556,6 +546,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               var attr = lvl.attributes[ai];
               attr.dimension = dim;
               attr.type = 'attributes';
+              attr.cardinality = lvl.cardinality;
               attr.sortKey = '1.' + dim.name + '.';
               if (attr.name != lvl.label_attribute) {
                 attr.subLabel = attr.label;
@@ -628,15 +619,19 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         });
       };
 
-      var makeFilters = function(options) {
+      var makeFilterAttributes = function(options) {
         var filters = [];
         for (var i in options) {
           var opt = options[i];
-          if (opt.type == 'attributes') {
+          if (opt.type == 'attributes' && opt.cardinality != 'high') {
             filters.push(opt);
           }
         }
         return filters.sort(sortOptions);
+      };
+
+      var getFilters = function(state) {
+        // TODO
       };
 
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
@@ -644,7 +639,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
         var options = makeOptions(model);
         $scope.axes = makeAxes(state, model, options);
-        $scope.filters = makeFilters(options);
+        $scope.filterAttributes = makeFilterAttributes(options);
       });
     }
   };
@@ -800,14 +795,14 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "  <div class=\"panel-heading\">\n" +
     "    <strong>Filters</strong>\n" +
     "\n" +
-    "    <div class=\"btn-group\" dropdown ng-show=\"filters.length\">\n" +
+    "    <div class=\"btn-group\" dropdown ng-show=\"filterAttributes.length\">\n" +
     "      &mdash;\n" +
     "      <a dropdown-toggle class=\"ng-link\">add filter</a>\n" +
     "      <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "        <li ng-repeat=\"filter in filters\">\n" +
-    "          <a ng-click=\"addFilter(filter)\">\n" +
-    "            <strong>{{filter.label}}</strong>\n" +
-    "            <small>{{filter.subLabel}}</small>\n" +
+    "        <li ng-repeat=\"attr in filterAttributes\">\n" +
+    "          <a ng-click=\"addFilter(attr)\">\n" +
+    "            <strong>{{attr.label}}</strong>\n" +
+    "            <small>{{attr.subLabel}}</small>\n" +
     "          </a>\n" +
     "        </li>\n" +
     "      </ul>\n" +

@@ -44,6 +44,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               var attr = lvl.attributes[ai];
               attr.dimension = dim;
               attr.type = 'attributes';
+              attr.cardinality = lvl.cardinality;
               attr.sortKey = '1.' + dim.name + '.';
               if (attr.name != lvl.label_attribute) {
                 attr.subLabel = attr.label;
@@ -116,15 +117,19 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         });
       };
 
-      var makeFilters = function(options) {
+      var makeFilterAttributes = function(options) {
         var filters = [];
         for (var i in options) {
           var opt = options[i];
-          if (opt.type == 'attributes') {
+          if (opt.type == 'attributes' && opt.cardinality != 'high') {
             filters.push(opt);
           }
         }
         return filters.sort(sortOptions);
+      };
+
+      var getFilters = function(state) {
+        // TODO
       };
 
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
@@ -132,7 +137,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
 
         var options = makeOptions(model);
         $scope.axes = makeAxes(state, model, options);
-        $scope.filters = makeFilters(options);
+        $scope.filterAttributes = makeFilterAttributes(options);
       });
     }
   };
