@@ -220,7 +220,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
   },
   templateUrl: 'angular-cubes-templates/crosstab.html',
   link: function(scope, element, attrs, cubesCtrl) {
-    //var model = null, query = {};
+    scope.queryLoaded = false;
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
@@ -259,9 +259,6 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
     var queryResult = function(data, q, model, state) {
-      // console.log('crosstab received data');
-      if (!model) return;
-
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
 
@@ -318,6 +315,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
+      scope.queryLoaded = true;
     };
 
 
@@ -786,9 +784,11 @@ angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache
     "  </table>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"alert alert-info\" ng-hide=\"rows.length\">\n" +
-    "  <strong>You have not selected any data.</strong> Please choose a set of rows \n" +
-    "  and columns to generate a cross-table.\n" +
+    "<div class=\"table-cubes\" ng-hide=\"rows.length || !queryLoaded\">\n" +
+    "  <div class=\"alert alert-info\">\n" +
+    "    <strong>You have not selected any data.</strong> Please choose a set of rows \n" +
+    "    and columns to generate a cross-table.\n" +
+    "  </div>\n" +
     "</div>\n" +
     "");
 }]);
@@ -971,7 +971,7 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "          ng-click=\"setView('crosstab')\">\n" +
-    "          <i class=\"fa fa-cubes\"></i> Crosstab\n" +
+    "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
     "        </a>\n" +
     "        <!--a type=\"button\" class=\"btn btn-default disabled\">\n" +
     "          <i class=\"fa fa-bar-chart\"></i>\n" +

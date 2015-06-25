@@ -10,7 +10,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
   },
   templateUrl: 'angular-cubes-templates/crosstab.html',
   link: function(scope, element, attrs, cubesCtrl) {
-    //var model = null, query = {};
+    scope.queryLoaded = false;
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
@@ -49,9 +49,6 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
     var queryResult = function(data, q, model, state) {
-      // console.log('crosstab received data');
-      if (!model) return;
-
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
 
@@ -108,6 +105,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
+      scope.queryLoaded = true;
     };
 
 
