@@ -50,17 +50,34 @@
     </div>
   </div>
   <table class="table">
-    <!--tr ng-repeat="opt in axis.active">
-      <td colspan="2">
-        <span class="pull-right">
-          <a ng-click="remove(axis, opt.ref)" class="ng-link">
-            <i class="fa fa-times"></i>
-          </a>
-        </span>
-        <strong>{{opt.label}}</strong>
-        <small>{{opt.subLabel}}</small>
-      </td>
-    </tr-->
+    <tbody ng-repeat="filter in filters">
+      <tr>
+        <td>
+          <span class="pull-right">
+            <a ng-click="removeFilter(filter)" class="ng-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </span>
+          <strong>{{filter.attr.label}}</strong>
+          <small>{{filter.attr.subLabel}}</small>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div ng-hide="filter.editMode">
+            <span class="pull-right">
+              <a ng-click="editFilter(filter)" class="ng-link">
+                <i class="fa fa-edit"></i>
+              </a>
+            </span>
+            &nbsp; {{filter.value}}
+          </div>
+          <div ng-show="filter.editMode">
+
+          </div>
+        </td>
+      </tr>
+    </tbody>
   </table>
 </div>
 

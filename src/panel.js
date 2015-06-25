@@ -10,6 +10,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
     link: function($scope, $element, attrs, cubesCtrl) {
       $scope.state = {};
       $scope.axes = [];
+      $scope.filterAttributes = [];
       $scope.filters = [];
 
       var update = function() {
@@ -128,8 +129,92 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         return filters.sort(sortOptions);
       };
 
+      var refToDimension = function(ref) {
+        return ref.split('.', 1);
+      };
+
+      var makeValues = function(ref, res) {
+        return res.data.data.map(function(e) {
+          return e[ref];
+        });
+      };
+
+      var getAttributeByRef = function(ref) {
+        for (var i in $scope.filterAttributes) {
+          var attr = $scope.filterAttributes[i];
+          if (attr.ref == ref) {
+            return attr;
+          }
+        }
+      };
+
       var getFilters = function(state) {
-        // TODO
+        var filters = [],
+            cuts = asArray(state.cut);
+        for (var i in cuts) {
+          var cut = cuts[i];
+          if (cut.indexOf(':') != -1) {
+            var ref = cut.split(':', 1)[0],
+                values = cut.slice(ref.length + 1).split(';');
+            for (var j in values) {
+              var filter = {
+                ref: ref,
+                attr: getAttributeByRef(ref),
+                value: values[j],
+                values: [],
+                editMode: false
+              };
+              cubesCtrl.getDimensionMembers(refToDimension(ref)).then(function(res) {
+                filter.values = makeValues(ref, res);
+              });
+              filters.push(filter);
+            }
+          }
+        }
+        return filters;
+      };
+
+      $scope.addFilter = function(attr) {
+        cubesCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
+          $scope.filters.push({
+            ref: attr.ref,
+            attr: attr,
+            editMode: true,
+            values: makeValues(attr.ref, res)
+          });
+        });
+      };
+
+      $scope.removeFilter = function(filter) {
+        var idx = $scope.filters.indexOf(filter);
+        if (idx != -1) {
+          $scope.filters.splice(idx, 1);
+          $scope.updateFilters();
+        }
+      };
+
+      $scope.editFilter = function(filter) {
+        filter.editMode = true;
+      };
+
+      $scope.updateFilters = function() {
+        var filters = {};
+        for (var i in $scope.filters) {
+          var f = $scope.filters[i];
+          if (angular.isUndefined(filters[f.ref])) {
+            filters[f.ref] = [];
+          }
+          filters[f.ref].push(f.value);
+        }
+        var cuts = [];
+        for (var ref in filters) {
+          var values = filters[ref],
+              value = values.join(';')
+              cut = ref + ':' + value;
+          cuts.push(cut);
+        }
+        $scope.state.cut = cuts;
+        update();
       };
 
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
@@ -138,6 +223,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         var options = makeOptions(model);
         $scope.axes = makeAxes(state, model, options);
         $scope.filterAttributes = makeFilterAttributes(options);
+        $scope.filters = getFilters(state);
+
       });
     }
   };
