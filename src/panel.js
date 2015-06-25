@@ -193,8 +193,13 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         }
       };
 
-      $scope.editFilter = function(filter) {
-        filter.editMode = true;
+      $scope.toggleEditFilter = function(filter) {
+        filter.editMode = !filter.editMode;
+      };
+
+      $scope.setFilter = function(filter, value) {
+        $scope.toggleEditFilter(filter);
+        $scope.updateFilters();
       };
 
       $scope.updateFilters = function() {
@@ -213,6 +218,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               cut = ref + ':' + value;
           cuts.push(cut);
         }
+        $scope.state.page = 0;
         $scope.state.cut = cuts;
         update();
       };

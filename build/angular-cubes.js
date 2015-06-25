@@ -90,7 +90,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       self.dataUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
-      
+
       self.init = function(queryModel) {
         self.queryModel = queryModel;
         cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
@@ -120,7 +120,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
           aggregates: [],
           cut: state.cut || [],
           page: state.page || 0,
-          pagesize: state.pagesize || 20,
+          pagesize: state.pagesize || 100,
           order: []
         };
         return q;
@@ -239,6 +239,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       }
       q.drilldown = q.drilldown.concat(state.rows);
       q.drilldown = q.drilldown.concat(state.columns);
+      q.page = 0;
       q.pagesize = q.pagesize * 10000;
 
       q.order = asArray(q.order);
@@ -313,7 +314,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         }
         table.push(row);
       }
-   
+
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
@@ -335,17 +336,17 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
 
     // console.log('crosstab init');
     cubesCtrl.init({
-      rows: {
-        label: 'Rows',
-        addLabel: 'add row',
+      columns: {
+        label: 'Columns',
+        addLabel: 'add column',
         types: ['attributes'],
         defaults: [],
         sortId: 0,
         multiple: true
       },
-      columns: {
-        label: 'Columns',
-        addLabel: 'add column',
+      rows: {
+        label: 'Rows',
+        addLabel: 'add row',
         types: ['attributes'],
         defaults: [],
         sortId: 1,
@@ -512,6 +513,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
     link: function($scope, $element, attrs, cubesCtrl) {
       $scope.state = {};
       $scope.axes = [];
+      $scope.filterAttributes = [];
       $scope.filters = [];
 
       var update = function() {
@@ -630,8 +632,98 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         return filters.sort(sortOptions);
       };
 
+      var refToDimension = function(ref) {
+        return ref.split('.', 1);
+      };
+
+      var makeValues = function(ref, res) {
+        return res.data.data.map(function(e) {
+          return e[ref];
+        });
+      };
+
+      var getAttributeByRef = function(ref) {
+        for (var i in $scope.filterAttributes) {
+          var attr = $scope.filterAttributes[i];
+          if (attr.ref == ref) {
+            return attr;
+          }
+        }
+      };
+
       var getFilters = function(state) {
-        // TODO
+        var filters = [],
+            cuts = asArray(state.cut);
+        for (var i in cuts) {
+          var cut = cuts[i];
+          if (cut.indexOf(':') != -1) {
+            var ref = cut.split(':', 1)[0],
+                values = cut.slice(ref.length + 1).split(';');
+            for (var j in values) {
+              var filter = {
+                ref: ref,
+                attr: getAttributeByRef(ref),
+                value: values[j],
+                values: [],
+                editMode: false
+              };
+              cubesCtrl.getDimensionMembers(refToDimension(ref)).then(function(res) {
+                filter.values = makeValues(ref, res);
+              });
+              filters.push(filter);
+            }
+          }
+        }
+        return filters;
+      };
+
+      $scope.addFilter = function(attr) {
+        cubesCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
+          $scope.filters.push({
+            ref: attr.ref,
+            attr: attr,
+            editMode: true,
+            values: makeValues(attr.ref, res)
+          });
+        });
+      };
+
+      $scope.removeFilter = function(filter) {
+        var idx = $scope.filters.indexOf(filter);
+        if (idx != -1) {
+          $scope.filters.splice(idx, 1);
+          $scope.updateFilters();
+        }
+      };
+
+      $scope.toggleEditFilter = function(filter) {
+        filter.editMode = !filter.editMode;
+      };
+
+      $scope.setFilter = function(filter, value) {
+        $scope.toggleEditFilter(filter);
+        $scope.updateFilters();
+      };
+
+      $scope.updateFilters = function() {
+        var filters = {};
+        for (var i in $scope.filters) {
+          var f = $scope.filters[i];
+          if (angular.isUndefined(filters[f.ref])) {
+            filters[f.ref] = [];
+          }
+          filters[f.ref].push(f.value);
+        }
+        var cuts = [];
+        for (var ref in filters) {
+          var values = filters[ref],
+              value = values.join(';')
+              cut = ref + ':' + value;
+          cuts.push(cut);
+        }
+        $scope.state.page = 0;
+        $scope.state.cut = cuts;
+        update();
       };
 
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
@@ -640,6 +732,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         var options = makeOptions(model);
         $scope.axes = makeAxes(state, model, options);
         $scope.filterAttributes = makeFilterAttributes(options);
+        $scope.filters = getFilters(state);
+
       });
     }
   };
@@ -808,18 +902,47 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "      </ul>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <table class=\"table\">\n" +
-    "    <!--tr ng-repeat=\"opt in axis.active\">\n" +
-    "      <td colspan=\"2\">\n" +
-    "        <span class=\"pull-right\">\n" +
-    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link\">\n" +
-    "            <i class=\"fa fa-times\"></i>\n" +
-    "          </a>\n" +
-    "        </span>\n" +
-    "        <strong>{{opt.label}}</strong>\n" +
-    "        <small>{{opt.subLabel}}</small>\n" +
-    "      </td>\n" +
-    "    </tr-->\n" +
+    "  <table class=\"table table-panel\">\n" +
+    "    <tbody ng-repeat=\"filter in filters\">\n" +
+    "      <tr>\n" +
+    "        <td colspan=\"2\">\n" +
+    "          <strong>{{filter.attr.label}}</strong>\n" +
+    "          <small>{{filter.attr.subLabel}}</small>\n" +
+    "        </td>\n" +
+    "        <td width=\"1%\">\n" +
+    "          <span class=\"pull-right\">\n" +
+    "            <a ng-click=\"removeFilter(filter)\" class=\"ng-link\">\n" +
+    "              <i class=\"fa fa-times\"></i>\n" +
+    "            </a>\n" +
+    "          </span>\n" +
+    "        </td>\n" +
+    "      </tr>\n" +
+    "      <tr class=\"adjoined\">\n" +
+    "        <td width=\"1%\" class=\"middle\">\n" +
+    "          is\n" +
+    "        </td>\n" +
+    "        <td width=\"90%\">\n" +
+    "          <div ng-hide=\"filter.editMode\">\n" +
+    "            {{filter.value}}\n" +
+    "          </div>\n" +
+    "          <div ng-show=\"filter.editMode\">\n" +
+    "            <ui-select ng-model=\"filter.value\" disable-search=\"false\" on-select=\"setFilter(filter, $item, $model)\">\n" +
+    "              <ui-select-match placeholder=\"Pick one...\">{{$select.selected}}</ui-select-match>\n" +
+    "              <ui-select-choices repeat=\"v in filter.values | filter: $select.search track by $index\">\n" +
+    "                 <div ng-bind=\"v\"></div>\n" +
+    "              </ui-select-choices>\n" +
+    "            </ui-select>\n" +
+    "          </div>\n" +
+    "        </td>\n" +
+    "        <td class=\"middle\">\n" +
+    "          <span class=\"pull-right\">\n" +
+    "            <a ng-click=\"toggleEditFilter(filter)\" class=\"ng-link\">\n" +
+    "              <i class=\"fa fa-edit\"></i>\n" +
+    "            </a>\n" +
+    "          </span>\n" +
+    "        </td>\n" +
+    "      </tr>\n" +
+    "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
     "\n" +

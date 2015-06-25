@@ -67,7 +67,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       self.dataUpdate = makeSignal();
       self.modelUpdate = makeSignal();
       self.queryModel = {};
-      
+
       self.init = function(queryModel) {
         self.queryModel = queryModel;
         cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
@@ -97,7 +97,7 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
           aggregates: [],
           cut: state.cut || [],
           page: state.page || 0,
-          pagesize: state.pagesize || 20,
+          pagesize: state.pagesize || 100,
           order: []
         };
         return q;

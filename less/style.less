@@ -36,28 +36,34 @@
     //border-bottom: 2px solid @table-border-color;
 
     .table {
-        table-layout: fixed;
-        width: inherit;
-        min-width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 0;
+      table-layout: fixed;
+      width: inherit;
+      min-width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0;
 
-        td, th {
-            min-width: 8em;
-            max-width: 25em;
-            border-right: 2px solid @table-border-color;
-            overflow: hidden;
-            white-space: nowrap;
-        }
+      td, th {
+        min-width: 8em;
+        max-width: 25em;
+        border-right: 2px solid @table-border-color;
+        overflow: hidden;
+        white-space: nowrap;
+      }
 
-        // td {
-        //     overflow: hidden;
-        //     white-space: nowrap;
-        // }
-
-        td.numeric {
-            text-align: right;
-        }
+      td.numeric {
+          text-align: right;
+      }
 
     }
+}
+
+.table.table-panel {
+  td.middle {
+    vertical-align: middle;
+  }
+
+  tr.adjoined td, tr.adjoined th {
+    border-top: 0;
+  }
+
 }

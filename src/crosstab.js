@@ -29,6 +29,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       }
       q.drilldown = q.drilldown.concat(state.rows);
       q.drilldown = q.drilldown.concat(state.columns);
+      q.page = 0;
       q.pagesize = q.pagesize * 10000;
 
       q.order = asArray(q.order);
@@ -103,7 +104,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         }
         table.push(row);
       }
-   
+
       scope.rows = row_headers;
       scope.columns = column_headers;
       scope.table = table;
@@ -125,17 +126,17 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
 
     // console.log('crosstab init');
     cubesCtrl.init({
-      rows: {
-        label: 'Rows',
-        addLabel: 'add row',
+      columns: {
+        label: 'Columns',
+        addLabel: 'add column',
         types: ['attributes'],
         defaults: [],
         sortId: 0,
         multiple: true
       },
-      columns: {
-        label: 'Columns',
-        addLabel: 'add column',
+      rows: {
+        label: 'Rows',
+        addLabel: 'add row',
         types: ['attributes'],
         defaults: [],
         sortId: 1,

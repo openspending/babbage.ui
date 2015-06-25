@@ -40,3 +40,10 @@
 .table-cubes .table td.numeric {
   text-align: right;
 }
+.table.table-panel td.middle {
+  vertical-align: middle;
+}
+.table.table-panel tr.adjoined td,
+.table.table-panel tr.adjoined th {
+  border-top: 0;
+}
