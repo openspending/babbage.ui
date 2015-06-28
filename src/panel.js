@@ -1,6 +1,6 @@
 
 
-ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
     require: '^cubes',
@@ -45,7 +45,9 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               var attr = angular.copy(lvl.attributes[ai]);
               //attr.dimension = dim;
               attr.type = 'attributes';
-              attr.subLabel = '' + attr.label;
+              if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
+                attr.subLabel = '' + attr.label;
+              }
               attr.sortKey = '0' + dim.label + attr.label;
               attr.label = dim.label;
               attr.cardinality = lvl.cardinality;

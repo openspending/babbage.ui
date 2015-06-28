@@ -365,7 +365,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
 }]);
 
 ;
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', function($rootScope, $http, $q, slugifyFilter) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -431,7 +431,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           column.span = 1;
           column.label = column.label || column.name;
           column.header = header.label || header.name;
-          column.hide = column.measure;
+          column.hide = column.hideLabel;
           prev = header.name;
           prev_idx = columns.length;
         }
@@ -473,7 +473,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       for (var i in model.measures) {
         var measure = model.measures[i];
         measure.numeric = true;
-        measure.measure = true;
+        measure.hideLabel = true;
         refs[measure.ref] = measure;
       }
       for (var di in model.dimensions) {
@@ -483,7 +483,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           for (var ai in lvl.attributes) {
             var attr = lvl.attributes[ai];
             attr.dimension = dim;
-            attr.measure = false;
+            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             refs[attr.ref] = attr;
           }
         }
@@ -508,7 +508,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
 ;
 
-ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
+ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
     require: '^cubes',
@@ -553,7 +553,9 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
               var attr = angular.copy(lvl.attributes[ai]);
               //attr.dimension = dim;
               attr.type = 'attributes';
-              attr.subLabel = '' + attr.label;
+              if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
+                attr.subLabel = '' + attr.label;
+              }
               attr.sortKey = '0' + dim.label + attr.label;
               attr.label = dim.label;
               attr.cardinality = lvl.cardinality;
@@ -807,7 +809,7 @@ angular.module("angular-cubes-templates/cubes.html", []).run(["$templateCache", 
 angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/facts.html",
     "<div class=\"table-cubes\" ng-show=\"data\">\n" +
-    "  <table class=\"table table-bordered table-condensed\">\n" +
+    "  <table class=\"table table-bordered table-striped table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr>\n" +
     "        <th ng-repeat=\"c in columns\" ng-if=\"c.span\" colspan=\"{{c.span}}\">\n" +
@@ -818,7 +820,7 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "    </thead>\n" +
     "    <tbody>\n" +
     "      <tr ng-repeat=\"row in data\">\n" +
-    "        <td ng-repeat=\"c in columns\" ng-class=\"{'numeric': c.numeric}\">\n" +
+    "        <td ng-repeat=\"c in columns\" ng-class=\"{'numeric': c.numeric}\" class=\"simple\">\n" +
     "          <span ng-if=\"c.numeric\">\n" +
     "            {{ row[c.ref] | numeric }}\n" +
     "          </span>\n" +

@@ -30,11 +30,6 @@
         border-radius: 8px; 
     }
 
-    //border: 1px solid @table-border-color;
-    //border-right: 1px solid @table-border-color;
-    //border-left: 1px solid @table-border-color;
-    //border-bottom: 2px solid @table-border-color;
-
     .table {
       table-layout: fixed;
       width: inherit;
@@ -55,8 +50,13 @@
         background-color: @panel-default-heading-bg;
       }
 
+      td.simple {
+        border-bottom: 0;
+        border-top: 0;
+      }
+
       td.numeric {
-          text-align: right;
+        text-align: right;
       }
 
       th .sublabel {

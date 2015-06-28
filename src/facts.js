@@ -1,5 +1,5 @@
 
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', function($rootScope, $http, $q, slugifyFilter) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -65,7 +65,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           column.span = 1;
           column.label = column.label || column.name;
           column.header = header.label || header.name;
-          column.hide = column.measure;
+          column.hide = column.hideLabel;
           prev = header.name;
           prev_idx = columns.length;
         }
@@ -107,7 +107,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       for (var i in model.measures) {
         var measure = model.measures[i];
         measure.numeric = true;
-        measure.measure = true;
+        measure.hideLabel = true;
         refs[measure.ref] = measure;
       }
       for (var di in model.dimensions) {
@@ -117,7 +117,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           for (var ai in lvl.attributes) {
             var attr = lvl.attributes[ai];
             attr.dimension = dim;
-            attr.measure = false;
+            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             refs[attr.ref] = attr;
           }
         }
