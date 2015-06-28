@@ -44,16 +44,20 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
       var frst = data[0],
           keys = [];
+
       for (var k in frst) {
         keys.push(k);
       }
       keys = keys.sort();
 
       var columns = [],
-          prev = null, prev_idx = 0;
+          prev = null,
+          prev_idx = 0;
+
       for (var i in keys) {
         var column = refs[keys[i]],
             header = column.dimension ? column.dimension : column;
+
         if (header.name == prev) {
           columns[prev_idx].span += 1;
           column.span = 0;
@@ -61,10 +65,11 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           column.span = 1;
           column.label = column.label || column.name;
           column.header = header.label || header.name;
-          column.hide = column.header == column.label;
+          column.hide = column.measure;
           prev = header.name;
           prev_idx = columns.length;
         }
+
         columns.push(column);
       }
       scope.columns = columns;
@@ -102,6 +107,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       for (var i in model.measures) {
         var measure = model.measures[i];
         measure.numeric = true;
+        measure.measure = true;
         refs[measure.ref] = measure;
       }
       for (var di in model.dimensions) {
@@ -111,6 +117,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           for (var ai in lvl.attributes) {
             var attr = lvl.attributes[ai];
             attr.dimension = dim;
+            attr.measure = false;
             refs[attr.ref] = attr;
           }
         }

@@ -10,7 +10,7 @@
         <li ng-repeat="opt in axis.available">
           <a ng-click="add(axis, opt.ref)">
             <strong>{{opt.label}}</strong>
-            <small>{{opt.subLabel}}</small>
+            {{opt.subLabel}}
           </a>
         </li>
       </ul>
@@ -25,7 +25,7 @@
           </a>
         </span>
         <strong>{{opt.label}}</strong>
-        <small>{{opt.subLabel}}</small>
+        {{opt.subLabel}}
       </td>
     </tr>
   </table>
@@ -43,7 +43,7 @@
         <li ng-repeat="attr in filterAttributes">
           <a ng-click="addFilter(attr)">
             <strong>{{attr.label}}</strong>
-            <small>{{attr.subLabel}}</small>
+            {{attr.subLabel}}
           </a>
         </li>
       </ul>
@@ -54,7 +54,7 @@
       <tr>
         <td colspan="2">
           <strong>{{filter.attr.label}}</strong>
-          <small>{{filter.attr.subLabel}}</small>
+          {{filter.attr.subLabel}}
         </td>
         <td width="1%">
           <span class="pull-right">

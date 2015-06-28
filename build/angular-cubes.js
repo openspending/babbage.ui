@@ -410,16 +410,20 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
       var frst = data[0],
           keys = [];
+
       for (var k in frst) {
         keys.push(k);
       }
       keys = keys.sort();
 
       var columns = [],
-          prev = null, prev_idx = 0;
+          prev = null,
+          prev_idx = 0;
+
       for (var i in keys) {
         var column = refs[keys[i]],
             header = column.dimension ? column.dimension : column;
+
         if (header.name == prev) {
           columns[prev_idx].span += 1;
           column.span = 0;
@@ -427,10 +431,11 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           column.span = 1;
           column.label = column.label || column.name;
           column.header = header.label || header.name;
-          column.hide = column.header == column.label;
+          column.hide = column.measure;
           prev = header.name;
           prev_idx = columns.length;
         }
+
         columns.push(column);
       }
       scope.columns = columns;
@@ -468,6 +473,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       for (var i in model.measures) {
         var measure = model.measures[i];
         measure.numeric = true;
+        measure.measure = true;
         refs[measure.ref] = measure;
       }
       for (var di in model.dimensions) {
@@ -477,6 +483,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
           for (var ai in lvl.attributes) {
             var attr = lvl.attributes[ai];
             attr.dimension = dim;
+            attr.measure = false;
             refs[attr.ref] = attr;
           }
         }
@@ -543,16 +550,13 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
           for (var li in dim.levels) {
             var lvl = dim.levels[li];
             for (var ai in lvl.attributes) {
-              var attr = lvl.attributes[ai];
-              attr.dimension = dim;
+              var attr = angular.copy(lvl.attributes[ai]);
+              //attr.dimension = dim;
               attr.type = 'attributes';
-              attr.cardinality = lvl.cardinality;
-              attr.sortKey = '1.' + dim.name + '.';
-              if (attr.name != lvl.label_attribute) {
-                attr.subLabel = attr.label;
-                attr.sortKey = attr.sortKey + attr.name;
-              }
+              attr.subLabel = '' + attr.label;
+              attr.sortKey = '0' + dim.label + attr.label;
               attr.label = dim.label;
+              attr.cardinality = lvl.cardinality;
               options.push(attr);
             }
           }
@@ -561,14 +565,14 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
         for (var ai in model.aggregates) {
           var agg = model.aggregates[ai];
           agg.type = 'aggregates';
-          agg.sortKey = '2..' + agg.name;
+          agg.sortKey = '1' + agg.name;
           options.push(agg);
         }
 
         for (var mi in model.measures) {
           var mea = model.measures[mi];
           mea.type = 'measures';
-          mea.sortKey = '3..' + mea.name;
+          mea.sortKey = '2' + mea.name;
           options.push(mea);
         }
 
@@ -576,7 +580,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', function($rootScope) {
       }
 
       var sortOptions = function(a, b) {
-        return a.sortKey.localeCompare(b.sortKey);
+        return a.label.localeCompare(b.label);
       }
 
       var makeAxes = function(state, model, options) {
@@ -808,11 +812,7 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "      <tr>\n" +
     "        <th ng-repeat=\"c in columns\" ng-if=\"c.span\" colspan=\"{{c.span}}\">\n" +
     "          {{ c.header }}\n" +
-    "        </th>\n" +
-    "      </tr>\n" +
-    "      <tr>\n" +
-    "        <th ng-repeat=\"c in columns\">\n" +
-    "          <span ng-hide=\"c.hide\">{{ c.label }}</span>\n" +
+    "          <span class=\"sublabel\" ng-hide=\"c.hide\">{{ c.label }}</span>\n" +
     "        </th>\n" +
     "      </tr>\n" +
     "    </thead>\n" +
@@ -863,7 +863,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "        <li ng-repeat=\"opt in axis.available\">\n" +
     "          <a ng-click=\"add(axis, opt.ref)\">\n" +
     "            <strong>{{opt.label}}</strong>\n" +
-    "            <small>{{opt.subLabel}}</small>\n" +
+    "            {{opt.subLabel}}\n" +
     "          </a>\n" +
     "        </li>\n" +
     "      </ul>\n" +
@@ -878,7 +878,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "          </a>\n" +
     "        </span>\n" +
     "        <strong>{{opt.label}}</strong>\n" +
-    "        <small>{{opt.subLabel}}</small>\n" +
+    "        {{opt.subLabel}}\n" +
     "      </td>\n" +
     "    </tr>\n" +
     "  </table>\n" +
@@ -896,7 +896,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "        <li ng-repeat=\"attr in filterAttributes\">\n" +
     "          <a ng-click=\"addFilter(attr)\">\n" +
     "            <strong>{{attr.label}}</strong>\n" +
-    "            <small>{{attr.subLabel}}</small>\n" +
+    "            {{attr.subLabel}}\n" +
     "          </a>\n" +
     "        </li>\n" +
     "      </ul>\n" +
@@ -907,7 +907,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "      <tr>\n" +
     "        <td colspan=\"2\">\n" +
     "          <strong>{{filter.attr.label}}</strong>\n" +
-    "          <small>{{filter.attr.subLabel}}</small>\n" +
+    "          {{filter.attr.subLabel}}\n" +
     "        </td>\n" +
     "        <td width=\"1%\">\n" +
     "          <span class=\"pull-right\">\n" +

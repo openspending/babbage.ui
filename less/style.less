@@ -45,15 +45,23 @@
       td, th {
         min-width: 8em;
         max-width: 25em;
-        border-right: 2px solid @table-border-color;
+        //border-right: 2px solid @table-border-color;
         overflow: hidden;
         white-space: nowrap;
+      }
+
+      th {
+        border-bottom: 1px solid @table-border-color;
+        background-color: @panel-default-heading-bg;
       }
 
       td.numeric {
           text-align: right;
       }
 
+      th .sublabel {
+        font-weight: normal;
+      }
     }
 }
 
