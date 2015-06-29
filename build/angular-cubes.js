@@ -939,30 +939,29 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         }
       };
 
-      var getFilters = function(state) {
-        var filters = [],
-            cuts = asArray(state.cut);
+      var loadFilters = function(state) {
+        var cuts = asArray(state.cut);
         for (var i in cuts) {
           var cut = cuts[i];
           if (cut.indexOf(':') != -1) {
             var ref = cut.split(':', 1)[0],
                 values = cut.slice(ref.length + 1).split(';');
             for (var j in values) {
-              var filter = {
-                ref: ref,
-                attr: getAttributeByRef(ref),
-                value: values[j],
-                values: [],
-                editMode: false
-              };
               cubesCtrl.getDimensionMembers(refToDimension(ref)).then(function(res) {
-                filter.values = makeValues(ref, res);
+                var filter = {
+                  ref: ref,
+                  attr: getAttributeByRef(ref),
+                  value: values[j],
+                  values: makeValues(ref, res),
+                  editMode: false
+                };
+                $scope.filters.push(filter);
               });
-              filters.push(filter);
+              
             }
           }
         }
-        return filters;
+        //return filters;
       };
 
       $scope.addFilter = function(attr) {
@@ -1020,7 +1019,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         var options = makeOptions(model);
         $scope.axes = makeAxes(state, model, options);
         $scope.filterAttributes = makeFilterAttributes(options);
-        $scope.filters = getFilters(state);
+        $scope.filters = [];
+        loadFilters(state);
 
       });
     }
@@ -1107,7 +1107,7 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "          <span ng-switch-when=\"asc\" ng-click=\"pushSort(c.ref, 'desc')\" class=\"ng-link\">\n" +
     "            <i class=\"fa fa-sort-asc\"></i>\n" +
     "          </span>\n" +
-    "          <span ng-switch-default ng-click=\"pushSort(c.ref, 'asc')\" class=\"ng-link\">\n" +
+    "          <span ng-switch-default ng-click=\"pushSort(c.ref, 'desc')\" class=\"ng-link\">\n" +
     "            <i class=\"fa fa-sort\"></i>\n" +
     "          </span>\n" +
     "        </th>\n" +
@@ -1176,7 +1176,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "              <i class=\"fa fa-sort-amount-desc\"></i></a>\n" +
     "            <a ng-switch-when=\"asc\" ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\">\n" +
     "              <i class=\"fa fa-sort-amount-asc\"></i></a>\n" +
-    "            <a ng-switch-default ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\">\n" +
+    "            <a ng-switch-default ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\">\n" +
     "              <i class=\"fa fa-sort-amount-desc\"></i></a>\n" +
     "          </span>\n" +
     "          <a ng-click=\"remove(axis, opt.ref)\" ng-show=\"axis.multiple\" class=\"ng-link ng-icon\">\n" +
