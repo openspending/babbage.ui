@@ -112,7 +112,61 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
 
       self.getDimensionMembers = function(dimension) {
         return cubesApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
-      }
+      };
+
+      self.getSorts = function() {
+        var sorts = [],
+            order = state.order || '',
+            order = asArray(order.split(','));
+        for (var i in order) {
+          var parts = order[i].split(':'),
+              sort = {};
+          sort.ref = parts[0],
+          sort.direction = parts[1] || null;
+          sorts.push(sort);
+        }
+        return sorts;
+      };
+
+      self.getSort = function(ref) {
+        var sorts = self.getSorts();
+        for (var i in sorts) {
+          if (sorts[i].ref == ref) {
+            return sorts[i];  
+          } 
+        }
+        return {ref: ref};
+      };
+
+      self.pushSort = function(ref, direction) {
+        var sorts = self.getSorts().filter(function(s) {
+          return s.ref != ref;
+        });
+        sorts.unshift({ref: ref, direction: direction});
+        state.order = self.mergeSorts(sorts);
+        self.setState(state);
+      };
+
+      self.removeSorts = function(ref) {
+        var sorts = self.getSorts().filter(function(s) {
+          return s.ref != ref;
+        });
+        return self.mergeSorts(sorts);
+      };
+
+      self.mergeSorts = function(order) {
+        var sorts = [];
+        order = asArray(order);
+        for (var i in order) {
+          var o = order[i];
+          if (angular.isObject(o) && o.ref.length) {
+            o.direction = o.direction || 'asc';
+            o = o.ref + ':' + o.direction;
+            sorts.push(o);
+          }
+        }
+        return sorts.join(',');
+      };
 
       self.getQuery = function() {
         var q = {
@@ -120,20 +174,22 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
           aggregates: [],
           cut: state.cut || [],
           page: state.page || 0,
-          pagesize: state.pagesize || 100,
-          order: []
+          pagesize: state.pagesize || 30,
+          order: self.getSorts()
         };
         return q;
       };
 
       self.queryParams = function(q) {
+        q.order = self.mergeSorts(q.order);
+
         // join arguments and remove empty arguments
         for (var k in q) {
           if (angular.isArray(q[k])) {
-            if (['order', 'fields'].indexOf(k) == -1) {
-              q[k] = q[k].join('|');
-            } else {
+            if (['order', 'fields'].indexOf(k) != -1) {
               q[k] = q[k].join(',');
+            } else {
+              q[k] = q[k].join('|');
             }
           }
           q[k] = q[k] + '';
@@ -243,14 +299,25 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       q.pagesize = q.pagesize * 10000;
 
       q.order = asArray(q.order);
-      var drilldowns = state.rows.concat(state.columns);
+      var drilldowns = state.rows.concat(state.columns),
+          refs = drilldowns.concat(q.aggregates);
       for (var i in drilldowns) {
         var dd = drilldowns[i];
-        // TODO: sorting?
-        if (q.order.indexOf(dd) == -1) {
-          q.order.push(dd);
+        if (!cubesCtrl.getSort(dd).direction) {
+          if (q.order.indexOf(dd) == -1) {
+            q.order.push({ref: dd});
+          }  
         }
       }
+      var order = [];
+      for (var i in q.order) {
+        var o = q.order[i];
+        if (refs.indexOf(o.ref) != -1) {
+          order.push(o);
+        }
+      }
+      q.order = order;
+
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
       dfd.then(function(res) {
@@ -261,6 +328,25 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     var queryResult = function(data, q, model, state) {
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
+
+      var refKeys = {};
+      for (var i in model.dimensions) {
+        var dim = model.dimensions[i];
+        for (var j in dim.levels) {
+          var lvl = dim.levels[j];
+          for (var k in lvl.attributes) {
+            var attr = lvl.attributes[k],
+                nested = attr.ref.indexOf('.') != -1,
+                key = nested ? dim.name + '.' + lvl.key : attr.ref;
+            refKeys[attr.ref] = key;
+          }
+        }
+      }
+
+      //console.log(refKeys);
+      var makeKey = function(refs, cell) {
+
+      }
 
       var aggregates = model.aggregates.filter(function(agg) {
         return data.aggregates.indexOf(agg.ref) != -1;
@@ -273,17 +359,20 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
           row_keys = [], column_keys = [];
 
       for (var i in data.cells) {
-        var pick = function(k) { return cell[k]; };
+        var pickValue = function(k) { return cell[k]; },
+            pickRefs = function(k) { return cell[refKeys[k]] + cell[k]; };
+
         var cell = data.cells[i],
-            row_values = state.rows.map(pick),
-            row_set = row_values.join(VAL_KEY),
-            all_column_values = state.columns.map(pick);
+            row_values = state.rows.map(pickValue),
+            row_set = state.rows.map(pickRefs).join(VAL_KEY),
+            all_column_values = state.columns.map(pickValue),
+            all_column_set = state.columns.map(pickRefs);
 
         for (var k in aggregates) {
           var agg = aggregates[k],
               label = agg.label || agg.name,
               column_values = all_column_values.concat([label]);
-              column_set = column_values.join(VAL_KEY)
+              column_set = all_column_set.concat([label]).join(VAL_KEY)
 
           if (row_keys.indexOf(row_set) == -1) {
             row_keys.push(row_set);
@@ -380,6 +469,8 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
     scope.data = [];
     scope.columns = [];
     scope.pagerCtx = {};
+    scope.getSort = cubesCtrl.getSort;
+    scope.pushSort = cubesCtrl.pushSort;
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
@@ -387,6 +478,15 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
       if (q.fields.length == 0) {
         q.fields = defaultFields(model);
       }
+
+      var order = [];
+      for (var i in q.order) {
+        var o = q.order[i];
+        if (q.fields.indexOf(o.ref) != -1) {
+          order.push(o);
+        }
+      }
+      q.order = order;
 
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
@@ -421,8 +521,11 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
           prev_idx = 0;
 
       for (var i in keys) {
-        var column = refs[keys[i]],
+        var ref = keys[i],
+            column = refs[ref],
             header = column.dimension ? column.dimension : column;
+
+        column.ref = ref;
 
         if (header.name == prev) {
           columns[prev_idx].span += 1;
@@ -435,7 +538,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
           prev = header.name;
           prev_idx = columns.length;
         }
-
         columns.push(column);
       }
       scope.columns = columns;
@@ -520,6 +622,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
       $scope.axes = [];
       $scope.filterAttributes = [];
       $scope.filters = [];
+      $scope.getSort = cubesCtrl.getSort;
+      $scope.pushSort = cubesCtrl.pushSort;
 
       var update = function() {
         //$scope.state.page = 0;
@@ -539,6 +643,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         if (i != -1) {
           axis.selected.splice(i, 1);
           $scope.state[axis.name] = axis.selected;
+          $scope.state.order = cubesCtrl.removeSorts(ref);
           update();
         }
       };
@@ -812,15 +917,27 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "  <table class=\"table table-bordered table-striped table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr>\n" +
-    "        <th ng-repeat=\"c in columns\" ng-if=\"c.span\" colspan=\"{{c.span}}\">\n" +
+    "        <th ng-repeat-start=\"c in columns\" class=\"title\">\n" +
     "          {{ c.header }}\n" +
     "          <span class=\"sublabel\" ng-hide=\"c.hide\">{{ c.label }}</span>\n" +
+    "        </th>\n" +
+    "        <th ng-repeat-end class=\"operations\" ng-switch=\"getSort(c.ref).direction\">\n" +
+    "          <span ng-switch-when=\"desc\" ng-click=\"pushSort(c.ref, 'asc')\" class=\"ng-link\">\n" +
+    "            <i class=\"fa fa-sort-desc\"></i>\n" +
+    "          </span>\n" +
+    "          <span ng-switch-when=\"asc\" ng-click=\"pushSort(c.ref, 'desc')\" class=\"ng-link\">\n" +
+    "            <i class=\"fa fa-sort-asc\"></i>\n" +
+    "          </span>\n" +
+    "          <span ng-switch-default ng-click=\"pushSort(c.ref, 'asc')\" class=\"ng-link\">\n" +
+    "            <i class=\"fa fa-sort\"></i>\n" +
+    "          </span>\n" +
     "        </th>\n" +
     "      </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
     "      <tr ng-repeat=\"row in data\">\n" +
-    "        <td ng-repeat=\"c in columns\" ng-class=\"{'numeric': c.numeric}\" class=\"simple\">\n" +
+    "        <td ng-repeat=\"c in columns\" ng-class=\"{'numeric': c.numeric}\" class=\"simple\"\n" +
+    "          colspan=\"2\">\n" +
     "          <span ng-if=\"c.numeric\">\n" +
     "            {{ row[c.ref] | numeric }}\n" +
     "          </span>\n" +
@@ -874,11 +991,18 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "  <table class=\"table\">\n" +
     "    <tr ng-repeat=\"opt in axis.active\">\n" +
     "      <td colspan=\"2\">\n" +
-    "        <span class=\"pull-right\">\n" +
-    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link\">\n" +
-    "            <i class=\"fa fa-times\"></i>\n" +
-    "          </a>\n" +
-    "        </span>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "          <span ng-switch=\"getSort(opt.ref).direction\">\n" +
+    "            <a ng-switch-when=\"desc\" ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\">\n" +
+    "              <i class=\"fa fa-sort-amount-desc\"></i></a>\n" +
+    "            <a ng-switch-when=\"asc\" ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\">\n" +
+    "              <i class=\"fa fa-sort-amount-asc\"></i></a>\n" +
+    "            <a ng-switch-default ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\">\n" +
+    "              <i class=\"fa fa-sort-amount-desc\"></i></a>\n" +
+    "          </span>\n" +
+    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link ng-icon\">\n" +
+    "            <i class=\"fa fa-times\"></i></a>\n" +
+    "        </div>\n" +
     "        <strong>{{opt.label}}</strong>\n" +
     "        {{opt.subLabel}}\n" +
     "      </td>\n" +

@@ -14,6 +14,8 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
     scope.data = [];
     scope.columns = [];
     scope.pagerCtx = {};
+    scope.getSort = cubesCtrl.getSort;
+    scope.pushSort = cubesCtrl.pushSort;
 
     var query = function(model, state) {
       var q = cubesCtrl.getQuery();
@@ -21,6 +23,15 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
       if (q.fields.length == 0) {
         q.fields = defaultFields(model);
       }
+
+      var order = [];
+      for (var i in q.order) {
+        var o = q.order[i];
+        if (q.fields.indexOf(o.ref) != -1) {
+          order.push(o);
+        }
+      }
+      q.order = order;
 
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
@@ -55,8 +66,11 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
           prev_idx = 0;
 
       for (var i in keys) {
-        var column = refs[keys[i]],
+        var ref = keys[i],
+            column = refs[ref],
             header = column.dimension ? column.dimension : column;
+
+        column.ref = ref;
 
         if (header.name == prev) {
           columns[prev_idx].span += 1;
@@ -69,7 +83,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
           prev = header.name;
           prev_idx = columns.length;
         }
-
         columns.push(column);
       }
       scope.columns = columns;

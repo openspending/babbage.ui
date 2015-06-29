@@ -4,6 +4,10 @@
 .ng-link {
   cursor: pointer;
 }
+.ng-icon,
+.ng-icon:hover {
+  text-decoration: none !important;
+}
 .table-cubes {
   overflow-x: scroll;
   min-height: 25em;
@@ -31,7 +35,7 @@
 }
 .table-cubes .table td,
 .table-cubes .table th {
-  min-width: 8em;
+  min-width: 13em;
   max-width: 25em;
   overflow: hidden;
   white-space: nowrap;
@@ -39,6 +43,15 @@
 .table-cubes .table th {
   border-bottom: 1px solid #dddddd;
   background-color: #f5f5f5;
+}
+.table-cubes .table th.title {
+  border-right: 0px;
+}
+.table-cubes .table th.operations {
+  width: 1px;
+  min-width: 1em;
+  border-left: 0px;
+  text-align: right;
 }
 .table-cubes .table td.simple {
   border-bottom: 0;

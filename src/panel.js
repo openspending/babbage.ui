@@ -12,6 +12,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
       $scope.axes = [];
       $scope.filterAttributes = [];
       $scope.filters = [];
+      $scope.getSort = cubesCtrl.getSort;
+      $scope.pushSort = cubesCtrl.pushSort;
 
       var update = function() {
         //$scope.state.page = 0;
@@ -31,6 +33,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         if (i != -1) {
           axis.selected.splice(i, 1);
           $scope.state[axis.name] = axis.selected;
+          $scope.state.order = cubesCtrl.removeSorts(ref);
           update();
         }
       };

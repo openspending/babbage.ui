@@ -19,11 +19,18 @@
   <table class="table">
     <tr ng-repeat="opt in axis.active">
       <td colspan="2">
-        <span class="pull-right">
-          <a ng-click="remove(axis, opt.ref)" class="ng-link">
-            <i class="fa fa-times"></i>
-          </a>
-        </span>
+        <div class="pull-right">
+          <span ng-switch="getSort(opt.ref).direction">
+            <a ng-switch-when="desc" ng-click="pushSort(opt.ref, 'asc')" class="ng-link ng-icon">
+              <i class="fa fa-sort-amount-desc"></i></a>
+            <a ng-switch-when="asc" ng-click="pushSort(opt.ref, 'desc')" class="ng-link ng-icon">
+              <i class="fa fa-sort-amount-asc"></i></a>
+            <a ng-switch-default ng-click="pushSort(opt.ref, 'asc')" class="ng-link ng-icon">
+              <i class="fa fa-sort-amount-desc"></i></a>
+          </span>
+          <a ng-click="remove(axis, opt.ref)" class="ng-link ng-icon">
+            <i class="fa fa-times"></i></a>
+        </div>
         <strong>{{opt.label}}</strong>
         {{opt.subLabel}}
       </td>

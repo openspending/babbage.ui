@@ -1,10 +1,14 @@
 
 .spaced {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .ng-link {
-    cursor: pointer;
+  cursor: pointer;
+}
+
+.ng-icon, .ng-icon:hover {
+  text-decoration: none !important;
 }
 
 .table-cubes {
@@ -38,7 +42,7 @@
       margin-bottom: 0;
 
       td, th {
-        min-width: 8em;
+        min-width: 13em;
         max-width: 25em;
         //border-right: 2px solid @table-border-color;
         overflow: hidden;
@@ -48,6 +52,17 @@
       th {
         border-bottom: 1px solid @table-border-color;
         background-color: @panel-default-heading-bg;
+      }
+
+      th.title {
+        border-right: 0px;
+      }
+
+      th.operations {
+        width: 1px;
+        min-width: 1em;
+        border-left: 0px;
+        text-align: right;
       }
 
       td.simple {

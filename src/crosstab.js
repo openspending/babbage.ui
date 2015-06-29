@@ -33,14 +33,25 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       q.pagesize = q.pagesize * 10000;
 
       q.order = asArray(q.order);
-      var drilldowns = state.rows.concat(state.columns);
+      var drilldowns = state.rows.concat(state.columns),
+          refs = drilldowns.concat(q.aggregates);
       for (var i in drilldowns) {
         var dd = drilldowns[i];
-        // TODO: sorting?
-        if (q.order.indexOf(dd) == -1) {
-          q.order.push(dd);
+        if (!cubesCtrl.getSort(dd).direction) {
+          if (q.order.indexOf(dd) == -1) {
+            q.order.push({ref: dd});
+          }  
         }
       }
+      var order = [];
+      for (var i in q.order) {
+        var o = q.order[i];
+        if (refs.indexOf(o.ref) != -1) {
+          order.push(o);
+        }
+      }
+      q.order = order;
+
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
       dfd.then(function(res) {
@@ -51,6 +62,25 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     var queryResult = function(data, q, model, state) {
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
+
+      var refKeys = {};
+      for (var i in model.dimensions) {
+        var dim = model.dimensions[i];
+        for (var j in dim.levels) {
+          var lvl = dim.levels[j];
+          for (var k in lvl.attributes) {
+            var attr = lvl.attributes[k],
+                nested = attr.ref.indexOf('.') != -1,
+                key = nested ? dim.name + '.' + lvl.key : attr.ref;
+            refKeys[attr.ref] = key;
+          }
+        }
+      }
+
+      //console.log(refKeys);
+      var makeKey = function(refs, cell) {
+
+      }
 
       var aggregates = model.aggregates.filter(function(agg) {
         return data.aggregates.indexOf(agg.ref) != -1;
@@ -63,17 +93,20 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
           row_keys = [], column_keys = [];
 
       for (var i in data.cells) {
-        var pick = function(k) { return cell[k]; };
+        var pickValue = function(k) { return cell[k]; },
+            pickRefs = function(k) { return cell[refKeys[k]] + cell[k]; };
+
         var cell = data.cells[i],
-            row_values = state.rows.map(pick),
-            row_set = row_values.join(VAL_KEY),
-            all_column_values = state.columns.map(pick);
+            row_values = state.rows.map(pickValue),
+            row_set = state.rows.map(pickRefs).join(VAL_KEY),
+            all_column_values = state.columns.map(pickValue),
+            all_column_set = state.columns.map(pickRefs);
 
         for (var k in aggregates) {
           var agg = aggregates[k],
               label = agg.label || agg.name,
               column_values = all_column_values.concat([label]);
-              column_set = column_values.join(VAL_KEY)
+              column_set = all_column_set.concat([label]).join(VAL_KEY)
 
           if (row_keys.indexOf(row_set) == -1) {
             row_keys.push(row_set);
