@@ -70,3 +70,31 @@
 .table.table-panel tr.adjoined th {
   border-top: 0;
 }
+/* Tree maps */
+.treemap-cubes {
+  min-height: 500px;
+  overflow: hidden;
+}
+.treemap-cubes .node {
+  display: block;
+  border: 0;
+  color: #fff;
+  overflow: hidden;
+  position: absolute;
+  outline: 1px solid #fff;
+  font-size: 0.8em;
+  text-indent: 2px;
+  padding: 5px;
+  box-sizing: border-box;
+  z-index: 5;
+  font-weight: 300;
+  text-shadow: -2px -2px 13px rgba(150, 150, 150, 0.9);
+}
+.treemap-cubes .amount {
+  display: block;
+  padding-bottom: 0.2em;
+  font-size: 1.5em;
+}
+.treemap-cubes .node:hover {
+  text-decoration: none;
+}

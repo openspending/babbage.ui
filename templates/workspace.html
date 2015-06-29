@@ -16,16 +16,18 @@
         <a class="btn btn-default"
           ng-class="{'active': view == 'facts'}"
           ng-click="setView('facts')">
-          <i class="fa fa-table"></i> Line items
+          <i class="fa fa-table"></i> Items
         </a>
         <a class="btn btn-default"
           ng-class="{'active': view == 'crosstab'}"
           ng-click="setView('crosstab')">
           <i class="fa fa-cubes"></i> Pivot table
         </a>
-        <!--a type="button" class="btn btn-default disabled">
-          <i class="fa fa-bar-chart"></i>
-        </a-->
+        <a class="btn btn-default"
+          ng-class="{'active': view == 'treemap'}"
+          ng-click="setView('treemap')">
+          <i class="fa fa-th-large"></i> Treemap
+        </a>
       </div>
       <cubes-panel></cubes-panel>
     </div>

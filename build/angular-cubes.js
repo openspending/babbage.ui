@@ -608,8 +608,16 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
   };
 }]);
 
-;
-ngCubes.directive('cubesTreemap', ['$rootScope', '$http', function($rootScope, $http) {
+;ngCubesCategoryColors = [
+    "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
+    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D", 
+    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B", 
+    "#6E3F7C", "#6A246D", "#8A4873", "#EB0080", "#EF58A0", "#C05A89"
+    ];
+
+ngCubesColorScale = d3.scale.ordinal().range(ngCubesCategoryColors);
+
+ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -618,6 +626,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', function($rootScope, $
   },
   templateUrl: 'angular-cubes-templates/treemap.html',
   link: function(scope, element, attrs, cubesCtrl) {
+    var treemap = null,
+        div = null;
+
     scope.queryLoaded = false;
     scope.columns = [];
     scope.rows = [];
@@ -625,20 +636,49 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', function($rootScope, $
 
     var query = function(model, state) {
       var tile = asArray(state.tile)[0],
-          area = asArray(state.area)[0];
+          area = asArray(state.area)[0],
+          area = area ? [area] : defaultArea(model);
 
       var q = cubesCtrl.getQuery();
-
-      q.aggregates = area ? [area] : defaultArea(model);
+      q.aggregates = area;
       if (!tile) {
         return;
       }
       q.drilldown = [tile];
+
+      var order = [];
+      for (var i in q.order) {
+        var o = q.order[i];
+        if ([tile, area].indexOf(o.ref) != -1) {
+          order.push(o);
+        }
+      }
+      if (!order.length) {
+        order = [{ref: area, direction: 'desc'}];
+      }
+
+      q.order = order;
       q.page = 0;
-      q.pagesize = 100;
+      q.pagesize = 1000;
 
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
+
+      var wrapper = element.querySelectorAll('.treemap-cubes')[0],
+          width = wrapper.clientWidth,
+          height = width * 0.6; 
+
+      treemap = d3.layout.treemap()
+        .size([width, height])
+        .sticky(true)
+        .sort(function(a, b) { return a[area] - b[area]; })
+        .value(function(d) { return d[area]; });
+
+      div = d3.select(wrapper).append("div")
+        .style("position", "relative")
+        .style("width", width + "px")
+        .style("height", height + "px");
+
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
       });
@@ -646,11 +686,56 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', function($rootScope, $
 
     var queryResult = function(data, q, model, state) {
       var tileRef = asArray(state.tile)[0],
-          areaRef = asArray(state.area)[0];
+          areaRef = asArray(state.area)[0],
+          areaRef = areaRef ? [areaRef] : defaultArea(model);
 
-      console.log(data);
+      var root = {
+        children: []
+      };
+
+      for (var i in data.cells) {
+        var cell = data.cells[i];
+        cell._area_fmt = numberFormat(Math.round(cell[areaRef]));
+        cell._name = cell[tileRef];
+        cell._color = ngCubesColorScale(i);
+        cell._percentage = cell[areaRef] / Math.max(data.summary[areaRef], 1);
+        root.children.push(cell);
+      };
+
+      var node = div.datum(root).selectAll(".node")
+          .data(treemap.nodes)
+        .enter().append("a")
+          .attr("href", function(d){ return d.href; })
+          .attr("class", "node")
+          .call(positionNode)
+          .style("background", '#fff')
+          .html(function(d) {
+            if (d._percentage < 0.02) {
+              return '';
+            }
+            return d.children ? null : '<span class="amount">' + d._area_fmt + '</span>' + d._name;
+          })
+          .on("mouseover", function(d) {
+            d3.select(this).transition().duration(200)
+              .style({'background': d3.rgb(d._color).darker() });  
+          })
+          .on("mouseout", function(d) {
+            d3.select(this).transition().duration(500)
+              .style({'background': d._color});
+          })
+          .transition()
+          .duration(500)
+          .delay(function(d, i) { return Math.min(i * 30, 1500); })
+          .style("background", function(d) { return d._color; });
 
       scope.queryLoaded = true;
+    };
+
+    function positionNode() {
+      this.style("left", function(d) { return d.x + "px"; })
+          .style("top", function(d) { return d.y + "px"; })
+          .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+          .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
     };
 
 
@@ -1167,16 +1252,14 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
 
 angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/treemap.html",
-    "<div class=\"table-cubes\" ng-show=\"queryLoaded\">\n" +
-    "  huhu\n" +
-    "</div>\n" +
-    "\n" +
     "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
     "  </div>\n" +
     "</div>\n" +
+    "\n" +
+    "<div class=\"treemap-cubes\"></div>\n" +
     "");
 }]);
 
@@ -1200,16 +1283,18 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'facts'}\"\n" +
     "          ng-click=\"setView('facts')\">\n" +
-    "          <i class=\"fa fa-table\"></i> Line items\n" +
+    "          <i class=\"fa fa-table\"></i> Items\n" +
     "        </a>\n" +
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "          ng-click=\"setView('crosstab')\">\n" +
     "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
     "        </a>\n" +
-    "        <!--a type=\"button\" class=\"btn btn-default disabled\">\n" +
-    "          <i class=\"fa fa-bar-chart\"></i>\n" +
-    "        </a-->\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'treemap'}\"\n" +
+    "          ng-click=\"setView('treemap')\">\n" +
+    "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
+    "        </a>\n" +
     "      </div>\n" +
     "      <cubes-panel></cubes-panel>\n" +
     "    </div>\n" +
