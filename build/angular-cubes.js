@@ -630,6 +630,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
         div = null;
 
     scope.queryLoaded = false;
+    scope.cutoffWarning = false;
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
@@ -659,8 +660,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       q.order = order;
       q.page = 0;
-      q.pagesize = 1000;
+      q.pagesize = 50;
 
+      scope.cutoffWarning = false;
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
 
@@ -729,6 +731,8 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           .style("background", function(d) { return d._color; });
 
       scope.queryLoaded = true;
+      scope.cutoffWarning = data.total_cell_count > q.pagesize;
+      scope.cutoff = q.pagesize;
     };
 
     function positionNode() {
@@ -1257,6 +1261,11 @@ angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache"
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
     "  </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"alert alert-warning\" ng-show=\"cutoffWarning\">\n" +
+    "  <strong>Too many tiles.</strong> The breakdown you have selected contains many\n" +
+    "  different categories, only the {{cutoff}} biggest are shown.\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"treemap-cubes\"></div>\n" +

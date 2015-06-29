@@ -20,6 +20,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
         div = null;
 
     scope.queryLoaded = false;
+    scope.cutoffWarning = false;
     scope.columns = [];
     scope.rows = [];
     scope.table = [];
@@ -49,8 +50,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       q.order = order;
       q.page = 0;
-      q.pagesize = 1000;
+      q.pagesize = 50;
 
+      scope.cutoffWarning = false;
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
 
@@ -119,6 +121,8 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           .style("background", function(d) { return d._color; });
 
       scope.queryLoaded = true;
+      scope.cutoffWarning = data.total_cell_count > q.pagesize;
+      scope.cutoff = q.pagesize;
     };
 
     function positionNode() {
