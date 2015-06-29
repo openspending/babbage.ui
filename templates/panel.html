@@ -28,7 +28,7 @@
             <a ng-switch-default ng-click="pushSort(opt.ref, 'asc')" class="ng-link ng-icon">
               <i class="fa fa-sort-amount-desc"></i></a>
           </span>
-          <a ng-click="remove(axis, opt.ref)" class="ng-link ng-icon">
+          <a ng-click="remove(axis, opt.ref)" ng-show="axis.multiple" class="ng-link ng-icon">
             <i class="fa fa-times"></i></a>
         </div>
         <strong>{{opt.label}}</strong>

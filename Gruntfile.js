@@ -20,7 +20,8 @@ module.exports = function(grunt) {
       },
       build: {
         src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/panel.js', 'src/workspace.js', 'src/cubes.js', 'src/tmp/templates.js'],
+              'src/treemap.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
+              'src/tmp/templates.js'],
         dest: 'build/<%= pkg.name %>.min.js'
       }
     },
@@ -31,7 +32,8 @@ module.exports = function(grunt) {
       },
       dist: {
         src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/panel.js', 'src/workspace.js', 'src/cubes.js', 'src/tmp/templates.js'],
+              'src/treemap.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
+              'src/tmp/templates.js'],
         dest: 'build/<%= pkg.name %>.js'
       },
     },

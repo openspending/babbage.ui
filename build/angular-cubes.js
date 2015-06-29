@@ -609,7 +609,90 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
 }]);
 
 ;
+ngCubes.directive('cubesTreemap', ['$rootScope', '$http', function($rootScope, $http) {
+  return {
+  restrict: 'EA',
+  require: '^cubes',
+  scope: {
+    drilldown: '='
+  },
+  templateUrl: 'angular-cubes-templates/treemap.html',
+  link: function(scope, element, attrs, cubesCtrl) {
+    scope.queryLoaded = false;
+    scope.columns = [];
+    scope.rows = [];
+    scope.table = [];
 
+    var query = function(model, state) {
+      var tile = asArray(state.tile)[0],
+          area = asArray(state.area)[0];
+
+      var q = cubesCtrl.getQuery();
+
+      q.aggregates = area ? [area] : defaultArea(model);
+      if (!tile) {
+        return;
+      }
+      q.drilldown = [tile];
+      q.page = 0;
+      q.pagesize = 100;
+
+      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                          cubesCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, model, state);
+      });
+    };
+
+    var queryResult = function(data, q, model, state) {
+      var tileRef = asArray(state.tile)[0],
+          areaRef = asArray(state.area)[0];
+
+      console.log(data);
+
+      scope.queryLoaded = true;
+    };
+
+
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      query(model, state);
+    });
+
+    var defaultArea = function(model) {
+      for (var i in model.aggregates) {
+        var agg = model.aggregates[i];
+        if (agg.measure) {
+          return [agg.ref];
+        }
+      }
+      return [];
+    };
+
+    // console.log('crosstab init');
+    cubesCtrl.init({
+      tile: {
+        label: 'Tiles',
+        addLabel: 'set breakdown',
+        types: ['attributes'],
+        defaults: [],
+        sortId: 0,
+        multiple: false
+      },
+      area: {
+        label: 'Area',
+        addLabel: 'set area',
+        types: ['aggregates'],
+        defaults: defaultArea,
+        sortId: 1,
+        multiple: false
+      },
+
+    });
+  }
+  };
+}]);
+
+;
 ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
@@ -632,7 +715,14 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
 
       $scope.add = function(axis, ref) {
         if (axis.selected.indexOf(ref) == -1) {
-          axis.selected.push(ref);
+          if (axis.multiple) {
+            axis.selected.push(ref);
+          } else {
+            if (axis.selected.length) {
+              $scope.state.order = cubesCtrl.removeSorts(axis.selected[0]);  
+            }
+            axis.selected = [ref];
+          }
           $scope.state[axis.name] = axis.selected;
           update();
         }
@@ -868,7 +958,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     }
   };
 }]);
-;angular.module('ngCubes.templates', ['angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/workspace.html']);
+;angular.module('ngCubes.templates', ['angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
 
 angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/crosstab.html",
@@ -1000,7 +1090,7 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "            <a ng-switch-default ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\">\n" +
     "              <i class=\"fa fa-sort-amount-desc\"></i></a>\n" +
     "          </span>\n" +
-    "          <a ng-click=\"remove(axis, opt.ref)\" class=\"ng-link ng-icon\">\n" +
+    "          <a ng-click=\"remove(axis, opt.ref)\" ng-show=\"axis.multiple\" class=\"ng-link ng-icon\">\n" +
     "            <i class=\"fa fa-times\"></i></a>\n" +
     "        </div>\n" +
     "        <strong>{{opt.label}}</strong>\n" +
@@ -1075,6 +1165,21 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "");
 }]);
 
+angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("angular-cubes-templates/treemap.html",
+    "<div class=\"table-cubes\" ng-show=\"queryLoaded\">\n" +
+    "  huhu\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+    "  <div class=\"alert alert-info\">\n" +
+    "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
+    "    your treemap.\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
 angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/workspace.html",
     "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
@@ -1085,6 +1190,9 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      </div>\n" +
     "      <div ng-if=\"view == 'facts'\">\n" +
     "        <cubes-facts></cubes-facts>\n" +
+    "      </div>\n" +
+    "      <div ng-if=\"view == 'treemap'\">\n" +
+    "        <cubes-treemap></cubes-treemap>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +

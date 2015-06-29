@@ -1,5 +1,4 @@
 
-
 ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
@@ -22,7 +21,14 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
 
       $scope.add = function(axis, ref) {
         if (axis.selected.indexOf(ref) == -1) {
-          axis.selected.push(ref);
+          if (axis.multiple) {
+            axis.selected.push(ref);
+          } else {
+            if (axis.selected.length) {
+              $scope.state.order = cubesCtrl.removeSorts(axis.selected[0]);  
+            }
+            axis.selected = [ref];
+          }
           $scope.state[axis.name] = axis.selected;
           update();
         }
