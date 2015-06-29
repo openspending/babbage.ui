@@ -1,5 +1,5 @@
 
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', function($rootScope, $http, $q, slugifyFilter) {
+ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
   restrict: 'EA',
   require: '^cubes',
@@ -8,8 +8,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
   },
   templateUrl: 'angular-cubes-templates/facts.html',
   link: function(scope, element, attrs, cubesCtrl) {
-    var refs = {};
-
     scope.page = 0;
     scope.data = [];
     scope.columns = [];
@@ -41,11 +39,11 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
           aggs = $http.get(cubesCtrl.getApiUrl('aggregate'),
                             cubesCtrl.queryParams(aq));
       $q.all([facts, aggs]).then(function(res) {
-        queryResult(res[0].data, res[1].data, q, state);
+        queryResult(res[0].data, res[1].data, q, state, model);
       });
     };
 
-    var queryResult = function(data, aggs, q, state) {
+    var queryResult = function(data, aggs, q, state, model) {
       if (!data.length) {
         scope.columns = [];
         scope.data = [];
@@ -67,7 +65,7 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
 
       for (var i in keys) {
         var ref = keys[i],
-            column = refs[ref],
+            column = model.refs[ref],
             header = column.dimension ? column.dimension : column;
 
         column.ref = ref;
@@ -117,24 +115,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', 'slugifyFilter', f
     };
 
     $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
-      for (var i in model.measures) {
-        var measure = model.measures[i];
-        measure.numeric = true;
-        measure.hideLabel = true;
-        refs[measure.ref] = measure;
-      }
-      for (var di in model.dimensions) {
-        var dim = model.dimensions[di];
-        for (var li in dim.levels) {
-          var lvl = dim.levels[li];
-          for (var ai in lvl.attributes) {
-            var attr = lvl.attributes[ai];
-            attr.dimension = dim;
-            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
-            refs[attr.ref] = attr;
-          }
-        }
-      }
       query(model, state);
     });
 

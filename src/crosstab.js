@@ -63,25 +63,6 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
 
-      var refKeys = {};
-      for (var i in model.dimensions) {
-        var dim = model.dimensions[i];
-        for (var j in dim.levels) {
-          var lvl = dim.levels[j];
-          for (var k in lvl.attributes) {
-            var attr = lvl.attributes[k],
-                nested = attr.ref.indexOf('.') != -1,
-                key = nested ? dim.name + '.' + lvl.key : attr.ref;
-            refKeys[attr.ref] = key;
-          }
-        }
-      }
-
-      //console.log(refKeys);
-      var makeKey = function(refs, cell) {
-
-      }
-
       var aggregates = model.aggregates.filter(function(agg) {
         return data.aggregates.indexOf(agg.ref) != -1;
       });
@@ -94,7 +75,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
 
       for (var i in data.cells) {
         var pickValue = function(k) { return cell[k]; },
-            pickRefs = function(k) { return cell[refKeys[k]] + cell[k]; };
+            pickRefs = function(k) { return cell[model.refKeys[k]] + cell[k]; };
 
         var cell = data.cells[i],
             row_values = state.rows.map(pickValue),

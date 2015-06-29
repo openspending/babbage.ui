@@ -75,25 +75,15 @@
         <td width="1%" class="middle">
           is
         </td>
-        <td width="90%">
-          <div ng-hide="filter.editMode">
-            {{filter.value}}
-          </div>
-          <div ng-show="filter.editMode">
-            <ui-select ng-model="filter.value" disable-search="false" on-select="setFilter(filter, $item, $model)">
-              <ui-select-match placeholder="Pick one...">{{$select.selected}}</ui-select-match>
-              <ui-select-choices repeat="v in filter.values | filter: $select.search track by $index">
-                 <div ng-bind="v"></div>
-              </ui-select-choices>
-            </ui-select>
-          </div>
+        <td width="95%">
+          <ui-select ng-model="filter.value" disable-search="false" on-select="setFilter(filter, $item, $model)">
+            <ui-select-match placeholder="Pick one...">{{$select.selected.label}}</ui-select-match>
+            <ui-select-choices repeat="v.value as v in filter.values | filter: $select.search track by $index">
+               <div ng-bind="v.label"></div>
+            </ui-select-choices>
+          </ui-select>
         </td>
         <td class="middle">
-          <span class="pull-right">
-            <a ng-click="toggleEditFilter(filter)" class="ng-link">
-              <i class="fa fa-edit"></i>
-            </a>
-          </span>
         </td>
       </tr>
     </tbody>

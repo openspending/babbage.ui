@@ -12,7 +12,7 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
+ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
   var getUrl = function(slicer, cube, endpoint) {
@@ -25,12 +25,39 @@ ngCubes.factory('cubesApi', ['$http', '$q', function($http, $q) {
   var getCached = function(url) {
     if (!angular.isDefined(cache[url])) {
       cache[url] = $http.get(url);
-    } 
+    }
     return cache[url];
   };
 
   var getModel = function(slicer, cube) {
-    return getCached(getUrl(slicer, cube, 'model'));
+    return getCached(getUrl(slicer, cube, 'model')).then(function(res) {
+      var model = res.data;
+      model.refs = {};
+      model.refKeys = {};
+
+      for (var i in model.measures) {
+        var measure = model.measures[i];
+        measure.numeric = true;
+        measure.hideLabel = true;
+        model.refs[measure.ref] = measure;
+      }
+
+      for (var di in model.dimensions) {
+        var dim = model.dimensions[di];
+        for (var li in dim.levels) {
+          var lvl = dim.levels[li];
+          for (var ai in lvl.attributes) {
+            var attr = lvl.attributes[ai],
+                nested = attr.ref.indexOf('.') != -1;
+            attr.dimension = dim;
+            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
+            model.refs[attr.ref] = attr;
+            model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
+          }
+        }
+      }
+      return model;
+    });
   };
 
   var getDimensionMembers = function(slicer, cube, dimension) {
@@ -70,8 +97,8 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
-        cubesApi.getModel($scope.slicer, $scope.cube).then(function(res) {
-          $rootScope.$broadcast(self.modelUpdate, res.data, state);
+        cubesApi.getModel($scope.slicer, $scope.cube).then(function(model) {
+          $rootScope.$broadcast(self.modelUpdate, model, state);
         });
       };
 

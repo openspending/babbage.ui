@@ -69,6 +69,10 @@
 .table.table-panel tr.adjoined td,
 .table.table-panel tr.adjoined th {
   border-top: 0;
+  padding-top: 0;
+}
+.table.table-panel tbody {
+  border-top: 1px solid #dddddd;
 }
 /* Tree maps */
 .treemap-cubes {
