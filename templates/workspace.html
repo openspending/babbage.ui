@@ -10,6 +10,9 @@
       <div ng-if="view == 'treemap'">
         <cubes-treemap></cubes-treemap>
       </div>
+      <div ng-if="view == 'barchart'">
+        <cubes-barchart></cubes-barchart>
+      </div>
     </div>
     <div class="col-md-3">
       <div class="btn-group spaced" role="group">
@@ -23,11 +26,23 @@
           ng-click="setView('crosstab')">
           <i class="fa fa-cubes"></i> Pivot table
         </a>
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'treemap'}"
-          ng-click="setView('treemap')">
-          <i class="fa fa-th-large"></i> Treemap
-        </a>
+        <div class="btn-group" dropdown is-open="status.isopen">
+          <button
+            type="button"
+            ng-class="{'active': activeVisualization.visible}"
+            class="btn btn-default dropdown-toggle"
+            dropdown-toggle
+            ng-disabled="disabled">
+            <i class="fa {{activeVisualization.icon}}"></i> {{activeVisualization.name}}<span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li ng-repeat="viz in visualizations">
+              <a ng-click="toggleDropdown($event, viz.view)">
+                <i class="fa {{viz.icon}}"></i> {{viz.name}}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <cubes-panel></cubes-panel>
     </div>
