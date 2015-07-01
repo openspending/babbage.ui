@@ -1029,7 +1029,13 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
 
 angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/barchart.html",
-    "<div class=\"barchart-cubes\"></div>\n" +
+    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+    "  <div class=\"alert alert-info\">\n" +
+    "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
+    "    your treemap.\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "<div class=\"barchart-cubes\">\n" +
     "");
 }]);
 

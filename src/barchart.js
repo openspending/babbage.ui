@@ -7,16 +7,34 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
     },
     templateUrl: 'angular-cubes-templates/barchart.html',
     link: function(scope, element, attrs, cubesCtrl) {
+      scope.queryLoaded = false;
+      var isAggregate = function(aggregates, type) {
+        var isAggregate = aggregates.some(function(a) {
+          return (a.name == type);
+        });
+        return isAggregate;
+      }
+      var getAggregate = function(model, x, y) {
+        var aggregate;
+        if(isAggregate(model.aggregates, x)) {
+          aggregate = x;
+        }
+        if(isAggregate(model.aggregates, y)) {
+          aggregate = y;
+        }
+        return aggregate;
+      }
       var query = function(model, state) {
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
 
         var q = cubesCtrl.getQuery();
-        q.aggregates = x;
-        if (!x) {
+        q.aggregates = getAggregate(model, x, y);
+        if (!q.aggregates) {
           return;
         }
-        q.drilldown = [y];
+        var drilldown = (q.aggregates == y) ? x : y;
+        q.drilldown = [drilldown];
 
         var order = [];
         for (var i in q.order) {
@@ -42,14 +60,16 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
       var queryResult = function(data, q, model, state) {
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
+        xType = isAggregate(model.aggregates, x) ? "Q" : "O";
+        yType = isAggregate(model.aggregates, y) ? "Q" : "O";
         shorthand = {
           "data": {
               "values": data.cells
             },
           "marktype": "bar",
           "encoding": {
-              "y": {"type": "O","name": y},
-              "x": {"type": "Q","name": x}
+              "y": {"type": yType, "name": y},
+              "x": {"type": xType, "name": x}
             }
         };
         wrapper = element.querySelectorAll('.barchart-cubes')[0]
@@ -58,6 +78,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
           var view = chart({el:wrapper})
             .update();
         });
+        scope.queryLoaded = true;
       };
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         query(model, state);
@@ -66,7 +87,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         y: {
           label: 'Y',
           addLabel: 'set Y',
-          types: ['attributes'],
+          types: ['attributes', 'aggregates'],
           defaults: [],
           sortId: 0,
           multiple: false
@@ -74,7 +95,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         x: {
           label: 'X',
           addLabel: 'set x',
-          types: ['aggregates'],
+          types: ['attributes', 'aggregates'],
           defaults: [],
           sortId: 1,
           multiple: false
