@@ -1025,7 +1025,13 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     }
   };
 }]);
-;angular.module('ngCubes.templates', ['angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
+;angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
+
+angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("angular-cubes-templates/barchart.html",
+    "<div class=\"barchart-cubes\"></div>\n" +
+    "");
+}]);
 
 angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/crosstab.html",
@@ -1254,6 +1260,9 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      <div ng-if=\"view == 'treemap'\">\n" +
     "        <cubes-treemap></cubes-treemap>\n" +
     "      </div>\n" +
+    "      <div ng-if=\"view == 'barchart'\">\n" +
+    "        <cubes-barchart></cubes-barchart>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
     "      <div class=\"btn-group spaced\" role=\"group\">\n" +
@@ -1271,6 +1280,11 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "          ng-class=\"{'active': view == 'treemap'}\"\n" +
     "          ng-click=\"setView('treemap')\">\n" +
     "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
+    "        </a>\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'barchart'}\"\n" +
+    "          ng-click=\"setView('barchart')\">\n" +
+    "          <i class=\"fa fa-th-large\"></i> Barchart\n" +
     "        </a>\n" +
     "      </div>\n" +
     "      <cubes-panel></cubes-panel>\n" +

@@ -10,6 +10,9 @@
       <div ng-if="view == 'treemap'">
         <cubes-treemap></cubes-treemap>
       </div>
+      <div ng-if="view == 'barchart'">
+        <cubes-barchart></cubes-barchart>
+      </div>
     </div>
     <div class="col-md-3">
       <div class="btn-group spaced" role="group">
@@ -27,6 +30,11 @@
           ng-class="{'active': view == 'treemap'}"
           ng-click="setView('treemap')">
           <i class="fa fa-th-large"></i> Treemap
+        </a>
+        <a class="btn btn-default"
+          ng-class="{'active': view == 'barchart'}"
+          ng-click="setView('barchart')">
+          <i class="fa fa-th-large"></i> Barchart
         </a>
       </div>
       <cubes-panel></cubes-panel>
