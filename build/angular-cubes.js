@@ -1014,13 +1014,57 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     },
     templateUrl: 'angular-cubes-templates/workspace.html',
     link: function(scope, element, attrs) {
+      var getActiveVisualization = function() {
+        var active;
+        scope.visualizations.some(function(v) {
+          if(v.view == scope.view) {
+            active = v;
+            return true;
+          }
+        });
+        return active;
+      }
       scope.state = {};
+      scope.visualizationHead = {
+        name: 'Visulization',
+        icon: 'fa-eye',
+        visible: false
+      }
+      scope.visualizations = [
+        {
+          name: 'Treemap',
+          icon: 'fa-th-large',
+          view: 'treemap',
+          visible: true
+        },
+        {
+          name: 'Barchart',
+          icon: 'fa-bar-chart',
+          view: 'barchart',
+          visible: true
+        }
+      ];
       scope.view = $location.search().view || 'facts';
+      scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
 
+      scope.$watch('view', function(view) {
+        if(view) {
+          scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
+        }
+      });
       scope.setView = function(view) {
         var state = $location.search();
         state.view = view;
         $location.search(state);
+      };
+      scope.status = {
+        isopen: false
+      };
+      scope.toggleDropdown = function($event, view) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        scope.status.isopen = !scope.status.isopen;
+        scope.setView(view);
       };
     }
   };
@@ -1282,16 +1326,23 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "          ng-click=\"setView('crosstab')\">\n" +
     "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
     "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'treemap'}\"\n" +
-    "          ng-click=\"setView('treemap')\">\n" +
-    "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'barchart'}\"\n" +
-    "          ng-click=\"setView('barchart')\">\n" +
-    "          <i class=\"fa fa-th-large\"></i> Barchart\n" +
-    "        </a>\n" +
+    "        <div class=\"btn-group\" dropdown is-open=\"status.isopen\">\n" +
+    "          <button\n" +
+    "            type=\"button\"\n" +
+    "            ng-class=\"{'active': activeVisualization.visible}\"\n" +
+    "            class=\"btn btn-default dropdown-toggle\"\n" +
+    "            dropdown-toggle\n" +
+    "            ng-disabled=\"disabled\">\n" +
+    "            <i class=\"fa {{activeVisualization.icon}}\"></i> {{activeVisualization.name}}<span class=\"caret\"></span>\n" +
+    "          </button>\n" +
+    "          <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "            <li ng-repeat=\"viz in visualizations\">\n" +
+    "              <a ng-click=\"toggleDropdown($event, viz.view)\">\n" +
+    "                <i class=\"fa {{viz.icon}}\"></i> {{viz.name}}\n" +
+    "              </a>\n" +
+    "            </li>\n" +
+    "          </ul>\n" +
+    "        </div>\n" +
     "      </div>\n" +
     "      <cubes-panel></cubes-panel>\n" +
     "    </div>\n" +
