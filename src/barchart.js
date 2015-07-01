@@ -62,14 +62,27 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
             y = asArray(state.y)[0];
         xType = isAggregate(model.aggregates, x) ? "Q" : "O";
         yType = isAggregate(model.aggregates, y) ? "Q" : "O";
+        ySlug = y.replace(/\./g,"-");
+        xSlug = x.replace(/\./g,"-");
+        var dataCells = [];
+        data.cells.forEach(function(d) {
+          dCell = {};
+          Object.keys(d).forEach(function(key){
+              var value = d[key];
+              key = key.replace(/\./g,'-');
+              dCell[key] = value;
+          });
+          dataCells.push(dCell);
+        });
+
         shorthand = {
           "data": {
-              "values": data.cells
+              "values": dataCells
             },
           "marktype": "bar",
           "encoding": {
-              "y": {"type": yType, "name": y},
-              "x": {"type": xType, "name": x}
+              "y": {"type": yType, "name": ySlug},
+              "x": {"type": xType, "name": xSlug}
             }
         };
         wrapper = element.querySelectorAll('.barchart-cubes')[0]
