@@ -78,4 +78,5 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['less', 'html2js', 'concat', 'uglify']);
+  grunt.registerTask('server', ['connect', 'watch'])
 };
