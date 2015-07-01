@@ -12,7 +12,7 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.factory('cubesApi', ['$http', '$q', '$filter',  function($http, $q, $filter) {
+ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
   var getUrl = function(slicer, cube, endpoint) {
@@ -50,7 +50,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', '$filter',  function($http, $q, $fil
             var attr = lvl.attributes[ai],
                 nested = attr.ref.indexOf('.') != -1;
             attr.dimension = dim;
-            attr.hideLabel = $filter('slugify')(attr.label) == $filter('slugify')(dim.label);
+            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             model.refs[attr.ref] = attr;
             model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
           }

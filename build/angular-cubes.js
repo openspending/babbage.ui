@@ -35,7 +35,7 @@ ngCubes.filter('numeric', function() {
   };
 })
 
-ngCubes.factory('cubesApi', ['$http', '$q', '$filter',  function($http, $q, $filter) {
+ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
   var getUrl = function(slicer, cube, endpoint) {
@@ -73,7 +73,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', '$filter',  function($http, $q, $fil
             var attr = lvl.attributes[ai],
                 nested = attr.ref.indexOf('.') != -1;
             attr.dimension = dim;
-            attr.hideLabel = $filter('slugify')(attr.label) == $filter('slugify')(dim.label);
+            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             model.refs[attr.ref] = attr;
             model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
           }
@@ -770,7 +770,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 }]);
 
 ;
-ngCubes.directive('cubesPanel', ['$rootScope', '$filter', function($rootScope, $filter) {
+ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
     require: '^cubes',
@@ -828,7 +828,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', '$filter', function($rootScope, $
               attr.dimension = dim;
               attr.level = lvl;
               attr.type = 'attributes';
-              if ($filter('slugify')(dim.label) != $filter('slugify')(attr.label)) {
+              if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
                 attr.subLabel = '' + attr.label;
               }
               attr.sortKey = '0' + dim.label + attr.label;
