@@ -57,40 +57,56 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         queryResult(res.data, q, model, state);
       });
       };
-      var queryResult = function(data, q, model, state) {
-        var x = asArray(state.x)[0],
-            y = asArray(state.y)[0];
-        xType = isAggregate(model.aggregates, x) ? "Q" : "O";
-        yType = isAggregate(model.aggregates, y) ? "Q" : "O";
-        ySlug = y.replace(/\./g,"-");
-        xSlug = x.replace(/\./g,"-");
+      var slugifyParameter = function(parameter) {
+        return parameter.replace(/\./g,"-");
+      }
+      var typeForParameter = function(model, parameter) {
+        return isAggregate(model.aggregates, parameter) ? "Q" : "O";
+      }
+      var slugifyData = function(data) {
         var dataCells = [];
-        data.cells.forEach(function(d) {
-          dCell = {};
+        data.forEach(function(d) {
+          var dCell = {};
           Object.keys(d).forEach(function(key){
               var value = d[key];
-              key = key.replace(/\./g,'-');
+              key = slugifyParameter(key);
               dCell[key] = value;
           });
           dataCells.push(dCell);
         });
-
-        shorthand = {
-          "data": {
-              "values": dataCells
-            },
-          "marktype": "bar",
-          "encoding": {
-              "y": {"type": yType, "name": ySlug},
-              "x": {"type": xType, "name": xSlug}
-            }
-        };
-        wrapper = element.querySelectorAll('.barchart-cubes')[0]
+        return dataCells;
+      }
+      var widthForChart = function(element) {
+        var textWidthDefaultFromVega = 200;
+        return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
+      }
+      var renderChartForSpec = function(shorthand, wrapper) {
         spec = vl.compile(shorthand);
         vg.parse.spec(spec, function(chart) {
-          var view = chart({el:wrapper})
+          var view = chart({el:wrapper, renderer: "svg"})
             .update();
         });
+      }
+      var queryResult = function(data, q, model, state) {
+        var ySlug, xSlug, shorthand;
+        var x = asArray(state.x)[0],
+            y = asArray(state.y)[0];
+        xSlug = slugifyParameter(x);
+        ySlug = slugifyParameter(y);
+        shorthand = {
+          "data": {
+            "values": slugifyData(data.cells)
+          },
+          "marktype": "bar",
+          "encoding": {
+            "y": {"type": typeForParameter(model, y), "name": ySlug},
+            "x": {"type": typeForParameter(model, x), "name": xSlug},
+          },
+          "config": {
+            "singleWidth": widthForChart(element)
+          }
+        };
+        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-cubes')[0])
         scope.queryLoaded = true;
       };
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
