@@ -63,28 +63,31 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
       var typeForParameter = function(model, parameter) {
         return isAggregate(model.aggregates, parameter) ? "Q" : "O";
       }
+      var slugifyData = function(data) {
+        var dataCells = [];
+        data.forEach(function(d) {
+          var dCell = {};
+          Object.keys(d).forEach(function(key){
+              var value = d[key];
+              key = slugifyParameter(key);
+              dCell[key] = value;
+          });
+          dataCells.push(dCell);
+        });
+        return dataCells;
+      }
       var queryResult = function(data, q, model, state) {
         var ySlug, xSlug, width, spec;
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0],
-            dataCells = [],
             wrapper = element.querySelectorAll('.barchart-cubes')[0],
             textWidthDefaultFromVega = 200;
         width = parseInt(d3.selectAll(element).node().getBoundingClientRect().width);
         xSlug = slugifyParameter(x);
         ySlug = slugifyParameter(y);
-        data.cells.forEach(function(d) {
-          dCell = {};
-          Object.keys(d).forEach(function(key){
-              var value = d[key];
-              key = key.replace(/\./g,'-');
-              dCell[key] = value;
-          });
-          dataCells.push(dCell);
-        });
         shorthand = {
           "data": {
-            "values": dataCells
+            "values": slugifyData(data.cells)
           },
           "marktype": "bar",
           "encoding": {
