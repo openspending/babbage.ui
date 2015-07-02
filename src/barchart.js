@@ -60,16 +60,17 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
       var slugifyParameter = function(parameter) {
         return parameter.replace(/\./g,"-");
       }
+      var typeForParameter = function(model, parameter) {
+        return isAggregate(model.aggregates, parameter) ? "Q" : "O";
+      }
       var queryResult = function(data, q, model, state) {
-        var xType, yType, ySlug, xSlug, width, spec;
+        var ySlug, xSlug, width, spec;
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0],
             dataCells = [],
             wrapper = element.querySelectorAll('.barchart-cubes')[0],
             textWidthDefaultFromVega = 200;
         width = parseInt(d3.selectAll(element).node().getBoundingClientRect().width);
-        xType = isAggregate(model.aggregates, x) ? "Q" : "O";
-        yType = isAggregate(model.aggregates, y) ? "Q" : "O";
         xSlug = slugifyParameter(x);
         ySlug = slugifyParameter(y);
         data.cells.forEach(function(d) {
@@ -87,8 +88,8 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
           },
           "marktype": "bar",
           "encoding": {
-            "y": {"type": yType, "name": ySlug},
-            "x": {"type": xType, "name": xSlug},
+            "y": {"type": typeForParameter(model, y), "name": ySlug},
+            "x": {"type": typeForParameter(model, x), "name": xSlug},
           },
           "config": {
             "singleWidth": width - textWidthDefaultFromVega
