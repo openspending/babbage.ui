@@ -80,11 +80,17 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         var textWidthDefaultFromVega = 200;
         return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
       }
+      var renderChartForSpec = function(shorthand, wrapper) {
+        spec = vl.compile(shorthand);
+        vg.parse.spec(spec, function(chart) {
+          var view = chart({el:wrapper, renderer: "svg"})
+            .update();
+        });
+      }
       var queryResult = function(data, q, model, state) {
-        var ySlug, xSlug, spec;
+        var ySlug, xSlug, shorthand;
         var x = asArray(state.x)[0],
-            y = asArray(state.y)[0],
-            wrapper = element.querySelectorAll('.barchart-cubes')[0],
+            y = asArray(state.y)[0];
         xSlug = slugifyParameter(x);
         ySlug = slugifyParameter(y);
         shorthand = {
@@ -100,11 +106,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
             "singleWidth": widthForChart(element)
           }
         };
-        spec = vl.compile(shorthand);
-        vg.parse.spec(spec, function(chart) {
-          var view = chart({el:wrapper, renderer: "svg"})
-            .update();
-        });
+        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-cubes')[0])
         scope.queryLoaded = true;
       };
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
