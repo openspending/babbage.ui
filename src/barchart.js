@@ -58,15 +58,17 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
       });
       };
       var queryResult = function(data, q, model, state) {
+        var xType, yType, ySlug, xSlug, width, spec;
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0],
+            dataCells = [],
+            wrapper = element.querySelectorAll('.barchart-cubes')[0],
             textWidthDefaultFromVega = 200;
         width = parseInt(d3.selectAll(element).node().getBoundingClientRect().width);
         xType = isAggregate(model.aggregates, x) ? "Q" : "O";
         yType = isAggregate(model.aggregates, y) ? "Q" : "O";
         ySlug = y.replace(/\./g,"-");
         xSlug = x.replace(/\./g,"-");
-        var dataCells = [];
         data.cells.forEach(function(d) {
           dCell = {};
           Object.keys(d).forEach(function(key){
@@ -76,11 +78,10 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
           });
           dataCells.push(dCell);
         });
-
         shorthand = {
           "data": {
-              "values": dataCells
-            },
+            "values": dataCells
+          },
           "marktype": "bar",
           "encoding": {
             "y": {"type": yType, "name": ySlug},
@@ -90,10 +91,9 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
             "singleWidth": width - textWidthDefaultFromVega
           }
         };
-        wrapper = element.querySelectorAll('.barchart-cubes')[0]
         spec = vl.compile(shorthand);
         vg.parse.spec(spec, function(chart) {
-          var view = chart({el:wrapper})
+          var view = chart({el:wrapper, renderer: "svg"})
             .update();
         });
         scope.queryLoaded = true;
