@@ -34,6 +34,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q,
       var model = res.data;
       model.refs = {};
       model.refKeys = {};
+      model.refLabels = {};
 
       for (var i in model.measures) {
         var measure = model.measures[i];
@@ -53,6 +54,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q,
             attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             model.refs[attr.ref] = attr;
             model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
+            model.refLabels[attr.ref] = nested ? dim.name + '.' + lvl.label_attribute : attr.ref;
           }
         }
       }
@@ -136,8 +138,8 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         var sorts = self.getSorts();
         for (var i in sorts) {
           if (sorts[i].ref == ref) {
-            return sorts[i];  
-          } 
+            return sorts[i];
+          }
         }
         return {ref: ref};
       };
@@ -206,4 +208,3 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
     }]
   };
 }]);
-

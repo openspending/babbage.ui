@@ -1,7 +1,7 @@
 ngCubesCategoryColors = [
     "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
-    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D", 
-    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B", 
+    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D",
+    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B",
     "#6E3F7C", "#6A246D", "#8A4873", "#EB0080", "#EF58A0", "#C05A89"
     ];
 
@@ -21,9 +21,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
     scope.queryLoaded = false;
     scope.cutoffWarning = false;
-    scope.columns = [];
-    scope.rows = [];
-    scope.table = [];
 
     var query = function(model, state) {
       var tile = asArray(state.tile)[0],
@@ -53,12 +50,13 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       q.pagesize = 50;
 
       scope.cutoffWarning = false;
+      scope.queryLoaded = true;
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
 
       var wrapper = element.querySelectorAll('.treemap-cubes')[0],
           width = wrapper.clientWidth,
-          height = width * 0.6; 
+          height = width * 0.6;
 
       treemap = d3.layout.treemap()
         .size([width, height])
@@ -109,7 +107,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           })
           .on("mouseover", function(d) {
             d3.select(this).transition().duration(200)
-              .style({'background': d3.rgb(d._color).darker() });  
+              .style({'background': d3.rgb(d._color).darker() });
           })
           .on("mouseout", function(d) {
             d3.select(this).transition().duration(500)
@@ -120,7 +118,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           .delay(function(d, i) { return Math.min(i * 30, 1500); })
           .style("background", function(d) { return d._color; });
 
-      scope.queryLoaded = true;
       scope.cutoffWarning = data.total_cell_count > q.pagesize;
       scope.cutoff = q.pagesize;
     };
@@ -147,7 +144,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       return [];
     };
 
-    // console.log('crosstab init');
     cubesCtrl.init({
       tile: {
         label: 'Tiles',
@@ -165,9 +161,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
         sortId: 1,
         multiple: false
       },
-
     });
   }
   };
 }]);
-

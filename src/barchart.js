@@ -109,21 +109,23 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         renderChartForSpec(shorthand, element.querySelectorAll('.barchart-cubes')[0])
         scope.queryLoaded = true;
       };
+
       $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
         query(model, state);
       });
+
       cubesCtrl.init({
         y: {
-          label: 'Y',
-          addLabel: 'set Y',
+          label: 'Y Axis',
+          addLabel: 'set Y axis',
           types: ['attributes', 'aggregates'],
           defaults: [],
           sortId: 0,
           multiple: false
         },
         x: {
-          label: 'X',
-          addLabel: 'set x',
+          label: 'X Axis',
+          addLabel: 'set X axis',
           types: ['attributes', 'aggregates'],
           defaults: [],
           sortId: 1,

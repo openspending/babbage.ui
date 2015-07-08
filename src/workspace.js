@@ -36,6 +36,12 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
           icon: 'fa-bar-chart',
           view: 'barchart',
           visible: true
+        },
+        {
+          name: 'Flow diagram',
+          icon: 'fa-random',
+          view: 'sankey',
+          visible: true
         }
       ];
       scope.view = $location.search().view || 'facts';

@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       },
       build: {
         src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/treemap.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
+              'src/treemap.js', 'src/sankey.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
               'src/tmp/templates.js'],
         dest: 'build/<%= pkg.name %>.min.js'
       }
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/treemap.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
+              'src/treemap.js', 'src/sankey.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
               'src/tmp/templates.js'],
         dest: 'build/<%= pkg.name %>.js'
       },
@@ -64,15 +64,15 @@ module.exports = function(grunt) {
     watch: {
       templates: {
         files: ['templates/**/*.html'],
-        tasks: ['html2js']  
+        tasks: ['html2js']
       },
       js: {
         files: ['src/**/*.js'],
-        tasks: ['concat', 'uglify']  
+        tasks: ['concat', 'uglify']
       },
       style: {
         files: ['less/**/*.less'],
-        tasks: ['less']  
+        tasks: ['less']
       },
     }
   });

@@ -57,6 +57,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q,
       var model = res.data;
       model.refs = {};
       model.refKeys = {};
+      model.refLabels = {};
 
       for (var i in model.measures) {
         var measure = model.measures[i];
@@ -76,6 +77,7 @@ ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q,
             attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
             model.refs[attr.ref] = attr;
             model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
+            model.refLabels[attr.ref] = nested ? dim.name + '.' + lvl.label_attribute : attr.ref;
           }
         }
       }
@@ -159,8 +161,8 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         var sorts = self.getSorts();
         for (var i in sorts) {
           if (sorts[i].ref == ref) {
-            return sorts[i];  
-          } 
+            return sorts[i];
+          }
         }
         return {ref: ref};
       };
@@ -229,7 +231,6 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
     }]
   };
 }]);
-
 ;
 ngCubes.directive('cubesPager', ['$timeout', '$location', function ($timeout, $location) {
   return {
@@ -598,8 +599,8 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
 
 ;ngCubesCategoryColors = [
     "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
-    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D", 
-    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B", 
+    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D",
+    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B",
     "#6E3F7C", "#6A246D", "#8A4873", "#EB0080", "#EF58A0", "#C05A89"
     ];
 
@@ -619,9 +620,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
     scope.queryLoaded = false;
     scope.cutoffWarning = false;
-    scope.columns = [];
-    scope.rows = [];
-    scope.table = [];
 
     var query = function(model, state) {
       var tile = asArray(state.tile)[0],
@@ -651,12 +649,13 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       q.pagesize = 50;
 
       scope.cutoffWarning = false;
+      scope.queryLoaded = true;
       var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
                           cubesCtrl.queryParams(q));
 
       var wrapper = element.querySelectorAll('.treemap-cubes')[0],
           width = wrapper.clientWidth,
-          height = width * 0.6; 
+          height = width * 0.6;
 
       treemap = d3.layout.treemap()
         .size([width, height])
@@ -707,7 +706,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           })
           .on("mouseover", function(d) {
             d3.select(this).transition().duration(200)
-              .style({'background': d3.rgb(d._color).darker() });  
+              .style({'background': d3.rgb(d._color).darker() });
           })
           .on("mouseout", function(d) {
             d3.select(this).transition().duration(500)
@@ -718,7 +717,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           .delay(function(d, i) { return Math.min(i * 30, 1500); })
           .style("background", function(d) { return d._color; });
 
-      scope.queryLoaded = true;
       scope.cutoffWarning = data.total_cell_count > q.pagesize;
       scope.cutoff = q.pagesize;
     };
@@ -745,7 +743,6 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       return [];
     };
 
-    // console.log('crosstab init');
     cubesCtrl.init({
       tile: {
         label: 'Tiles',
@@ -763,12 +760,231 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
         sortId: 1,
         multiple: false
       },
+    });
+  }
+  };
+}]);
+;
+ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
+  return {
+  restrict: 'EA',
+  require: '^cubes',
+  scope: {
+    drilldown: '='
+  },
+  templateUrl: 'angular-cubes-templates/sankey.html',
+  link: function(scope, element, attrs, cubesCtrl) {
+    var unit = 15,
+        margin = {top: unit / 2, right: 1, bottom: 6, left: 1},
+        svg = null, group = null;
+
+    scope.queryLoaded = false;
+    scope.cutoffWarning = false;
+    scope.cutoff = 0;
+
+    var query = function(model, state) {
+      var source = asArray(state.source)[0],
+          target = asArray(state.target)[0]
+          aggregate = asArray(state.aggregate)[0],
+          aggregate = aggregate ? [aggregate] : defaultAggregate(model);
+
+      var q = cubesCtrl.getQuery();
+      q.aggregates = aggregate;
+      if (!source || !target) {
+        return;
+      }
+      q.drilldown = [source, target];
+
+      q.order = [
+        {
+          ref: aggregate,
+          direction: 'desc'
+        },
+        {
+          ref: source,
+          direction: 'asc'
+        },
+        {
+          ref: target,
+          direction: 'asc'
+        }
+      ];
+      q.page = 0;
+      q.pagesize = 2000;
+
+      scope.queryLoaded = true;
+      scope.cutoffWarning = false;
+      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
+                          cubesCtrl.queryParams(q));
+
+      var wrapper = element.querySelectorAll('.sankey-cubes')[0],
+          width = wrapper.clientWidth;
+
+      if (!svg) {
+          svg = d3.select(wrapper).append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", margin.top + margin.bottom);
+          group =  svg.append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      }
+
+      dfd.then(function(res) {
+        queryResult(width, res.data, q, model, state);
+      });
+    };
+
+    var queryResult = function(width, data, q, model, state) {
+      var sourceRef = asArray(state.source)[0],
+          targetRef = asArray(state.target)[0]
+          aggregateRef = asArray(state.aggregate)[0],
+          aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
+          height = data.cells.length * unit * 0.6;
+
+      svg.attr("height", height + margin.top + margin.bottom);
+
+      var graph = {nodes: [], links: []},
+          objs = {};
+
+      // console.log(data);
+
+      data.cells.forEach(function(cell) {
+        var sourceId = cell[sourceRef],
+            targetId = cell[targetRef],
+            link = {
+              value: Math.sqrt(cell[aggregateRef]),
+              number: numberFormat(cell[aggregateRef])
+            };
+
+        if (link.value == 0 || !sourceId || !targetId) {
+          return;
+        }
+
+        if (!objs[sourceId]) {
+          var label = cell[model.refLabels[sourceRef]];
+          graph.nodes.push({
+            name: label,
+            color: ngCubesColorScale(sourceId)
+          });
+          objs[sourceId] = {idx: graph.nodes.length - 1};
+        }
+        link.source = objs[sourceId].idx;
+
+        if (!objs[targetId]) {
+          var label = cell[model.refLabels[targetRef]];
+          graph.nodes.push({
+            name: label,
+            color: ngCubesColorScale(targetId)
+          });
+          objs[targetId] = {
+            idx: graph.nodes.length - 1
+          };
+        }
+        link.target = objs[targetId].idx;
+        graph.links.push(link);
+      });
+
+      var sankey = d3.sankey()
+         .nodeWidth(unit)
+         .nodePadding(unit * 0.6)
+         .size([width, height]);
+
+      var path = sankey.link();
+
+      sankey
+        .nodes(graph.nodes)
+        .links(graph.links)
+        .layout(32);
+
+    var link = group.append("g").selectAll(".link")
+        .data(graph.links)
+      .enter().append("path")
+        .attr("class", "link")
+        .attr("d", path)
+        .style("stroke-width", function(d) {
+          return Math.max(1, d.dy);
+        })
+        .style("stroke", function(d) {
+          return d.source.color;
+        })
+        .sort(function(a, b) { return b.dy - a.dy; });
+
+    link.append("title")
+        .text(function(d) { return d.source.name + " → " + d.target.name + "\n" + d.number; });
+
+    var node = group.append("g").selectAll(".node")
+        .data(graph.nodes)
+      .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    node.append("rect")
+        .attr("height", function(d) { return d.dy; })
+        .attr("width", sankey.nodeWidth())
+        .style("fill", function(d) { return d.color; })
+        .style("stroke", function(d) { return d3.rgb(d.color).darker(1); })
+      .append("title")
+        .text(function(d) { return d.name });
+
+    node.append("text")
+        .attr("x", -6)
+        .attr("y", function(d) { return d.dy / 2; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "end")
+        .attr("transform", null)
+        .text(function(d) { return d.name; })
+      .filter(function(d) { return d.x < width / 2; })
+        .attr("x", 6 + sankey.nodeWidth())
+        .attr("text-anchor", "start");
+
+      scope.cutoffWarning = data.total_cell_count > q.pagesize;
+      scope.cutoff = q.pagesize;
+    };
+
+
+    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      query(model, state);
+    });
+
+    var defaultAggregate = function(model) {
+      for (var i in model.aggregates) {
+        var agg = model.aggregates[i];
+        if (agg.measure) {
+          return [agg.ref];
+        }
+      }
+      return [];
+    };
+
+    cubesCtrl.init({
+      source: {
+        label: 'Source',
+        addLabel: 'set left side',
+        types: ['attributes'],
+        defaults: [],
+        sortId: 0,
+        multiple: false
+      },
+      target: {
+        label: 'Target',
+        addLabel: 'set right side',
+        types: ['attributes'],
+        defaults: [],
+        sortId: 1,
+        multiple: false
+      },
+      aggregate: {
+        label: 'Width',
+        addLabel: 'set width',
+        types: ['aggregates'],
+        defaults: defaultAggregate,
+        sortId: 2,
+        multiple: false
+      },
 
     });
   }
   };
 }]);
-
 ;
 ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
@@ -1042,6 +1258,12 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
           icon: 'fa-bar-chart',
           view: 'barchart',
           visible: true
+        },
+        {
+          name: 'Flow diagram',
+          icon: 'fa-random',
+          view: 'sankey',
+          visible: true
         }
       ];
       scope.view = $location.search().view || 'facts';
@@ -1069,7 +1291,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     }
   };
 }]);
-;angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
+;angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/sankey.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
 
 angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/barchart.html",
@@ -1278,6 +1500,24 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "");
 }]);
 
+angular.module("angular-cubes-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("angular-cubes-templates/sankey.html",
+    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+    "  <div class=\"alert alert-info\">\n" +
+    "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
+    "    both sides of the flow diagram.\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"alert alert-warning\" ng-show=\"cutoffWarning\">\n" +
+    "  <strong>Too many links.</strong> The source and target you have selected\n" +
+    "  have many different links, only the {{cutoff}} biggest are shown.\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sankey-cubes\"></div>\n" +
+    "");
+}]);
+
 angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/treemap.html",
     "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
@@ -1300,6 +1540,37 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
   $templateCache.put("angular-cubes-templates/workspace.html",
     "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
+    "    <div class=\"col-md-12\">\n" +
+    "      <div class=\"btn-group spaced pull-right\" role=\"group\">\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'facts'}\"\n" +
+    "          ng-click=\"setView('facts')\">\n" +
+    "          <i class=\"fa fa-table\"></i> Items\n" +
+    "        </a>\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
+    "          ng-click=\"setView('crosstab')\">\n" +
+    "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
+    "        </a>\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'barchart'}\"\n" +
+    "          ng-click=\"setView('barchart')\">\n" +
+    "          <i class=\"fa fa-bar-chart\"></i> Barchart\n" +
+    "        </a>\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'treemap'}\"\n" +
+    "          ng-click=\"setView('treemap')\">\n" +
+    "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
+    "        </a>\n" +
+    "        <a class=\"btn btn-default\"\n" +
+    "          ng-class=\"{'active': view == 'sankey'}\"\n" +
+    "          ng-click=\"setView('sankey')\">\n" +
+    "          <i class=\"fa fa-random\"></i> Flow diagram\n" +
+    "        </a>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"row\">\n" +
     "    <div class=\"col-md-9\">\n" +
     "      <div ng-if=\"view == 'crosstab'\">\n" +
     "        <cubes-crosstab></cubes-crosstab>\n" +
@@ -1313,37 +1584,12 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      <div ng-if=\"view == 'barchart'\">\n" +
     "        <cubes-barchart></cubes-barchart>\n" +
     "      </div>\n" +
+    "      <div ng-if=\"view == 'sankey'\">\n" +
+    "        <cubes-sankey></cubes-sankey>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
-    "      <div class=\"btn-group spaced\" role=\"group\">\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'facts'}\"\n" +
-    "          ng-click=\"setView('facts')\">\n" +
-    "          <i class=\"fa fa-table\"></i> Items\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
-    "          ng-click=\"setView('crosstab')\">\n" +
-    "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
-    "        </a>\n" +
-    "        <div class=\"btn-group\" dropdown is-open=\"status.isopen\">\n" +
-    "          <button\n" +
-    "            type=\"button\"\n" +
-    "            ng-class=\"{'active': activeVisualization.visible}\"\n" +
-    "            class=\"btn btn-default dropdown-toggle\"\n" +
-    "            dropdown-toggle\n" +
-    "            ng-disabled=\"disabled\">\n" +
-    "            <i class=\"fa {{activeVisualization.icon}}\"></i> {{activeVisualization.name}}<span class=\"caret\"></span>\n" +
-    "          </button>\n" +
-    "          <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "            <li ng-repeat=\"viz in visualizations\">\n" +
-    "              <a ng-click=\"toggleDropdown($event, viz.view)\">\n" +
-    "                <i class=\"fa {{viz.icon}}\"></i> {{viz.name}}\n" +
-    "              </a>\n" +
-    "            </li>\n" +
-    "          </ul>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
+    "\n" +
     "      <cubes-panel></cubes-panel>\n" +
     "    </div>\n" +
     "  </div>\n" +

@@ -29,9 +29,9 @@
         background-color: rgba(0, 0, 0, .5);
     }
 
-    &::-webkit-scrollbar-track { 
-        background-color: #fff; 
-        border-radius: 8px; 
+    &::-webkit-scrollbar-track {
+        background-color: #fff;
+        border-radius: 8px;
     }
 
     .table {
@@ -132,4 +132,30 @@
     //text-indent: 2px;
     text-decoration: none;
   }
+}
+
+.sankey-cubes {
+    .node rect {
+      //cursor: move;
+      //fill-opacity: .9;
+      shape-rendering: crispEdges;
+      stroke-width: 2px;
+      stroke: #fff;
+    }
+
+    .node text {
+      pointer-events: none;
+      text-shadow: 0 1px 0 #fff;
+      font-family: inherit;
+    }
+
+    .link {
+      fill: none;
+      stroke: #000;
+      stroke-opacity: .1;
+    }
+
+    .link:hover {
+      stroke-opacity: .5;
+    }
 }
