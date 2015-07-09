@@ -1,5 +1,4 @@
 _site/
 .sass-cache/
-src/tmp/*
 node_modules/*
 bower_components/*

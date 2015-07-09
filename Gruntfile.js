@@ -15,14 +15,32 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+      app: {
+        options: {
+          banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        },
+        build: {
+          src: ['dist/<%= pkg.name %>.js'],
+          dest: 'dist/<%= pkg.name %>.min.js'
+        }
       },
-      build: {
-        src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/treemap.js', 'src/sankey.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
-              'src/tmp/templates.js'],
-        dest: 'build/<%= pkg.name %>.min.js'
+      deps: {
+        options: {},
+        build: {
+          src: [
+            'bower_components/d3/d3.js',
+            'bower_components/d3-plugins/sankey/sankey.js',
+            'bower_components/vega-lite/lib/vega.js',
+            'bower_components/vega-lite/vega-lite.js',
+            'bower_components/angular/angular.js',
+            'bower_components/angular-route/angular-route.js',
+            'bower_components/angular-bootstrap/ui-bootstrap.min.js',
+            'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+            'bower_components/angular-ui-select/dist/select.min.js',
+            'bower_components/angular-filter/dist/angular-filter.js'
+          ],
+          dest: 'dist/deps.js'
+        }
       }
     },
     concat: {
@@ -33,8 +51,8 @@ module.exports = function(grunt) {
       dist: {
         src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
               'src/treemap.js', 'src/sankey.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
-              'src/tmp/templates.js'],
-        dest: 'build/<%= pkg.name %>.js'
+              'dist/templates.js'],
+        dest: 'dist/<%= pkg.name %>.js'
       },
     },
     html2js: {
@@ -47,17 +65,24 @@ module.exports = function(grunt) {
           }
         },
         src: ['templates/**/*.html'],
-        dest: 'src/tmp/templates.js'
+        dest: 'dist/templates.js'
       }
     },
     less: {
-      development: {
+      app: {
         options: {
           paths: ["less"],
           strictImports: true
         },
         files: {
-          "build/angular-cubes.css": ["less/build.less"]
+          "dist/angular-cubes.css": ["less/build.less"]
+        }
+      },
+      deps: {
+        files: {
+          "dist/deps.css": ["node_modules/bootstrap/dist/css/bootstrap.css",
+                            "bower_components/angular/angular-csp.css",
+                            "bower_components/angular-ui-select/dist/select.min.css"]
         }
       }
     },
@@ -68,7 +93,7 @@ module.exports = function(grunt) {
       },
       js: {
         files: ['src/**/*.js'],
-        tasks: ['concat', 'uglify']
+        tasks: ['concat']
       },
       style: {
         files: ['less/**/*.less'],
