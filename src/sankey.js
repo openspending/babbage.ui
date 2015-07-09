@@ -82,7 +82,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       var graph = {nodes: [], links: []},
           objs = {};
 
-      var sourceScale = ngCubesColorScale.copy(),
+      var sourceScale = ngCubesGlobals.colorScale.copy(),
           targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
@@ -90,7 +90,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
             link = {
               //value: Math.sqrt(cell[aggregateRef]),
               value: cell[aggregateRef],
-              number: numberFormat(cell[aggregateRef])
+              number: ngCubesGlobals.numberFormat(cell[aggregateRef])
             };
 
         if (link.value == 0 || !sourceId || !targetId) {

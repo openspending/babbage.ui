@@ -1,11 +1,3 @@
-ngCubesCategoryColors = [
-    "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
-    "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D",
-    "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B",
-    "#6E3F7C", "#6A246D", "#8A4873", "#EB0080", "#EF58A0", "#C05A89"
-    ];
-
-ngCubesColorScale = d3.scale.ordinal().range(ngCubesCategoryColors);
 
 ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
@@ -85,9 +77,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       for (var i in data.cells) {
         var cell = data.cells[i];
-        cell._area_fmt = numberFormat(Math.round(cell[areaRef]));
+        cell._area_fmt = ngCubesGlobals.numberFormat(Math.round(cell[areaRef]));
         cell._name = cell[tileRef];
-        cell._color = ngCubesColorScale(i);
+        cell._color = ngCubesGlobals.colorScale(i);
         cell._percentage = cell[areaRef] / Math.max(data.summary[areaRef], 1);
         root.children.push(cell);
       };

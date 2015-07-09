@@ -49,9 +49,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/util.js', 'src/cubes.js', 'src/pager.js', 'src/crosstab.js', 'src/facts.js',
-              'src/treemap.js', 'src/sankey.js', 'src/panel.js', 'src/workspace.js', 'src/cubes.js',
-              'dist/templates.js'],
+        src: ['src/app.js', 'src/**/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       },
     },
@@ -78,6 +76,15 @@ module.exports = function(grunt) {
           "dist/angular-cubes.css": ["less/build.less"]
         }
       },
+      embed: {
+        options: {
+          paths: ["less"],
+          strictImports: true
+        },
+        files: {
+          "dist/embed.css": ["less/embed.less"]
+        }
+      },
       deps: {
         files: {
           "dist/deps.css": ["node_modules/bootstrap/dist/css/bootstrap.css",
@@ -93,7 +100,7 @@ module.exports = function(grunt) {
       },
       js: {
         files: ['src/**/*.js'],
-        tasks: ['concat']
+        tasks: ['concat', 'uglify:app']
       },
       style: {
         files: ['less/**/*.less'],

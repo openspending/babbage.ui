@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="cubesEmbed">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="dist/deps.css">
+  <link rel="stylesheet" href="dist/angular-cubes.css">
+  <link rel="stylesheet" href="dist/embed.css">
+  <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
+</head>
+<body ng-controller='Ctrl'>
+  <cubes slicer="{{slicer}}" cube="{{cube}}" state="state">
+    <div ng-if="view == 'crosstab'">
+      <cubes-crosstab></cubes-crosstab>
+    </div>
+    <div ng-if="view == 'facts'">
+      <cubes-facts></cubes-facts>
+    </div>
+    <div ng-if="view == 'treemap'">
+      <cubes-treemap></cubes-treemap>
+    </div>
+    <div ng-if="view == 'barchart'">
+      <cubes-barchart></cubes-barchart>
+    </div>
+    <div ng-if="view == 'sankey'">
+      <cubes-sankey></cubes-sankey>
+    </div>
+  </cubes>
+
+  <script src='dist/deps.js'></script>
+  <script src='dist/angular-cubes.min.js'></script>
+  <script>
+    var cubesEmbed = angular.module('cubesEmbed', ['ngCubes', 'angular.filter', 'ui.bootstrap', 'ui.select']);
+
+    cubesEmbed.controller('Ctrl', function ($scope, $location) {
+      $scope.state = $location.search();
+      console.log($scope.state);
+      $scope.cube = 'wb-contract-awards';
+      $scope.slicer = 'https://spendb-dev.herokuapp.com/api/slicer/';
+      $scope.view = $scope.state.view || 'facts';
+    });
+
+  </script>
+</body>
+</html>
