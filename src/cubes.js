@@ -32,6 +32,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         return state;
       };
 
+      self.isEmbedded = function() {
+        return state.embed == 'true';
+      };
+
       self.setState = function(s) {
         $location.search(s);
       };

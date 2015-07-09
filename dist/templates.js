@@ -203,7 +203,6 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 
@@ -248,32 +247,34 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
-    "      <div class=\"btn-group spaced pull-right\" role=\"group\">\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'facts'}\"\n" +
-    "          ng-click=\"setView('facts')\">\n" +
-    "          <i class=\"fa fa-table\"></i> Items\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
-    "          ng-click=\"setView('crosstab')\">\n" +
-    "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'barchart'}\"\n" +
-    "          ng-click=\"setView('barchart')\">\n" +
-    "          <i class=\"fa fa-bar-chart\"></i> Bar chart\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'treemap'}\"\n" +
-    "          ng-click=\"setView('treemap')\">\n" +
-    "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'sankey'}\"\n" +
-    "          ng-click=\"setView('sankey')\">\n" +
-    "          <i class=\"fa fa-random\"></i> Flow\n" +
-    "        </a>\n" +
+    "      <div class=\"pull-right\">\n" +
+    "        <div class=\"btn-group spaced\" role=\"group\">\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'facts'}\"\n" +
+    "            ng-click=\"setView('facts')\">\n" +
+    "            <i class=\"fa fa-table\"></i> Items\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
+    "            ng-click=\"setView('crosstab')\">\n" +
+    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'barchart'}\"\n" +
+    "            ng-click=\"setView('barchart')\">\n" +
+    "            <i class=\"fa fa-bar-chart\"></i> Bar chart\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'treemap'}\"\n" +
+    "            ng-click=\"setView('treemap')\">\n" +
+    "            <i class=\"fa fa-th-large\"></i> Treemap\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'sankey'}\"\n" +
+    "            ng-click=\"setView('sankey')\">\n" +
+    "            <i class=\"fa fa-random\"></i> Flow\n" +
+    "          </a>\n" +
+    "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -296,8 +297,18 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
-    "\n" +
     "      <cubes-panel></cubes-panel>\n" +
+    "\n" +
+    "      <div class=\"embed-link\">\n" +
+    "        <p class=\"help-block\">Embed this view into another website with this code:</p>\n" +
+    "        <div class=\"input-group\">\n" +
+    "          <span class=\"input-group-addon\">\n" +
+    "            <i class=\"fa fa-external-link-square\"></i>\n" +
+    "          </span>\n" +
+    "          <input type=\"text\" class=\"form-control\" readonly value=\"<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</cubes>\n" +

@@ -74,6 +74,17 @@
 .table.table-panel tbody {
   border-top: 0;
 }
+.embed-link {
+  padding-top: 1em;
+}
+.embed-link p.help-block {
+  margin-bottom: 0.2em;
+}
+.embed-link input[readonly],
+.embed-link span.input-group-addon {
+  background-color: #fff;
+  box-shadow: none;
+}
 /* Tree maps */
 .treemap-cubes {
   min-height: 500px;

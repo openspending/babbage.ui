@@ -53,14 +53,12 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
 
       var wrapper = element.querySelectorAll('.sankey-cubes')[0],
           width = wrapper.clientWidth,
-          height = window.outerHeight;
+          height = document.documentElement.clientHeight;
 
-      unit = Math.max(400, height) / 50;
+      unit = Math.max(400, height) / 30;
 
       if (!svg) {
-          svg = d3.select(wrapper).append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", margin.top + margin.bottom);
+          svg = d3.select(wrapper).append("svg");
           group =  svg.append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
       }
@@ -77,7 +75,12 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
           height = data.cells.length * unit;
 
+      if (cubesCtrl.isEmbedded()) {
+        width = document.documentElement.clientWidth;
+        height = document.documentElement.clientHeight;
+      }
       svg.attr("height", height + margin.top + margin.bottom);
+      svg.attr("width", width + margin.left + margin.right);
 
       var graph = {nodes: [], links: []},
           objs = {};

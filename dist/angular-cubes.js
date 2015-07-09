@@ -203,7 +203,6 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 
@@ -248,32 +247,34 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
-    "      <div class=\"btn-group spaced pull-right\" role=\"group\">\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'facts'}\"\n" +
-    "          ng-click=\"setView('facts')\">\n" +
-    "          <i class=\"fa fa-table\"></i> Items\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'crosstab'}\"\n" +
-    "          ng-click=\"setView('crosstab')\">\n" +
-    "          <i class=\"fa fa-cubes\"></i> Pivot table\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'barchart'}\"\n" +
-    "          ng-click=\"setView('barchart')\">\n" +
-    "          <i class=\"fa fa-bar-chart\"></i> Bar chart\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'treemap'}\"\n" +
-    "          ng-click=\"setView('treemap')\">\n" +
-    "          <i class=\"fa fa-th-large\"></i> Treemap\n" +
-    "        </a>\n" +
-    "        <a class=\"btn btn-default\"\n" +
-    "          ng-class=\"{'active': view == 'sankey'}\"\n" +
-    "          ng-click=\"setView('sankey')\">\n" +
-    "          <i class=\"fa fa-random\"></i> Flow\n" +
-    "        </a>\n" +
+    "      <div class=\"pull-right\">\n" +
+    "        <div class=\"btn-group spaced\" role=\"group\">\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'facts'}\"\n" +
+    "            ng-click=\"setView('facts')\">\n" +
+    "            <i class=\"fa fa-table\"></i> Items\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
+    "            ng-click=\"setView('crosstab')\">\n" +
+    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'barchart'}\"\n" +
+    "            ng-click=\"setView('barchart')\">\n" +
+    "            <i class=\"fa fa-bar-chart\"></i> Bar chart\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'treemap'}\"\n" +
+    "            ng-click=\"setView('treemap')\">\n" +
+    "            <i class=\"fa fa-th-large\"></i> Treemap\n" +
+    "          </a>\n" +
+    "          <a class=\"btn btn-default\"\n" +
+    "            ng-class=\"{'active': view == 'sankey'}\"\n" +
+    "            ng-click=\"setView('sankey')\">\n" +
+    "            <i class=\"fa fa-random\"></i> Flow\n" +
+    "          </a>\n" +
+    "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -296,8 +297,18 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
-    "\n" +
     "      <cubes-panel></cubes-panel>\n" +
+    "\n" +
+    "      <div class=\"embed-link\">\n" +
+    "        <p class=\"help-block\">Embed this view into another website with this code:</p>\n" +
+    "        <div class=\"input-group\">\n" +
+    "          <span class=\"input-group-addon\">\n" +
+    "            <i class=\"fa fa-external-link-square\"></i>\n" +
+    "          </span>\n" +
+    "          <input type=\"text\" class=\"form-control\" readonly value=\"<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</cubes>\n" +
@@ -741,6 +752,10 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
         return state;
       };
 
+      self.isEmbedded = function() {
+        return state.embed == 'true';
+      };
+
       self.setState = function(s) {
         $location.search(s);
       };
@@ -1054,6 +1069,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
       $scope.filters = [];
       $scope.getSort = cubesCtrl.getSort;
       $scope.pushSort = cubesCtrl.pushSort;
+      $scope.embedLink = null;
 
       var update = function() {
         //$scope.state.page = 0;
@@ -1329,14 +1345,12 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
 
       var wrapper = element.querySelectorAll('.sankey-cubes')[0],
           width = wrapper.clientWidth,
-          height = window.outerHeight;
+          height = document.documentElement.clientHeight;
 
-      unit = Math.max(400, height) / 50;
+      unit = Math.max(400, height) / 30;
 
       if (!svg) {
-          svg = d3.select(wrapper).append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", margin.top + margin.bottom);
+          svg = d3.select(wrapper).append("svg");
           group =  svg.append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
       }
@@ -1353,7 +1367,12 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
           height = data.cells.length * unit;
 
+      if (cubesCtrl.isEmbedded()) {
+        width = document.documentElement.clientWidth;
+        height = document.documentElement.clientHeight;
+      }
       svg.attr("height", height + margin.top + margin.bottom);
+      svg.attr("width", width + margin.left + margin.right);
 
       var graph = {nodes: [], links: []},
           objs = {};
@@ -1555,6 +1574,11 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           width = wrapper.clientWidth,
           height = width * 0.6;
 
+      if (cubesCtrl.isEmbedded()) {
+        width = document.documentElement.clientWidth;
+        height = document.documentElement.clientHeight;
+      }
+
       treemap = d3.layout.treemap()
         .size([width, height])
         .sticky(true)
@@ -1692,64 +1716,35 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     },
     templateUrl: 'angular-cubes-templates/workspace.html',
     link: function(scope, element, attrs) {
-      var getActiveVisualization = function() {
-        var active;
-        scope.visualizations.some(function(v) {
-          if(v.view == scope.view) {
-            active = v;
-            return true;
-          }
-        });
-        return active;
-      }
       scope.state = {};
-      scope.visualizationHead = {
-        name: 'Visulization',
-        icon: 'fa-eye',
-        visible: false
-      }
-      scope.visualizations = [
-        {
-          name: 'Treemap',
-          icon: 'fa-th-large',
-          view: 'treemap',
-          visible: true
-        },
-        {
-          name: 'Barchart',
-          icon: 'fa-bar-chart',
-          view: 'barchart',
-          visible: true
-        },
-        {
-          name: 'Flow diagram',
-          icon: 'fa-random',
-          view: 'sankey',
-          visible: true
-        }
-      ];
+      scope.embedLink = '';
       scope.view = $location.search().view || 'facts';
-      scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
 
-      scope.$watch('view', function(view) {
-        if(view) {
-          scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
-        }
-      });
       scope.setView = function(view) {
         var state = $location.search();
         state.view = view;
         $location.search(state);
       };
-      scope.status = {
-        isopen: false
+
+      var prepareEmbed = function() {
+        var qs = [],
+            opts = angular.extend({}, $location.search(), {
+              view: scope.view,
+              slicer: scope.slicer,
+              cube: scope.cube,
+              embed: true
+            });
+        for (var name in opts) {
+          var values = asArray(opts[name]);
+          for (var i in values) {
+            var val = encodeURIComponent(values[i]);
+            qs.push(name + '=' + val);
+          }
+        }
+        scope.embedLink = ngCubesGlobals.embedLink + '#/?' + qs.join('&');
       };
-      scope.toggleDropdown = function($event, view) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        scope.status.isopen = !scope.status.isopen;
-        scope.setView(view);
-      };
+
+      prepareEmbed();
     }
   };
 }]);

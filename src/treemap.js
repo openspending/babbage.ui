@@ -50,6 +50,11 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           width = wrapper.clientWidth,
           height = width * 0.6;
 
+      if (cubesCtrl.isEmbedded()) {
+        width = document.documentElement.clientWidth;
+        height = document.documentElement.clientHeight;
+      }
+
       treemap = d3.layout.treemap()
         .size([width, height])
         .sticky(true)

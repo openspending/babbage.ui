@@ -8,64 +8,35 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
     },
     templateUrl: 'angular-cubes-templates/workspace.html',
     link: function(scope, element, attrs) {
-      var getActiveVisualization = function() {
-        var active;
-        scope.visualizations.some(function(v) {
-          if(v.view == scope.view) {
-            active = v;
-            return true;
-          }
-        });
-        return active;
-      }
       scope.state = {};
-      scope.visualizationHead = {
-        name: 'Visulization',
-        icon: 'fa-eye',
-        visible: false
-      }
-      scope.visualizations = [
-        {
-          name: 'Treemap',
-          icon: 'fa-th-large',
-          view: 'treemap',
-          visible: true
-        },
-        {
-          name: 'Barchart',
-          icon: 'fa-bar-chart',
-          view: 'barchart',
-          visible: true
-        },
-        {
-          name: 'Flow diagram',
-          icon: 'fa-random',
-          view: 'sankey',
-          visible: true
-        }
-      ];
+      scope.embedLink = '';
       scope.view = $location.search().view || 'facts';
-      scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
 
-      scope.$watch('view', function(view) {
-        if(view) {
-          scope.activeVisualization = getActiveVisualization() || scope.visualizationHead;
-        }
-      });
       scope.setView = function(view) {
         var state = $location.search();
         state.view = view;
         $location.search(state);
       };
-      scope.status = {
-        isopen: false
+
+      var prepareEmbed = function() {
+        var qs = [],
+            opts = angular.extend({}, $location.search(), {
+              view: scope.view,
+              slicer: scope.slicer,
+              cube: scope.cube,
+              embed: true
+            });
+        for (var name in opts) {
+          var values = asArray(opts[name]);
+          for (var i in values) {
+            var val = encodeURIComponent(values[i]);
+            qs.push(name + '=' + val);
+          }
+        }
+        scope.embedLink = ngCubesGlobals.embedLink + '#/?' + qs.join('&');
       };
-      scope.toggleDropdown = function($event, view) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        scope.status.isopen = !scope.status.isopen;
-        scope.setView(view);
-      };
+
+      prepareEmbed();
     }
   };
 }]);

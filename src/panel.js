@@ -15,6 +15,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
       $scope.filters = [];
       $scope.getSort = cubesCtrl.getSort;
       $scope.pushSort = cubesCtrl.pushSort;
+      $scope.embedLink = null;
 
       var update = function() {
         //$scope.state.page = 0;

@@ -1,32 +1,34 @@
 <cubes slicer="{{slicer}}" cube="{{cube}}" state="state">
   <div class="row">
     <div class="col-md-12">
-      <div class="btn-group spaced pull-right" role="group">
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'facts'}"
-          ng-click="setView('facts')">
-          <i class="fa fa-table"></i> Items
-        </a>
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'crosstab'}"
-          ng-click="setView('crosstab')">
-          <i class="fa fa-cubes"></i> Pivot table
-        </a>
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'barchart'}"
-          ng-click="setView('barchart')">
-          <i class="fa fa-bar-chart"></i> Bar chart
-        </a>
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'treemap'}"
-          ng-click="setView('treemap')">
-          <i class="fa fa-th-large"></i> Treemap
-        </a>
-        <a class="btn btn-default"
-          ng-class="{'active': view == 'sankey'}"
-          ng-click="setView('sankey')">
-          <i class="fa fa-random"></i> Flow
-        </a>
+      <div class="pull-right">
+        <div class="btn-group spaced" role="group">
+          <a class="btn btn-default"
+            ng-class="{'active': view == 'facts'}"
+            ng-click="setView('facts')">
+            <i class="fa fa-table"></i> Items
+          </a>
+          <a class="btn btn-default"
+            ng-class="{'active': view == 'crosstab'}"
+            ng-click="setView('crosstab')">
+            <i class="fa fa-cubes"></i> Pivot table
+          </a>
+          <a class="btn btn-default"
+            ng-class="{'active': view == 'barchart'}"
+            ng-click="setView('barchart')">
+            <i class="fa fa-bar-chart"></i> Bar chart
+          </a>
+          <a class="btn btn-default"
+            ng-class="{'active': view == 'treemap'}"
+            ng-click="setView('treemap')">
+            <i class="fa fa-th-large"></i> Treemap
+          </a>
+          <a class="btn btn-default"
+            ng-class="{'active': view == 'sankey'}"
+            ng-click="setView('sankey')">
+            <i class="fa fa-random"></i> Flow
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -49,8 +51,18 @@
       </div>
     </div>
     <div class="col-md-3">
-
       <cubes-panel></cubes-panel>
+
+      <div class="embed-link">
+        <p class="help-block">Embed this view into another website with this code:</p>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="fa fa-external-link-square"></i>
+          </span>
+          <input type="text" class="form-control" readonly value="<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>">
+        </div>
+      </div>
+
     </div>
   </div>
 </cubes>

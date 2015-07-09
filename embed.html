@@ -28,15 +28,14 @@
   </cubes>
 
   <script src='dist/deps.js'></script>
-  <script src='dist/angular-cubes.min.js'></script>
+  <script src='dist/angular-cubes.js'></script>
   <script>
     var cubesEmbed = angular.module('cubesEmbed', ['ngCubes', 'angular.filter', 'ui.bootstrap', 'ui.select']);
 
     cubesEmbed.controller('Ctrl', function ($scope, $location) {
       $scope.state = $location.search();
-      console.log($scope.state);
-      $scope.cube = 'wb-contract-awards';
-      $scope.slicer = 'https://spendb-dev.herokuapp.com/api/slicer/';
+      $scope.cube = $scope.state.cube;
+      $scope.slicer = $scope.state.slicer;
       $scope.view = $scope.state.view || 'facts';
     });
 
