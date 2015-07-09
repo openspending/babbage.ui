@@ -1347,7 +1347,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           width = wrapper.clientWidth,
           height = document.documentElement.clientHeight;
 
-      unit = Math.max(400, height) / 30;
+      unit = Math.max(400, height) / 40;
 
       if (!svg) {
           svg = d3.select(wrapper).append("svg");
@@ -1371,6 +1371,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
         width = document.documentElement.clientWidth;
         height = document.documentElement.clientHeight;
       }
+
       svg.attr("height", height + margin.top + margin.bottom);
       svg.attr("width", width + margin.left + margin.right);
 
