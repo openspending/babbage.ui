@@ -1555,7 +1555,7 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'barchart'}\"\n" +
     "          ng-click=\"setView('barchart')\">\n" +
-    "          <i class=\"fa fa-bar-chart\"></i> Barchart\n" +
+    "          <i class=\"fa fa-bar-chart\"></i> Bar chart\n" +
     "        </a>\n" +
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'treemap'}\"\n" +
@@ -1565,7 +1565,7 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "        <a class=\"btn btn-default\"\n" +
     "          ng-class=\"{'active': view == 'sankey'}\"\n" +
     "          ng-click=\"setView('sankey')\">\n" +
-    "          <i class=\"fa fa-random\"></i> Flow diagram\n" +
+    "          <i class=\"fa fa-random\"></i> Flow\n" +
     "        </a>\n" +
     "      </div>\n" +
     "    </div>\n" +
