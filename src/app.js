@@ -1,3 +1,5 @@
+var ngCubes = angular.module('ngCubes', ['ngCubes.templates']);
+
 var ngCubesGlobals = ngCubesGlobals || {};
 ngCubesGlobals.numberFormat = d3.format("0,000");
 ngCubesGlobals.categoryColors = [
@@ -8,7 +10,14 @@ ngCubesGlobals.categoryColors = [
     ];
 ngCubesGlobals.colorScale = d3.scale.ordinal().range(ngCubesGlobals.categoryColors);
 
-var ngCubes = angular.module('ngCubes', ['ngCubes.templates']);
+if(!ngCubesGlobals.embedSite) {
+  var url = window.location.href.split('#')[0],
+      lastSlash = url.lastIndexOf('/'),
+      lastSlash = lastSlash == -1 ? url.length : lastSlash;
+  ngCubesGlobals.embedSite = url.slice(0, lastSlash);
+}
+ngCubesGlobals.embedLink = ngCubesGlobals.embedSite + '/embed.html';
+
 
 ngCubes.filter('numeric', function() {
   return function(val) {

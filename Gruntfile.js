@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-aws-s3');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -17,10 +18,10 @@ module.exports = function(grunt) {
     uglify: {
       app: {
         options: {
-          banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+          banner: '/*! <%= pkg.name %> v<%= pkg.version %> */'
         },
         build: {
-          src: ['dist/<%= pkg.name %>.js'],
+          src: ['dist/angular-cubes.js'],
           dest: 'dist/<%= pkg.name %>.min.js'
         }
       },
@@ -45,11 +46,12 @@ module.exports = function(grunt) {
     },
     concat: {
       options: {
+        banner: 'var ngCubesGlobals = ngCubesGlobals || {}; ngCubesGlobals.embedSite = "http://<%= pkg.deployBucket %>/<%= pkg.deployBase %>/<%= pkg.version %>";',
         stripBanners: true,
         separator: ';'
       },
       dist: {
-        src: ['src/app.js', 'src/**/*.js'],
+        src: [ 'dist/templates.js', 'src/app.js', 'src/**/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       },
     },
@@ -93,6 +95,18 @@ module.exports = function(grunt) {
         }
       }
     },
+    aws_s3: {
+      assets: {
+        options: {
+          bucket: '<%= pkg.deployBucket %>',
+          region: 'eu-west-1',
+          uploadConcurrency: 5
+        },
+        files: [
+          {expand: true, cwd: '.', src: ['dist/**', 'src/**', '*.html'], dest: '<%= pkg.deployBase %>/<%= pkg.version %>'},
+        ]
+      }
+    },
     watch: {
       templates: {
         files: ['templates/**/*.html'],
@@ -110,5 +124,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['less', 'html2js', 'concat', 'uglify']);
+  grunt.registerTask('deploy', ['aws_s3']);
   grunt.registerTask('server', ['connect', 'watch'])
 };
