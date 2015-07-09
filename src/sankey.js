@@ -79,8 +79,6 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       var graph = {nodes: [], links: []},
           objs = {};
 
-      // console.log(data);
-
       var sourceScale = ngCubesColorScale.copy(),
           targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
       data.cells.forEach(function(cell) {
@@ -95,6 +93,8 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
         if (link.value == 0 || !sourceId || !targetId) {
           return;
         }
+        sourceId = 'source-' + sourceRef + sourceId;
+        targetId = 'target-' + targetRef + targetId;
 
         if (!objs[sourceId]) {
           var label = cell[model.refLabels[sourceRef]];
@@ -158,7 +158,8 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
         .attr("height", function(d) { return d.dy; })
         .attr("width", sankey.nodeWidth())
         .style("fill", function(d) { return d.color; })
-        .style("stroke", function(d) { return d3.rgb(d.color).darker(1); })
+        //.style("stroke", function(d) { return d3.rgb(d.color).darker(1); })
+        .style("stroke", function(d) { return d.color; })
       .append("title")
         .text(function(d) { return d.name });
 
