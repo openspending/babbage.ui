@@ -72,7 +72,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           targetRef = asArray(state.target)[0]
           aggregateRef = asArray(state.aggregate)[0],
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
-          height = data.cells.length * unit * 0.6;
+          height = data.cells.length * unit * 0.8;
 
       svg.attr("height", height + margin.top + margin.bottom);
 
@@ -81,11 +81,14 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
 
       // console.log(data);
 
+      var sourceScale = ngCubesColorScale.copy(),
+          targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
             targetId = cell[targetRef],
             link = {
-              value: Math.sqrt(cell[aggregateRef]),
+              //value: Math.sqrt(cell[aggregateRef]),
+              value: cell[aggregateRef],
               number: numberFormat(cell[aggregateRef])
             };
 
@@ -97,7 +100,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           var label = cell[model.refLabels[sourceRef]];
           graph.nodes.push({
             name: label,
-            color: ngCubesColorScale(sourceId)
+            color: sourceScale(sourceId)
           });
           objs[sourceId] = {idx: graph.nodes.length - 1};
         }
@@ -107,7 +110,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           var label = cell[model.refLabels[targetRef]];
           graph.nodes.push({
             name: label,
-            color: ngCubesColorScale(targetId)
+            color: targetScale(targetId)
           });
           objs[targetId] = {
             idx: graph.nodes.length - 1
