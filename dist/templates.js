@@ -305,7 +305,8 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "          <span class=\"input-group-addon\">\n" +
     "            <i class=\"fa fa-external-link-square\"></i>\n" +
     "          </span>\n" +
-    "          <input type=\"text\" class=\"form-control\" readonly value=\"<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
+    "          <input type=\"text\" class=\"form-control\" readonly\n" +
+    "            value=\"<style>.ngCuEmb{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .ngCuEmb iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='ngCuEmb'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +

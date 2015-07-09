@@ -33,7 +33,7 @@
     "d3-plugins": "*",
     "angular-ui-select": "~0.12.0",
     "angular-filter": "~0.5.4",
-    "angular-bootstrap": "~0.13.0",
+    "angular-bootstrap": "~0.12.0",
     "angular-route": "~1.2.28"
   },
   "resolutions": {
