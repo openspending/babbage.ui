@@ -114,17 +114,20 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: ['$scope', function($scope) {
       var self = this,
+          modelUpdate = 'cubesModelUpdate',
           state = angular.extend({}, $scope.state || {}, $location.search());
 
-      self.dataUpdate = makeSignal();
-      self.modelUpdate = makeSignal();
       self.queryModel = {};
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
         cubesApi.getModel($scope.slicer, $scope.cube).then(function(model) {
-          $rootScope.$broadcast(self.modelUpdate, model, state);
+          $scope.$broadcast(self.modelUpdate, model, state);
         });
+      };
+
+      self.subscribe = function(listener) {
+        return $scope.$on(self.modelUpdate, listener);
       };
 
       self.getState = function() {
@@ -334,7 +337,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         if (!cubesCtrl.getSort(dd).direction) {
           if (q.order.indexOf(dd) == -1) {
             q.order.push({ref: dd});
-          }  
+          }
         }
       }
       var order = [];
@@ -361,7 +364,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         return data.aggregates.indexOf(agg.ref) != -1;
       });
 
-      // following code inspired by: 
+      // following code inspired by:
       // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
       var matrix = {}, table = [],
           row_headers = [], column_headers = [],
@@ -417,9 +420,10 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     var defaultAggregates = function(model) {
       var aggs = [];
@@ -461,7 +465,6 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
   }
   };
 }]);
-
 ;
 ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
@@ -578,9 +581,10 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       return defaults;
     };
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     // console.log('facts init');
     cubesCtrl.init({
@@ -596,7 +600,6 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
   }
   };
 }]);
-
 ;ngCubesCategoryColors = [
     "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
     "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D",
@@ -729,9 +732,10 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
     };
 
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     var defaultArea = function(model) {
       for (var i in model.aggregates) {
@@ -944,9 +948,10 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
     };
 
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     var defaultAggregate = function(model) {
       for (var i in model.aggregates) {
@@ -1017,7 +1022,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
             axis.selected.push(ref);
           } else {
             if (axis.selected.length) {
-              $scope.state.order = cubesCtrl.removeSorts(axis.selected[0]);  
+              $scope.state.order = cubesCtrl.removeSorts(axis.selected[0]);
             }
             axis.selected = [ref];
           }
@@ -1123,7 +1128,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
           var opt = options[i];
           if (opt.type == 'attributes' && opt.cardinality != 'high') {
             if (opt.level.label_attribute == opt.name) {
-              filters.push(opt);  
+              filters.push(opt);
             }
           }
         }
@@ -1209,7 +1214,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         update();
       };
 
-      $rootScope.$on(cubesCtrl.modelUpdate, function(event, mdl, state) {
+      var unsubscribe = cubesCtrl.subscribe(function(event, mdl, state) {
         model = mdl;
         $scope.state = state;
 
@@ -1220,6 +1225,8 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         loadFilters(state);
 
       });
+      $scope.$on('$destroy', unsubscribe);
+
     }
   };
 }]);

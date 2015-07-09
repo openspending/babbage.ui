@@ -178,9 +178,10 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
     };
 
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     var defaultAggregate = function(model) {
       for (var i in model.aggregates) {

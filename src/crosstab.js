@@ -40,7 +40,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         if (!cubesCtrl.getSort(dd).direction) {
           if (q.order.indexOf(dd) == -1) {
             q.order.push({ref: dd});
-          }  
+          }
         }
       }
       var order = [];
@@ -67,7 +67,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
         return data.aggregates.indexOf(agg.ref) != -1;
       });
 
-      // following code inspired by: 
+      // following code inspired by:
       // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
       var matrix = {}, table = [],
           row_headers = [], column_headers = [],
@@ -123,9 +123,10 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     var defaultAggregates = function(model) {
       var aggs = [];
@@ -167,4 +168,3 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
   }
   };
 }]);
-

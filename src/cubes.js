@@ -91,17 +91,20 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
     templateUrl: 'angular-cubes-templates/cubes.html',
     controller: ['$scope', function($scope) {
       var self = this,
+          modelUpdate = 'cubesModelUpdate',
           state = angular.extend({}, $scope.state || {}, $location.search());
 
-      self.dataUpdate = makeSignal();
-      self.modelUpdate = makeSignal();
       self.queryModel = {};
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
         cubesApi.getModel($scope.slicer, $scope.cube).then(function(model) {
-          $rootScope.$broadcast(self.modelUpdate, model, state);
+          $scope.$broadcast(self.modelUpdate, model, state);
         });
+      };
+
+      self.subscribe = function(listener) {
+        return $scope.$on(self.modelUpdate, listener);
       };
 
       self.getState = function() {

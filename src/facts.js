@@ -114,9 +114,10 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       return defaults;
     };
 
-    $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
+    scope.$on('$destroy', unsubscribe);
 
     // console.log('facts init');
     cubesCtrl.init({
@@ -132,4 +133,3 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
   }
   };
 }]);
-

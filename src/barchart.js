@@ -110,9 +110,10 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         scope.queryLoaded = true;
       };
 
-      $rootScope.$on(cubesCtrl.modelUpdate, function(event, model, state) {
+      var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
         query(model, state);
       });
+      scope.$on('$destroy', unsubscribe);
 
       cubesCtrl.init({
         y: {
