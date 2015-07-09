@@ -300,7 +300,7 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      <cubes-panel></cubes-panel>\n" +
     "\n" +
     "      <div class=\"embed-link\">\n" +
-    "        <p class=\"help-block\">Embed this view into another website with this code:</p>\n" +
+    "        <p class=\"help-block\">Embed this view into another website:</p>\n" +
     "        <div class=\"input-group\">\n" +
     "          <span class=\"input-group-addon\">\n" +
     "            <i class=\"fa fa-external-link-square\"></i>\n" +

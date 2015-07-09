@@ -15,7 +15,7 @@
     "grunt-html2js": "^0.3.0"
   },
   "deployBucket": "assets.pudo.org",
-  "deployBase": "/libs/angular-cubes",
+  "deployBase": "libs/angular-cubes",
   "homepage": "https://github.com/pudo/angular-cubes",
   "dependencies": {},
   "repository": {

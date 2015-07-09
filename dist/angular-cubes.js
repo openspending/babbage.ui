@@ -1,4 +1,4 @@
-var ngCubesGlobals = ngCubesGlobals || {}; ngCubesGlobals.embedSite = "http://assets.pudo.org//libs/angular-cubes/0.1.6";angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/sankey.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
+var ngCubesGlobals = ngCubesGlobals || {}; ngCubesGlobals.embedSite = "http://assets.pudo.org/libs/angular-cubes/0.1.6";angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/sankey.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
 
 angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("angular-cubes-templates/barchart.html",
@@ -300,7 +300,7 @@ angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCach
     "      <cubes-panel></cubes-panel>\n" +
     "\n" +
     "      <div class=\"embed-link\">\n" +
-    "        <p class=\"help-block\">Embed this view into another website with this code:</p>\n" +
+    "        <p class=\"help-block\">Embed this view into another website:</p>\n" +
     "        <div class=\"input-group\">\n" +
     "          <span class=\"input-group-addon\">\n" +
     "            <i class=\"fa fa-external-link-square\"></i>\n" +

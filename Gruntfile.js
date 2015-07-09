@@ -20,15 +20,14 @@ module.exports = function(grunt) {
         options: {
           banner: '/*! <%= pkg.name %> v<%= pkg.version %> */'
         },
-        build: {
-          src: ['dist/angular-cubes.js'],
-          dest: 'dist/<%= pkg.name %>.min.js'
+        files: {
+          'dist/angular-cubes.min.js': ['dist/angular-cubes.js']
         }
       },
       deps: {
         options: {},
-        build: {
-          src: [
+        files: {
+          'dist/deps.js': [
             'bower_components/d3/d3.js',
             'bower_components/d3-plugins/sankey/sankey.js',
             'bower_components/vega-lite/lib/vega.js',
@@ -39,8 +38,7 @@ module.exports = function(grunt) {
             'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
             'bower_components/angular-ui-select/dist/select.min.js',
             'bower_components/angular-filter/dist/angular-filter.js'
-          ],
-          dest: 'dist/deps.js'
+          ]
         }
       }
     },
@@ -103,7 +101,7 @@ module.exports = function(grunt) {
           uploadConcurrency: 5
         },
         files: [
-          {expand: true, cwd: '.', src: ['dist/**', 'src/**', '*.html'], dest: '<%= pkg.deployBase %>/<%= pkg.version %>'},
+          {expand: true, cwd: '.', src: ['dist/**', 'src/**', '*.html'], dest: '/<%= pkg.deployBase %>/<%= pkg.version %>'},
         ]
       }
     },
