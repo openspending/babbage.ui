@@ -1,13 +1,13 @@
 
-ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
+ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/sankey.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/sankey.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     var unit = 15,
         margin = {top: unit / 2, right: 1, bottom: 6, left: 1},
         svg = null, group = null;
@@ -22,7 +22,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregate = asArray(state.aggregate)[0],
           aggregate = aggregate ? [aggregate] : defaultAggregate(model);
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = aggregate;
       if (!source || !target) {
         return;
@@ -48,10 +48,10 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
 
       scope.queryLoaded = true;
       scope.cutoffWarning = false;
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
 
-      var wrapper = element.querySelectorAll('.sankey-cubes')[0],
+      var wrapper = element.querySelectorAll('.sankey-babbage')[0],
           width = wrapper.clientWidth,
           height = document.documentElement.clientHeight;
 
@@ -75,7 +75,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
           height = data.cells.length * unit;
 
-      if (cubesCtrl.isEmbedded()) {
+      if (babbageCtrl.isEmbedded()) {
         width = document.documentElement.clientWidth;
         height = document.documentElement.clientHeight;
       }
@@ -86,7 +86,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       var graph = {nodes: [], links: []},
           objs = {};
 
-      var sourceScale = ngCubesGlobals.colorScale.copy(),
+      var sourceScale = ngBabbageGlobals.colorScale.copy(),
           targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
@@ -94,7 +94,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
             link = {
               //value: Math.sqrt(cell[aggregateRef]),
               value: cell[aggregateRef],
-              number: ngCubesGlobals.numberFormat(cell[aggregateRef])
+              number: ngBabbageGlobals.numberFormat(cell[aggregateRef])
             };
 
         if (link.value == 0 || !sourceId || !targetId) {
@@ -186,7 +186,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -201,7 +201,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       return [];
     };
 
-    cubesCtrl.init({
+    babbageCtrl.init({
       source: {
         label: 'Source',
         addLabel: 'set left side',

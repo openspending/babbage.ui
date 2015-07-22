@@ -1,12 +1,12 @@
 
-ngCubes.directive('cubesWorkspace', ['$location', function($location) {
+ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
   return {
     restrict: 'EA',
     scope: {
       slicer: '@',
       cube: '@'
     },
-    templateUrl: 'angular-cubes-templates/workspace.html',
+    templateUrl: 'babbage-templates/workspace.html',
     link: function(scope, element, attrs) {
       scope.state = {};
       scope.embedLink = '';
@@ -33,7 +33,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
             qs.push(name + '=' + val);
           }
         }
-        scope.embedLink = ngCubesGlobals.embedLink + '#/?' + qs.join('&');
+        scope.embedLink = ngBabbageGlobals.embedLink + '#/?' + qs.join('&');
       };
 
       prepareEmbed();

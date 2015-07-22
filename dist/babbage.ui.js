@@ -1,20 +1,20 @@
-var ngCubesGlobals = ngCubesGlobals || {}; ngCubesGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.6";angular.module('ngCubes.templates', ['babbage.ui-templates/barchart.html', 'babbage.ui-templates/crosstab.html', 'babbage.ui-templates/cubes.html', 'babbage.ui-templates/facts.html', 'babbage.ui-templates/pager.html', 'babbage.ui-templates/panel.html', 'babbage.ui-templates/sankey.html', 'babbage.ui-templates/treemap.html', 'babbage.ui-templates/workspace.html']);
+var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.6";angular.module('ngBabbage.templates', ['babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/cubes.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
 
-angular.module("babbage.ui-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/barchart.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/barchart.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
     "  </div>\n" +
     "</div>\n" +
-    "<div class=\"barchart-cubes\">\n" +
+    "<div class=\"barchart-babbage\">\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/crosstab.html",
-    "<div class=\"table-cubes\" ng-show=\"rows.length\">\n" +
+angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/crosstab.html",
+    "<div class=\"table-babbage\" ng-show=\"rows.length\">\n" +
     "  <table class=\"table table-bordered table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr ng-repeat=\"x in columns[0]\">\n" +
@@ -37,25 +37,25 @@ angular.module("babbage.ui-templates/crosstab.html", []).run(["$templateCache", 
     "  </table>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"table-cubes\" ng-hide=\"rows.length || !queryLoaded\">\n" +
+    "<div class=\"table-babbage\" ng-hide=\"rows.length || !queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
-    "    <strong>You have not selected any data.</strong> Please choose a set of rows \n" +
+    "    <strong>You have not selected any data.</strong> Please choose a set of rows\n" +
     "    and columns to generate a cross-table.\n" +
     "  </div>\n" +
     "</div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/cubes.html",
-    "<div class=\"cubes-frame\" ng-transclude>\n" +
+angular.module("babbage-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/cubes.html",
+    "<div class=\"babbage-frame\" ng-transclude>\n" +
     "</div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/facts.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/facts.html",
-    "<div class=\"table-cubes\" ng-show=\"data\">\n" +
+angular.module("babbage-templates/facts.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/facts.html",
+    "<div class=\"table-babbage\" ng-show=\"data\">\n" +
     "  <table class=\"table table-bordered table-striped table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr>\n" +
@@ -91,12 +91,12 @@ angular.module("babbage.ui-templates/facts.html", []).run(["$templateCache", fun
     "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
-    "<cubes-pager context=\"pagerCtx\"></cubes-pager>\n" +
+    "<babbage-pager context=\"pagerCtx\"></babbage-pager>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/pager.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/pager.html",
+angular.module("babbage-templates/pager.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/pager.html",
     "<ul ng-show=\"showPager\" class=\"pagination pagination-sm\">\n" +
     "  <li ng-class=\"{'disabled': !hasPrev}\">\n" +
     "    <a class=\"ng-link\" ng-click=\"setPage(current - 1)\">&laquo;</a>\n" +
@@ -111,8 +111,8 @@ angular.module("babbage.ui-templates/pager.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("babbage.ui-templates/panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/panel.html",
+angular.module("babbage-templates/panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/panel.html",
     "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\">\n" +
     "  <div class=\"panel-heading\">\n" +
     "    <strong>{{axis.label}}</strong>\n" +
@@ -206,9 +206,9 @@ angular.module("babbage.ui-templates/panel.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("babbage.ui-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/sankey.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/sankey.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    both sides of the flow diagram.\n" +
@@ -220,13 +220,13 @@ angular.module("babbage.ui-templates/sankey.html", []).run(["$templateCache", fu
     "  have many different links, only the {{cutoff}} biggest are shown.\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sankey-cubes\"></div>\n" +
+    "<div class=\"sankey-babbage\"></div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/treemap.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/treemap.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
@@ -238,13 +238,13 @@ angular.module("babbage.ui-templates/treemap.html", []).run(["$templateCache", f
     "  different categories, only the {{cutoff}} biggest are shown.\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"treemap-cubes\"></div>\n" +
+    "<div class=\"treemap-babbage\"></div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/workspace.html",
-    "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
+angular.module("babbage-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/workspace.html",
+    "<babbage slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
     "      <div class=\"pull-right\">\n" +
@@ -257,7 +257,7 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "            ng-click=\"setView('crosstab')\">\n" +
-    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
+    "            <i class=\"fa fa-babbage\"></i> Pivot table\n" +
     "          </a>\n" +
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'barchart'}\"\n" +
@@ -281,23 +281,23 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-9\">\n" +
     "      <div ng-if=\"view == 'crosstab'\">\n" +
-    "        <cubes-crosstab></cubes-crosstab>\n" +
+    "        <babbage-crosstab></babbage-crosstab>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'facts'\">\n" +
-    "        <cubes-facts></cubes-facts>\n" +
+    "        <babbage-facts></babbage-facts>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'treemap'\">\n" +
-    "        <cubes-treemap></cubes-treemap>\n" +
+    "        <babbage-treemap></babbage-treemap>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'barchart'\">\n" +
-    "        <cubes-barchart></cubes-barchart>\n" +
+    "        <babbage-barchart></babbage-barchart>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'sankey'\">\n" +
-    "        <cubes-sankey></cubes-sankey>\n" +
+    "        <babbage-sankey></babbage-sankey>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
-    "      <cubes-panel></cubes-panel>\n" +
+    "      <babbage-panel></babbage-panel>\n" +
     "\n" +
     "      <div class=\"embed-link\">\n" +
     "        <p class=\"help-block\">Embed this view into another website:</p>\n" +
@@ -312,41 +312,41 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "</cubes>\n" +
+    "</babbage>\n" +
     "");
 }]);
-;var ngCubes = angular.module('ngCubes', ['ngCubes.templates']);
+;var ngBabbage = angular.module('ngBabbage', ['ngBabbage.templates']);
 
-var ngCubesGlobals = ngCubesGlobals || {};
-ngCubesGlobals.numberFormat = d3.format("0,000");
-ngCubesGlobals.categoryColors = [
+var ngBabbageGlobals = ngBabbageGlobals || {};
+ngBabbageGlobals.numberFormat = d3.format("0,000");
+ngBabbageGlobals.categoryColors = [
     "#CF3D1E", "#F15623", "#F68B1F", "#FFC60B", "#DFCE21",
     "#BCD631", "#95C93D", "#48B85C", "#00833D", "#00B48D",
     "#60C4B1", "#27C4F4", "#478DCB", "#3E67B1", "#4251A3", "#59449B",
     "#6E3F7C", "#6A246D", "#8A4873", "#EB0080", "#EF58A0", "#C05A89"
     ];
-ngCubesGlobals.colorScale = d3.scale.ordinal().range(ngCubesGlobals.categoryColors);
+ngBabbageGlobals.colorScale = d3.scale.ordinal().range(ngBabbageGlobals.categoryColors);
 
-if(!ngCubesGlobals.embedSite) {
+if(!ngBabbageGlobals.embedSite) {
   var url = window.location.href.split('#')[0],
       lastSlash = url.lastIndexOf('/'),
       lastSlash = lastSlash == -1 ? url.length : lastSlash;
-  ngCubesGlobals.embedSite = url.slice(0, lastSlash);
+  ngBabbageGlobals.embedSite = url.slice(0, lastSlash);
 }
-ngCubesGlobals.embedLink = ngCubesGlobals.embedSite + '/embed.html';
+ngBabbageGlobals.embedLink = ngBabbageGlobals.embedSite + '/embed.html';
 
 
-ngCubes.filter('numeric', function() {
+ngBabbage.filter('numeric', function() {
   return function(val) {
     var fval = parseFloat(val)
     if (isNaN(fval)) {
       return '-';
     }
-    return ngCubesGlobals.numberFormat(Math.round(fval));
+    return ngBabbageGlobals.numberFormat(Math.round(fval));
   };
 });
 ;
-ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
+ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
   var getUrl = function(slicer, cube, endpoint) {
@@ -412,14 +412,14 @@ ngCubes.factory('cubesApi', ['$http', '$q', 'slugifyFilter', function($http, $q,
   };
 }]);
 ;
-ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, $http) {
+ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootScope, $http) {
   return {
     restrict: 'EA',
-    require: '^cubes',
+    require: '^babbage',
     scope: {
     },
-    templateUrl: 'angular-cubes-templates/barchart.html',
-    link: function(scope, element, attrs, cubesCtrl) {
+    templateUrl: 'babbage-templates/barchart.html',
+    link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
       var isAggregate = function(aggregates, type) {
         var isAggregate = aggregates.some(function(a) {
@@ -441,7 +441,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
 
-        var q = cubesCtrl.getQuery();
+        var q = babbageCtrl.getQuery();
         q.aggregates = getAggregate(model, x, y);
         if (!q.aggregates) {
           return;
@@ -464,8 +464,8 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         q.page = 0;
         q.pagesize = 50;
 
-        var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                            cubesCtrl.queryParams(q));
+        var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                            babbageCtrl.queryParams(q));
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
       });
@@ -519,16 +519,16 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
             "singleWidth": widthForChart(element)
           }
         };
-        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-cubes')[0])
+        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-babbage')[0])
         scope.queryLoaded = true;
       };
 
-      var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+      var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
         query(model, state);
       });
       scope.$on('$destroy', unsubscribe);
 
-      cubesCtrl.init({
+      babbageCtrl.init({
         y: {
           label: 'Y Axis',
           addLabel: 'set Y axis',
@@ -552,15 +552,15 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
 ;var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
-ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
+ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/crosstab.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/crosstab.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     scope.queryLoaded = false;
     scope.columns = [];
     scope.rows = [];
@@ -573,7 +573,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       // TODO: handle a case in which both sets contain the same
       // ref.
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = q.aggregates.concat(state.aggregates);
       if (!q.aggregates.length) {
         q.aggregates = defaultAggregates(model);
@@ -588,7 +588,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
           refs = drilldowns.concat(q.aggregates);
       for (var i in drilldowns) {
         var dd = drilldowns[i];
-        if (!cubesCtrl.getSort(dd).direction) {
+        if (!babbageCtrl.getSort(dd).direction) {
           if (q.order.indexOf(dd) == -1) {
             q.order.push({ref: dd});
           }
@@ -603,8 +603,8 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       }
       q.order = order;
 
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
       });
@@ -619,7 +619,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       });
 
       // following code inspired by:
-      // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
+      // https://github.com/DataBrewery/babbage/blob/master/babbage/formatters.py#L218
       var matrix = {}, table = [],
           row_headers = [], column_headers = [],
           row_keys = [], column_keys = [];
@@ -674,7 +674,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -689,7 +689,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
     // console.log('crosstab init');
-    cubesCtrl.init({
+    babbageCtrl.init({
       columns: {
         label: 'Columns',
         addLabel: 'add column',
@@ -720,8 +720,8 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
   };
 }]);
 ;
-ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
-    function($http, $rootScope, $location, cubesApi) {
+ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi',
+    function($http, $rootScope, $location, babbageApi) {
   return {
     restrict: 'E',
     transclude: true,
@@ -730,17 +730,17 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       cube: '@',
       state: '='
     },
-    templateUrl: 'angular-cubes-templates/cubes.html',
+    templateUrl: 'babbage-templates/babbage.html',
     controller: ['$scope', function($scope) {
       var self = this,
-          modelUpdate = 'cubesModelUpdate',
+          modelUpdate = 'babbageModelUpdate',
           state = angular.extend({}, $scope.state || {}, $location.search());
 
       self.queryModel = {};
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
-        cubesApi.getModel($scope.slicer, $scope.cube).then(function(model) {
+        babbageApi.getModel($scope.slicer, $scope.cube).then(function(model) {
           $scope.$broadcast(self.modelUpdate, model, state);
         });
       };
@@ -762,11 +762,11 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       };
 
       self.getApiUrl = function(endpoint) {
-        return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
+        return babbageApi.getUrl($scope.slicer, $scope.cube, endpoint);
       };
 
       self.getDimensionMembers = function(dimension) {
-        return cubesApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
+        return babbageApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
       };
 
       self.getSorts = function() {
@@ -858,24 +858,24 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
   };
 }]);
 ;
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
+ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/facts.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/facts.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     scope.page = 0;
     scope.data = [];
     scope.columns = [];
     scope.pagerCtx = {};
-    scope.getSort = cubesCtrl.getSort;
-    scope.pushSort = cubesCtrl.pushSort;
+    scope.getSort = babbageCtrl.getSort;
+    scope.pushSort = babbageCtrl.pushSort;
 
     var query = function(model, state) {
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.fields = asArray(state.fields);
       if (q.fields.length == 0) {
         q.fields = defaultFields(model);
@@ -893,10 +893,10 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
-      var facts = $http.get(cubesCtrl.getApiUrl('facts'),
-                            cubesCtrl.queryParams(q)),
-          aggs = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                            cubesCtrl.queryParams(aq));
+      var facts = $http.get(babbageCtrl.getApiUrl('facts'),
+                            babbageCtrl.queryParams(q)),
+          aggs = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                            babbageCtrl.queryParams(aq));
       $q.all([facts, aggs]).then(function(res) {
         queryResult(res[0].data, res[1].data, q, state, model);
       });
@@ -973,13 +973,13 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       return defaults;
     };
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
 
     // console.log('facts init');
-    cubesCtrl.init({
+    babbageCtrl.init({
       fields: {
         label: 'Columns',
         addLabel: 'add column',
@@ -993,13 +993,13 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
   };
 }]);
 ;
-ngCubes.directive('cubesPager', ['$timeout', '$location', function ($timeout, $location) {
+ngBabbage.directive('babbagePager', ['$timeout', '$location', function ($timeout, $location) {
   return {
     restrict: 'E',
     scope: {
       'context': '='
     },
-    templateUrl: 'angular-cubes-templates/pager.html',
+    templateUrl: 'babbage-templates/pager.html',
     link: function (scope, element, attrs, model) {
       scope.showPager = false;
       scope.hasPrev = false;
@@ -1054,27 +1054,27 @@ ngCubes.directive('cubesPager', ['$timeout', '$location', function ($timeout, $l
   };
 }]);
 ;
-ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
+ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($rootScope, slugifyFilter) {
   return {
     restrict: 'EA',
-    require: '^cubes',
+    require: '^babbage',
     scope: {
     },
-    templateUrl: 'angular-cubes-templates/panel.html',
-    link: function($scope, $element, attrs, cubesCtrl) {
+    templateUrl: 'babbage-templates/panel.html',
+    link: function($scope, $element, attrs, babbageCtrl) {
       var model = null;
 
       $scope.state = {};
       $scope.axes = [];
       $scope.filterAttributes = [];
       $scope.filters = [];
-      $scope.getSort = cubesCtrl.getSort;
-      $scope.pushSort = cubesCtrl.pushSort;
+      $scope.getSort = babbageCtrl.getSort;
+      $scope.pushSort = babbageCtrl.pushSort;
       $scope.embedLink = null;
 
       var update = function() {
         //$scope.state.page = 0;
-        cubesCtrl.setState($scope.state);
+        babbageCtrl.setState($scope.state);
       };
 
       $scope.add = function(axis, ref) {
@@ -1083,7 +1083,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
             axis.selected.push(ref);
           } else {
             if (axis.selected.length) {
-              $scope.state.order = cubesCtrl.removeSorts(axis.selected[0]);
+              $scope.state.order = babbageCtrl.removeSorts(axis.selected[0]);
             }
             axis.selected = [ref];
           }
@@ -1097,7 +1097,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         if (i != -1) {
           axis.selected.splice(i, 1);
           $scope.state[axis.name] = axis.selected;
-          $scope.state.order = cubesCtrl.removeSorts(ref);
+          $scope.state.order = babbageCtrl.removeSorts(ref);
           update();
         }
       };
@@ -1147,10 +1147,10 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
 
       var makeAxes = function(state, options) {
         var axes = [];
-        if (!cubesCtrl.queryModel) return [];
+        if (!babbageCtrl.queryModel) return [];
 
-        for (var name in cubesCtrl.queryModel) {
-          var axis = cubesCtrl.queryModel[name];
+        for (var name in babbageCtrl.queryModel) {
+          var axis = babbageCtrl.queryModel[name];
           axis.name = name;
           axis.sortId = axis.sortId || 1;
           axis.available = [];
@@ -1233,7 +1233,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
       };
 
       $scope.addFilter = function(attr, value) {
-        cubesCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
+        babbageCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
           $scope.filters.push({
             ref: attr.ref,
             attr: attr,
@@ -1275,7 +1275,7 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
         update();
       };
 
-      var unsubscribe = cubesCtrl.subscribe(function(event, mdl, state) {
+      var unsubscribe = babbageCtrl.subscribe(function(event, mdl, state) {
         model = mdl;
         $scope.state = state;
 
@@ -1292,15 +1292,15 @@ ngCubes.directive('cubesPanel', ['$rootScope', 'slugifyFilter', function($rootSc
   };
 }]);
 ;
-ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
+ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/sankey.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/sankey.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     var unit = 15,
         margin = {top: unit / 2, right: 1, bottom: 6, left: 1},
         svg = null, group = null;
@@ -1315,7 +1315,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregate = asArray(state.aggregate)[0],
           aggregate = aggregate ? [aggregate] : defaultAggregate(model);
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = aggregate;
       if (!source || !target) {
         return;
@@ -1341,10 +1341,10 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
 
       scope.queryLoaded = true;
       scope.cutoffWarning = false;
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
 
-      var wrapper = element.querySelectorAll('.sankey-cubes')[0],
+      var wrapper = element.querySelectorAll('.sankey-babbage')[0],
           width = wrapper.clientWidth,
           height = document.documentElement.clientHeight;
 
@@ -1368,7 +1368,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
           height = data.cells.length * unit;
 
-      if (cubesCtrl.isEmbedded()) {
+      if (babbageCtrl.isEmbedded()) {
         width = document.documentElement.clientWidth;
         height = document.documentElement.clientHeight;
       }
@@ -1379,7 +1379,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       var graph = {nodes: [], links: []},
           objs = {};
 
-      var sourceScale = ngCubesGlobals.colorScale.copy(),
+      var sourceScale = ngBabbageGlobals.colorScale.copy(),
           targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
@@ -1387,7 +1387,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
             link = {
               //value: Math.sqrt(cell[aggregateRef]),
               value: cell[aggregateRef],
-              number: ngCubesGlobals.numberFormat(cell[aggregateRef])
+              number: ngBabbageGlobals.numberFormat(cell[aggregateRef])
             };
 
         if (link.value == 0 || !sourceId || !targetId) {
@@ -1479,7 +1479,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -1494,7 +1494,7 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
       return [];
     };
 
-    cubesCtrl.init({
+    babbageCtrl.init({
       source: {
         label: 'Source',
         addLabel: 'set left side',
@@ -1525,15 +1525,15 @@ ngCubes.directive('cubesSankey', ['$rootScope', '$http', '$document', function($
   };
 }]);
 ;
-ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
+ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/treemap.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/treemap.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     var treemap = null,
         div = null;
 
@@ -1545,7 +1545,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           area = asArray(state.area)[0],
           area = area ? [area] : defaultArea(model);
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = area;
       if (!tile) {
         return;
@@ -1569,14 +1569,14 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       scope.cutoffWarning = false;
       scope.queryLoaded = true;
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
 
-      var wrapper = element.querySelectorAll('.treemap-cubes')[0],
+      var wrapper = element.querySelectorAll('.treemap-babbage')[0],
           width = wrapper.clientWidth,
           height = width * 0.6;
 
-      if (cubesCtrl.isEmbedded()) {
+      if (babbageCtrl.isEmbedded()) {
         width = document.documentElement.clientWidth;
         height = document.documentElement.clientHeight;
       }
@@ -1608,9 +1608,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       for (var i in data.cells) {
         var cell = data.cells[i];
-        cell._area_fmt = ngCubesGlobals.numberFormat(Math.round(cell[areaRef]));
+        cell._area_fmt = ngBabbageGlobals.numberFormat(Math.round(cell[areaRef]));
         cell._name = cell[tileRef];
-        cell._color = ngCubesGlobals.colorScale(i);
+        cell._color = ngBabbageGlobals.colorScale(i);
         cell._percentage = cell[areaRef] / Math.max(data.summary[areaRef], 1);
         root.children.push(cell);
       };
@@ -1653,7 +1653,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -1668,7 +1668,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       return [];
     };
 
-    cubesCtrl.init({
+    babbageCtrl.init({
       tile: {
         label: 'Tiles',
         addLabel: 'set breakdown',
@@ -1709,14 +1709,14 @@ if (!String.prototype.endsWith) {
   };
 }
 ;
-ngCubes.directive('cubesWorkspace', ['$location', function($location) {
+ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
   return {
     restrict: 'EA',
     scope: {
       slicer: '@',
       cube: '@'
     },
-    templateUrl: 'angular-cubes-templates/workspace.html',
+    templateUrl: 'babbage-templates/workspace.html',
     link: function(scope, element, attrs) {
       scope.state = {};
       scope.embedLink = '';
@@ -1743,7 +1743,7 @@ ngCubes.directive('cubesWorkspace', ['$location', function($location) {
             qs.push(name + '=' + val);
           }
         }
-        scope.embedLink = ngCubesGlobals.embedLink + '#/?' + qs.join('&');
+        scope.embedLink = ngBabbageGlobals.embedLink + '#/?' + qs.join('&');
       };
 
       prepareEmbed();

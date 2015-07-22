@@ -6,25 +6,25 @@ components for business intelligence.
 ### Usage
 
 ```html
-<cubes slicer="http://host.org/slicer" cube="sales">
+<babbage slicer="http://host.org/slicer" cube="sales">
     <div class="row">
         <div class="col-md-4">
-            <cubes-filter-panel></cubes-filter-panel>
+            <babbage-filter-panel></babbage-filter-panel>
         </div>
         <div class="col-md-8">
-            <cubes-table></cubes-table>
+            <babbage-table></babbage-table>
         </div>
     </div>
-</cubes>
+</babbage>
 ```
 
 Or, with inline config:
 
 ```html
-<cubes slicer="http://host.org/slicer" cube="sales">
-    <cubes-treemap drilldown="region" measure="sales_usd" cut="time.year:2015">
-    </cubes-treemap>
-</cubes>
+<babbage slicer="http://host.org/slicer" cube="sales">
+    <babbage-treemap drilldown="region" measure="sales_usd" cut="time.year:2015">
+    </babbage-treemap>
+</babbage>
 ```
 
 ### A few links

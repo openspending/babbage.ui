@@ -1,12 +1,12 @@
 {
-  "name": "angular-cubes",
+  "name": "babbage.ui",
   "version": "0.1.4",
-  "homepage": "https://github.com/pudo/angular-cubes",
+  "homepage": "https://github.com/spendb/babbage.ui",
   "authors": [
     "Friedrich Lindenberg <friedrich@pudo.org>"
   ],
-  "description": "Data analysis tools for the Python cubes API",
-  "main": "build/angular-cubes.min.js",
+  "description": "Data analysis tools for the Python babbage API",
+  "main": "dist/babbage.ui.min.js",
   "moduleType": [
     "globals"
   ],

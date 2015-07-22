@@ -1,4 +1,4 @@
-<cubes slicer="{{slicer}}" cube="{{cube}}" state="state">
+<babbage slicer="{{slicer}}" cube="{{cube}}" state="state">
   <div class="row">
     <div class="col-md-12">
       <div class="pull-right">
@@ -11,7 +11,7 @@
           <a class="btn btn-default"
             ng-class="{'active': view == 'crosstab'}"
             ng-click="setView('crosstab')">
-            <i class="fa fa-cubes"></i> Pivot table
+            <i class="fa fa-babbage"></i> Pivot table
           </a>
           <a class="btn btn-default"
             ng-class="{'active': view == 'barchart'}"
@@ -35,23 +35,23 @@
   <div class="row">
     <div class="col-md-9">
       <div ng-if="view == 'crosstab'">
-        <cubes-crosstab></cubes-crosstab>
+        <babbage-crosstab></babbage-crosstab>
       </div>
       <div ng-if="view == 'facts'">
-        <cubes-facts></cubes-facts>
+        <babbage-facts></babbage-facts>
       </div>
       <div ng-if="view == 'treemap'">
-        <cubes-treemap></cubes-treemap>
+        <babbage-treemap></babbage-treemap>
       </div>
       <div ng-if="view == 'barchart'">
-        <cubes-barchart></cubes-barchart>
+        <babbage-barchart></babbage-barchart>
       </div>
       <div ng-if="view == 'sankey'">
-        <cubes-sankey></cubes-sankey>
+        <babbage-sankey></babbage-sankey>
       </div>
     </div>
     <div class="col-md-3">
-      <cubes-panel></cubes-panel>
+      <babbage-panel></babbage-panel>
 
       <div class="embed-link">
         <p class="help-block">Embed this view into another website:</p>
@@ -66,4 +66,4 @@
 
     </div>
   </div>
-</cubes>
+</babbage>

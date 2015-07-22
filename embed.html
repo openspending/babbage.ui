@@ -1,38 +1,38 @@
 <!DOCTYPE html>
-<html ng-app="cubesEmbed">
+<html ng-app="babbageEmbed">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="dist/deps.css">
-  <link rel="stylesheet" href="dist/angular-cubes.css">
+  <link rel="stylesheet" href="dist/babbage.ui.css">
   <link rel="stylesheet" href="dist/embed.css">
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
 </head>
 <body ng-controller='Ctrl'>
-  <cubes slicer="{{slicer}}" cube="{{cube}}" state="state">
+  <babbage slicer="{{slicer}}" cube="{{cube}}" state="state">
     <div ng-if="view == 'crosstab'">
-      <cubes-crosstab></cubes-crosstab>
+      <babbage-crosstab></babbage-crosstab>
     </div>
     <div ng-if="view == 'facts'">
-      <cubes-facts></cubes-facts>
+      <babbage-facts></babbage-facts>
     </div>
     <div ng-if="view == 'treemap'">
-      <cubes-treemap></cubes-treemap>
+      <babbage-treemap></babbage-treemap>
     </div>
     <div ng-if="view == 'barchart'">
-      <cubes-barchart></cubes-barchart>
+      <babbage-barchart></babbage-barchart>
     </div>
     <div ng-if="view == 'sankey'">
-      <cubes-sankey></cubes-sankey>
+      <babbage-sankey></babbage-sankey>
     </div>
-  </cubes>
+  </babbage>
 
   <script src='dist/deps.js'></script>
-  <script src='dist/angular-cubes.js'></script>
+  <script src='dist/babbage.ui.min.js'></script>
   <script>
-    var cubesEmbed = angular.module('cubesEmbed', ['ngCubes', 'angular.filter', 'ui.bootstrap', 'ui.select']);
+    var babbageEmbed = angular.module('babbageEmbed', ['ngBabbage', 'angular.filter', 'ui.bootstrap', 'ui.select']);
 
-    cubesEmbed.controller('Ctrl', function ($scope, $location) {
+    babbageEmbed.controller('Ctrl', function ($scope, $location) {
       $scope.state = $location.search();
       $scope.cube = $scope.state.cube;
       $scope.slicer = $scope.state.slicer;

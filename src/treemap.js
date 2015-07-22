@@ -1,13 +1,13 @@
 
-ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
+ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', function($rootScope, $http, $document) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/treemap.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/treemap.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     var treemap = null,
         div = null;
 
@@ -19,7 +19,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
           area = asArray(state.area)[0],
           area = area ? [area] : defaultArea(model);
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = area;
       if (!tile) {
         return;
@@ -43,14 +43,14 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       scope.cutoffWarning = false;
       scope.queryLoaded = true;
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
 
-      var wrapper = element.querySelectorAll('.treemap-cubes')[0],
+      var wrapper = element.querySelectorAll('.treemap-babbage')[0],
           width = wrapper.clientWidth,
           height = width * 0.6;
 
-      if (cubesCtrl.isEmbedded()) {
+      if (babbageCtrl.isEmbedded()) {
         width = document.documentElement.clientWidth;
         height = document.documentElement.clientHeight;
       }
@@ -82,9 +82,9 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
 
       for (var i in data.cells) {
         var cell = data.cells[i];
-        cell._area_fmt = ngCubesGlobals.numberFormat(Math.round(cell[areaRef]));
+        cell._area_fmt = ngBabbageGlobals.numberFormat(Math.round(cell[areaRef]));
         cell._name = cell[tileRef];
-        cell._color = ngCubesGlobals.colorScale(i);
+        cell._color = ngBabbageGlobals.colorScale(i);
         cell._percentage = cell[areaRef] / Math.max(data.summary[areaRef], 1);
         root.children.push(cell);
       };
@@ -127,7 +127,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -142,7 +142,7 @@ ngCubes.directive('cubesTreemap', ['$rootScope', '$http', '$document', function(
       return [];
     };
 
-    cubesCtrl.init({
+    babbageCtrl.init({
       tile: {
         label: 'Tiles',
         addLabel: 'set breakdown',

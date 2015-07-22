@@ -1,20 +1,20 @@
-angular.module('ngCubes.templates', ['babbage.ui-templates/barchart.html', 'babbage.ui-templates/crosstab.html', 'babbage.ui-templates/cubes.html', 'babbage.ui-templates/facts.html', 'babbage.ui-templates/pager.html', 'babbage.ui-templates/panel.html', 'babbage.ui-templates/sankey.html', 'babbage.ui-templates/treemap.html', 'babbage.ui-templates/workspace.html']);
+angular.module('ngBabbage.templates', ['babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/cubes.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
 
-angular.module("babbage.ui-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/barchart.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/barchart.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
     "  </div>\n" +
     "</div>\n" +
-    "<div class=\"barchart-cubes\">\n" +
+    "<div class=\"barchart-babbage\">\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/crosstab.html",
-    "<div class=\"table-cubes\" ng-show=\"rows.length\">\n" +
+angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/crosstab.html",
+    "<div class=\"table-babbage\" ng-show=\"rows.length\">\n" +
     "  <table class=\"table table-bordered table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr ng-repeat=\"x in columns[0]\">\n" +
@@ -37,25 +37,25 @@ angular.module("babbage.ui-templates/crosstab.html", []).run(["$templateCache", 
     "  </table>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"table-cubes\" ng-hide=\"rows.length || !queryLoaded\">\n" +
+    "<div class=\"table-babbage\" ng-hide=\"rows.length || !queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
-    "    <strong>You have not selected any data.</strong> Please choose a set of rows \n" +
+    "    <strong>You have not selected any data.</strong> Please choose a set of rows\n" +
     "    and columns to generate a cross-table.\n" +
     "  </div>\n" +
     "</div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/cubes.html",
-    "<div class=\"cubes-frame\" ng-transclude>\n" +
+angular.module("babbage-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/cubes.html",
+    "<div class=\"babbage-frame\" ng-transclude>\n" +
     "</div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/facts.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/facts.html",
-    "<div class=\"table-cubes\" ng-show=\"data\">\n" +
+angular.module("babbage-templates/facts.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/facts.html",
+    "<div class=\"table-babbage\" ng-show=\"data\">\n" +
     "  <table class=\"table table-bordered table-striped table-condensed\">\n" +
     "    <thead>\n" +
     "      <tr>\n" +
@@ -91,12 +91,12 @@ angular.module("babbage.ui-templates/facts.html", []).run(["$templateCache", fun
     "    </tbody>\n" +
     "  </table>\n" +
     "</div>\n" +
-    "<cubes-pager context=\"pagerCtx\"></cubes-pager>\n" +
+    "<babbage-pager context=\"pagerCtx\"></babbage-pager>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/pager.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/pager.html",
+angular.module("babbage-templates/pager.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/pager.html",
     "<ul ng-show=\"showPager\" class=\"pagination pagination-sm\">\n" +
     "  <li ng-class=\"{'disabled': !hasPrev}\">\n" +
     "    <a class=\"ng-link\" ng-click=\"setPage(current - 1)\">&laquo;</a>\n" +
@@ -111,8 +111,8 @@ angular.module("babbage.ui-templates/pager.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("babbage.ui-templates/panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/panel.html",
+angular.module("babbage-templates/panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/panel.html",
     "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\">\n" +
     "  <div class=\"panel-heading\">\n" +
     "    <strong>{{axis.label}}</strong>\n" +
@@ -206,9 +206,9 @@ angular.module("babbage.ui-templates/panel.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("babbage.ui-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/sankey.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/sankey.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    both sides of the flow diagram.\n" +
@@ -220,13 +220,13 @@ angular.module("babbage.ui-templates/sankey.html", []).run(["$templateCache", fu
     "  have many different links, only the {{cutoff}} biggest are shown.\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sankey-cubes\"></div>\n" +
+    "<div class=\"sankey-babbage\"></div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/treemap.html",
-    "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
+angular.module("babbage-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/treemap.html",
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
     "    your treemap.\n" +
@@ -238,13 +238,13 @@ angular.module("babbage.ui-templates/treemap.html", []).run(["$templateCache", f
     "  different categories, only the {{cutoff}} biggest are shown.\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"treemap-cubes\"></div>\n" +
+    "<div class=\"treemap-babbage\"></div>\n" +
     "");
 }]);
 
-angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage.ui-templates/workspace.html",
-    "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
+angular.module("babbage-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/workspace.html",
+    "<babbage slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
     "      <div class=\"pull-right\">\n" +
@@ -257,7 +257,7 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "            ng-click=\"setView('crosstab')\">\n" +
-    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
+    "            <i class=\"fa fa-babbage\"></i> Pivot table\n" +
     "          </a>\n" +
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'barchart'}\"\n" +
@@ -281,23 +281,23 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-9\">\n" +
     "      <div ng-if=\"view == 'crosstab'\">\n" +
-    "        <cubes-crosstab></cubes-crosstab>\n" +
+    "        <babbage-crosstab></babbage-crosstab>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'facts'\">\n" +
-    "        <cubes-facts></cubes-facts>\n" +
+    "        <babbage-facts></babbage-facts>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'treemap'\">\n" +
-    "        <cubes-treemap></cubes-treemap>\n" +
+    "        <babbage-treemap></babbage-treemap>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'barchart'\">\n" +
-    "        <cubes-barchart></cubes-barchart>\n" +
+    "        <babbage-barchart></babbage-barchart>\n" +
     "      </div>\n" +
     "      <div ng-if=\"view == 'sankey'\">\n" +
-    "        <cubes-sankey></cubes-sankey>\n" +
+    "        <babbage-sankey></babbage-sankey>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"col-md-3\">\n" +
-    "      <cubes-panel></cubes-panel>\n" +
+    "      <babbage-panel></babbage-panel>\n" +
     "\n" +
     "      <div class=\"embed-link\">\n" +
     "        <p class=\"help-block\">Embed this view into another website:</p>\n" +
@@ -312,6 +312,6 @@ angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache",
     "\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "</cubes>\n" +
+    "</babbage>\n" +
     "");
 }]);

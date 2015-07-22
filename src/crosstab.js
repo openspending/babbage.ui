@@ -1,15 +1,15 @@
 var VAL_KEY = '@@@@',
     POS_KEY = '!@!@'
 
-ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
+ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootScope, $http) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/crosstab.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/crosstab.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     scope.queryLoaded = false;
     scope.columns = [];
     scope.rows = [];
@@ -22,7 +22,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       // TODO: handle a case in which both sets contain the same
       // ref.
 
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.aggregates = q.aggregates.concat(state.aggregates);
       if (!q.aggregates.length) {
         q.aggregates = defaultAggregates(model);
@@ -37,7 +37,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
           refs = drilldowns.concat(q.aggregates);
       for (var i in drilldowns) {
         var dd = drilldowns[i];
-        if (!cubesCtrl.getSort(dd).direction) {
+        if (!babbageCtrl.getSort(dd).direction) {
           if (q.order.indexOf(dd) == -1) {
             q.order.push({ref: dd});
           }
@@ -52,8 +52,8 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       }
       q.order = order;
 
-      var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                          cubesCtrl.queryParams(q));
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
       });
@@ -68,7 +68,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
       });
 
       // following code inspired by:
-      // https://github.com/DataBrewery/cubes/blob/master/cubes/formatters.py#L218
+      // https://github.com/DataBrewery/babbage/blob/master/babbage/formatters.py#L218
       var matrix = {}, table = [],
           row_headers = [], column_headers = [],
           row_keys = [], column_keys = [];
@@ -123,7 +123,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
@@ -138,7 +138,7 @@ ngCubes.directive('cubesCrosstab', ['$rootScope', '$http', function($rootScope, 
     };
 
     // console.log('crosstab init');
-    cubesCtrl.init({
+    babbageCtrl.init({
       columns: {
         label: 'Columns',
         addLabel: 'add column',

@@ -44,7 +44,7 @@ module.exports = function(grunt) {
     },
     concat: {
       options: {
-        banner: 'var ngCubesGlobals = ngCubesGlobals || {}; ngCubesGlobals.embedSite = "http://<%= pkg.deployBucket %>/<%= pkg.deployBase %>/<%= pkg.version %>";',
+        banner: 'var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://<%= pkg.deployBucket %>/<%= pkg.deployBase %>/<%= pkg.version %>";',
         stripBanners: true,
         separator: ';'
       },
@@ -57,9 +57,9 @@ module.exports = function(grunt) {
       dist: {
         options: {
           base: '.',
-          module: 'ngCubes.templates',
+          module: 'ngBabbage.templates',
           rename: function(name) {
-            return name.replace('templates', 'babbage.ui-templates');
+            return name.replace('templates', 'babbage-templates');
           }
         },
         src: ['templates/**/*.html'],

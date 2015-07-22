@@ -1,12 +1,12 @@
 
-ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, $http) {
+ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootScope, $http) {
   return {
     restrict: 'EA',
-    require: '^cubes',
+    require: '^babbage',
     scope: {
     },
-    templateUrl: 'angular-cubes-templates/barchart.html',
-    link: function(scope, element, attrs, cubesCtrl) {
+    templateUrl: 'babbage-templates/barchart.html',
+    link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
       var isAggregate = function(aggregates, type) {
         var isAggregate = aggregates.some(function(a) {
@@ -28,7 +28,7 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
 
-        var q = cubesCtrl.getQuery();
+        var q = babbageCtrl.getQuery();
         q.aggregates = getAggregate(model, x, y);
         if (!q.aggregates) {
           return;
@@ -51,8 +51,8 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
         q.page = 0;
         q.pagesize = 50;
 
-        var dfd = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                            cubesCtrl.queryParams(q));
+        var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                            babbageCtrl.queryParams(q));
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
       });
@@ -106,16 +106,16 @@ ngCubes.directive('cubesBarchart', ['$rootScope', '$http', function($rootScope, 
             "singleWidth": widthForChart(element)
           }
         };
-        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-cubes')[0])
+        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-babbage')[0])
         scope.queryLoaded = true;
       };
 
-      var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+      var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
         query(model, state);
       });
       scope.$on('$destroy', unsubscribe);
 
-      cubesCtrl.init({
+      babbageCtrl.init({
         y: {
           label: 'Y Axis',
           addLabel: 'set Y axis',

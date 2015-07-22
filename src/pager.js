@@ -1,11 +1,11 @@
 
-ngCubes.directive('cubesPager', ['$timeout', '$location', function ($timeout, $location) {
+ngBabbage.directive('babbagePager', ['$timeout', '$location', function ($timeout, $location) {
   return {
     restrict: 'E',
     scope: {
       'context': '='
     },
-    templateUrl: 'angular-cubes-templates/pager.html',
+    templateUrl: 'babbage-templates/pager.html',
     link: function (scope, element, attrs, model) {
       scope.showPager = false;
       scope.hasPrev = false;

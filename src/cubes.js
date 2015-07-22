@@ -1,6 +1,6 @@
 
-ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
-    function($http, $rootScope, $location, cubesApi) {
+ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi',
+    function($http, $rootScope, $location, babbageApi) {
   return {
     restrict: 'E',
     transclude: true,
@@ -9,17 +9,17 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       cube: '@',
       state: '='
     },
-    templateUrl: 'angular-cubes-templates/cubes.html',
+    templateUrl: 'babbage-templates/babbage.html',
     controller: ['$scope', function($scope) {
       var self = this,
-          modelUpdate = 'cubesModelUpdate',
+          modelUpdate = 'babbageModelUpdate',
           state = angular.extend({}, $scope.state || {}, $location.search());
 
       self.queryModel = {};
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
-        cubesApi.getModel($scope.slicer, $scope.cube).then(function(model) {
+        babbageApi.getModel($scope.slicer, $scope.cube).then(function(model) {
           $scope.$broadcast(self.modelUpdate, model, state);
         });
       };
@@ -41,11 +41,11 @@ ngCubes.directive('cubes', ['$http', '$rootScope', '$location', 'cubesApi',
       };
 
       self.getApiUrl = function(endpoint) {
-        return cubesApi.getUrl($scope.slicer, $scope.cube, endpoint);
+        return babbageApi.getUrl($scope.slicer, $scope.cube, endpoint);
       };
 
       self.getDimensionMembers = function(dimension) {
-        return cubesApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
+        return babbageApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
       };
 
       self.getSorts = function() {

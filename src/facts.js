@@ -1,22 +1,22 @@
 
-ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
+ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
   return {
   restrict: 'EA',
-  require: '^cubes',
+  require: '^babbage',
   scope: {
     drilldown: '='
   },
-  templateUrl: 'angular-cubes-templates/facts.html',
-  link: function(scope, element, attrs, cubesCtrl) {
+  templateUrl: 'babbage-templates/facts.html',
+  link: function(scope, element, attrs, babbageCtrl) {
     scope.page = 0;
     scope.data = [];
     scope.columns = [];
     scope.pagerCtx = {};
-    scope.getSort = cubesCtrl.getSort;
-    scope.pushSort = cubesCtrl.pushSort;
+    scope.getSort = babbageCtrl.getSort;
+    scope.pushSort = babbageCtrl.pushSort;
 
     var query = function(model, state) {
-      var q = cubesCtrl.getQuery();
+      var q = babbageCtrl.getQuery();
       q.fields = asArray(state.fields);
       if (q.fields.length == 0) {
         q.fields = defaultFields(model);
@@ -34,10 +34,10 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
-      var facts = $http.get(cubesCtrl.getApiUrl('facts'),
-                            cubesCtrl.queryParams(q)),
-          aggs = $http.get(cubesCtrl.getApiUrl('aggregate'),
-                            cubesCtrl.queryParams(aq));
+      var facts = $http.get(babbageCtrl.getApiUrl('facts'),
+                            babbageCtrl.queryParams(q)),
+          aggs = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                            babbageCtrl.queryParams(aq));
       $q.all([facts, aggs]).then(function(res) {
         queryResult(res[0].data, res[1].data, q, state, model);
       });
@@ -114,13 +114,13 @@ ngCubes.directive('cubesFacts', ['$rootScope', '$http', '$q', function($rootScop
       return defaults;
     };
 
-    var unsubscribe = cubesCtrl.subscribe(function(event, model, state) {
+    var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
       query(model, state);
     });
     scope.$on('$destroy', unsubscribe);
 
     // console.log('facts init');
-    cubesCtrl.init({
+    babbageCtrl.init({
       fields: {
         label: 'Columns',
         addLabel: 'add column',
