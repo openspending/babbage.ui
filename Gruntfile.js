@@ -21,7 +21,7 @@ module.exports = function(grunt) {
           banner: '/*! <%= pkg.name %> v<%= pkg.version %> */'
         },
         files: {
-          'dist/angular-cubes.min.js': ['dist/angular-cubes.js']
+          'dist/babbage.ui.min.js': ['dist/babbage.ui.js']
         }
       },
       deps: {
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
           base: '.',
           module: 'ngCubes.templates',
           rename: function(name) {
-            return name.replace('templates', 'angular-cubes-templates');
+            return name.replace('templates', 'babbage.ui-templates');
           }
         },
         src: ['templates/**/*.html'],
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
           strictImports: true
         },
         files: {
-          "dist/angular-cubes.css": ["less/build.less"]
+          "dist/babbage.ui.css": ["less/build.less"]
         }
       },
       embed: {

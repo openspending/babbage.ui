@@ -1,7 +1,7 @@
-angular.module('ngCubes.templates', ['angular-cubes-templates/barchart.html', 'angular-cubes-templates/crosstab.html', 'angular-cubes-templates/cubes.html', 'angular-cubes-templates/facts.html', 'angular-cubes-templates/pager.html', 'angular-cubes-templates/panel.html', 'angular-cubes-templates/sankey.html', 'angular-cubes-templates/treemap.html', 'angular-cubes-templates/workspace.html']);
+angular.module('ngCubes.templates', ['babbage.ui-templates/barchart.html', 'babbage.ui-templates/crosstab.html', 'babbage.ui-templates/cubes.html', 'babbage.ui-templates/facts.html', 'babbage.ui-templates/pager.html', 'babbage.ui-templates/panel.html', 'babbage.ui-templates/sankey.html', 'babbage.ui-templates/treemap.html', 'babbage.ui-templates/workspace.html']);
 
-angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/barchart.html",
+angular.module("babbage.ui-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/barchart.html",
     "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
@@ -12,8 +12,8 @@ angular.module("angular-cubes-templates/barchart.html", []).run(["$templateCache
     "");
 }]);
 
-angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/crosstab.html",
+angular.module("babbage.ui-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/crosstab.html",
     "<div class=\"table-cubes\" ng-show=\"rows.length\">\n" +
     "  <table class=\"table table-bordered table-condensed\">\n" +
     "    <thead>\n" +
@@ -46,15 +46,15 @@ angular.module("angular-cubes-templates/crosstab.html", []).run(["$templateCache
     "");
 }]);
 
-angular.module("angular-cubes-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/cubes.html",
+angular.module("babbage.ui-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/cubes.html",
     "<div class=\"cubes-frame\" ng-transclude>\n" +
     "</div>\n" +
     "");
 }]);
 
-angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/facts.html",
+angular.module("babbage.ui-templates/facts.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/facts.html",
     "<div class=\"table-cubes\" ng-show=\"data\">\n" +
     "  <table class=\"table table-bordered table-striped table-condensed\">\n" +
     "    <thead>\n" +
@@ -95,8 +95,8 @@ angular.module("angular-cubes-templates/facts.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("angular-cubes-templates/pager.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/pager.html",
+angular.module("babbage.ui-templates/pager.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/pager.html",
     "<ul ng-show=\"showPager\" class=\"pagination pagination-sm\">\n" +
     "  <li ng-class=\"{'disabled': !hasPrev}\">\n" +
     "    <a class=\"ng-link\" ng-click=\"setPage(current - 1)\">&laquo;</a>\n" +
@@ -111,8 +111,8 @@ angular.module("angular-cubes-templates/pager.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/panel.html",
+angular.module("babbage.ui-templates/panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/panel.html",
     "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\">\n" +
     "  <div class=\"panel-heading\">\n" +
     "    <strong>{{axis.label}}</strong>\n" +
@@ -206,8 +206,8 @@ angular.module("angular-cubes-templates/panel.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("angular-cubes-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/sankey.html",
+angular.module("babbage.ui-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/sankey.html",
     "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
@@ -224,8 +224,8 @@ angular.module("angular-cubes-templates/sankey.html", []).run(["$templateCache",
     "");
 }]);
 
-angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/treemap.html",
+angular.module("babbage.ui-templates/treemap.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/treemap.html",
     "<div class=\"table-cubes\" ng-hide=\"queryLoaded\">\n" +
     "  <div class=\"alert alert-info\">\n" +
     "    <strong>You have not selected any data.</strong> Please choose a breakdown for\n" +
@@ -242,8 +242,8 @@ angular.module("angular-cubes-templates/treemap.html", []).run(["$templateCache"
     "");
 }]);
 
-angular.module("angular-cubes-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-cubes-templates/workspace.html",
+angular.module("babbage.ui-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage.ui-templates/workspace.html",
     "<cubes slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +

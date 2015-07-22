@@ -1,5 +1,5 @@
 {
-  "name": "angular-cubes",
+  "name": "babbage.ui",
   "version": "0.1.6",
   "devDependencies": {
     "bootstrap": "3.3.4",
@@ -15,11 +15,11 @@
     "grunt-html2js": "^0.3.0"
   },
   "deployBucket": "assets.pudo.org",
-  "deployBase": "libs/angular-cubes",
-  "homepage": "https://github.com/pudo/angular-cubes",
+  "deployBase": "libs/babbage.ui",
+  "homepage": "https://github.com/spendb/babbage.ui",
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/pudo/angular-cubes.git"
+    "url": "https://github.com/spendb/babbage.ui.git"
   }
 }
