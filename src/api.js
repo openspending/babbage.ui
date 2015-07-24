@@ -2,10 +2,11 @@
 ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
-  var getUrl = function(slicer, cube, endpoint) {
-    var api = slicer.slice(),
+  var getUrl = function(endpoint, cube, path) {
+    console.log("Endpoint: ", endpoint)
+    var api = endpoint.slice(),
         api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
-        api = api + '/cube/' + cube + '/' + endpoint;
+        api = api + '/cubes/' + cube + '/' + path;
     return api;
   };
 
@@ -16,9 +17,9 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
     return cache[url];
   };
 
-  var getModel = function(slicer, cube) {
-    return getCached(getUrl(slicer, cube, 'model')).then(function(res) {
-      var model = res.data;
+  var getModel = function(endpoint, cube) {
+    return getCached(getUrl(endpoint, cube, 'model')).then(function(res) {
+      var model = res.data.model;
       model.refs = {};
       model.refKeys = {};
       model.refLabels = {};
@@ -49,8 +50,8 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
     });
   };
 
-  var getDimensionMembers = function(slicer, cube, dimension) {
-    return getCached(getUrl(slicer, cube, 'members/' + dimension));
+  var getDimensionMembers = function(endpoint, cube, dimension) {
+    return getCached(getUrl(endpoint, cube, 'members/' + dimension));
   };
 
   var flush = function() {

@@ -1,4 +1,11 @@
-var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.6";angular.module('ngBabbage.templates', ['babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/cubes.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
+var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.6";angular.module('ngBabbage.templates', ['babbage-templates/babbage.html', 'babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
+
+angular.module("babbage-templates/babbage.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/babbage.html",
+    "<div class=\"babbage-frame\" ng-transclude>\n" +
+    "</div>\n" +
+    "");
+}]);
 
 angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/barchart.html",
@@ -42,13 +49,6 @@ angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", fun
     "    <strong>You have not selected any data.</strong> Please choose a set of rows\n" +
     "    and columns to generate a cross-table.\n" +
     "  </div>\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("babbage-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage-templates/cubes.html",
-    "<div class=\"babbage-frame\" ng-transclude>\n" +
     "</div>\n" +
     "");
 }]);
@@ -244,7 +244,7 @@ angular.module("babbage-templates/treemap.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/workspace.html",
-    "<babbage slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
+    "<babbage endpoint=\"{{endpoint}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
     "      <div class=\"pull-right\">\n" +
@@ -306,7 +306,7 @@ angular.module("babbage-templates/workspace.html", []).run(["$templateCache", fu
     "            <i class=\"fa fa-external-link-square\"></i>\n" +
     "          </span>\n" +
     "          <input type=\"text\" class=\"form-control\" readonly\n" +
-    "            value=\"<style>.ngCuEmb{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .ngCuEmb iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='ngCuEmb'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
+    "            value=\"<style>.babbage-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .babbage-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='babbage-embed'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
@@ -349,10 +349,11 @@ ngBabbage.filter('numeric', function() {
 ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http, $q, slugifyFilter) {
   var cache = {};
 
-  var getUrl = function(slicer, cube, endpoint) {
-    var api = slicer.slice(),
+  var getUrl = function(endpoint, cube, path) {
+    console.log("Endpoint: ", endpoint)
+    var api = endpoint.slice(),
         api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
-        api = api + '/cube/' + cube + '/' + endpoint;
+        api = api + '/cubes/' + cube + '/' + path;
     return api;
   };
 
@@ -363,9 +364,9 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
     return cache[url];
   };
 
-  var getModel = function(slicer, cube) {
-    return getCached(getUrl(slicer, cube, 'model')).then(function(res) {
-      var model = res.data;
+  var getModel = function(endpoint, cube) {
+    return getCached(getUrl(endpoint, cube, 'model')).then(function(res) {
+      var model = res.data.model;
       model.refs = {};
       model.refKeys = {};
       model.refLabels = {};
@@ -396,8 +397,8 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
     });
   };
 
-  var getDimensionMembers = function(slicer, cube, dimension) {
-    return getCached(getUrl(slicer, cube, 'members/' + dimension));
+  var getDimensionMembers = function(endpoint, cube, dimension) {
+    return getCached(getUrl(endpoint, cube, 'members/' + dimension));
   };
 
   var flush = function() {
@@ -409,6 +410,144 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
     getModel: getModel,
     getDimensionMembers: getDimensionMembers,
     flush: flush
+  };
+}]);
+;
+ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi',
+    function($http, $rootScope, $location, babbageApi) {
+  return {
+    restrict: 'E',
+    transclude: true,
+    scope: {
+      endpoint: '@',
+      cube: '@',
+      state: '='
+    },
+    templateUrl: 'babbage-templates/babbage.html',
+    controller: ['$scope', function($scope) {
+      var self = this,
+          modelUpdate = 'babbageModelUpdate',
+          state = angular.extend({}, $scope.state || {}, $location.search());
+
+      self.queryModel = {};
+
+      self.init = function(queryModel) {
+        self.queryModel = queryModel;
+        babbageApi.getModel($scope.endpoint, $scope.cube).then(function(model) {
+          $scope.$broadcast(self.modelUpdate, model, state);
+        });
+      };
+
+      self.subscribe = function(listener) {
+        return $scope.$on(self.modelUpdate, listener);
+      };
+
+      self.getState = function() {
+        return state;
+      };
+
+      self.isEmbedded = function() {
+        return state.embed == 'true';
+      };
+
+      self.setState = function(s) {
+        $location.search(s);
+      };
+
+      self.getApiUrl = function(endpoint) {
+        return babbageApi.getUrl($scope.endpoint, $scope.cube, endpoint);
+      };
+
+      self.getDimensionMembers = function(dimension) {
+        return babbageApi.getDimensionMembers($scope.endpoint, $scope.cube, dimension);
+      };
+
+      self.getSorts = function() {
+        var sorts = [],
+            order = state.order || '',
+            order = asArray(order.split(','));
+        for (var i in order) {
+          var parts = order[i].split(':'),
+              sort = {};
+          sort.ref = parts[0],
+          sort.direction = parts[1] || null;
+          sorts.push(sort);
+        }
+        return sorts;
+      };
+
+      self.getSort = function(ref) {
+        var sorts = self.getSorts();
+        for (var i in sorts) {
+          if (sorts[i].ref == ref) {
+            return sorts[i];
+          }
+        }
+        return {ref: ref};
+      };
+
+      self.pushSort = function(ref, direction) {
+        var sorts = self.getSorts().filter(function(s) {
+          return s.ref != ref;
+        });
+        sorts.unshift({ref: ref, direction: direction});
+        state.order = self.mergeSorts(sorts);
+        self.setState(state);
+      };
+
+      self.removeSorts = function(ref) {
+        var sorts = self.getSorts().filter(function(s) {
+          return s.ref != ref;
+        });
+        return self.mergeSorts(sorts);
+      };
+
+      self.mergeSorts = function(order) {
+        var sorts = [];
+        order = asArray(order);
+        for (var i in order) {
+          var o = order[i];
+          if (angular.isObject(o) && o.ref.length) {
+            o.direction = o.direction || 'asc';
+            o = o.ref + ':' + o.direction;
+            sorts.push(o);
+          }
+        }
+        return sorts.join(',');
+      };
+
+      self.getQuery = function() {
+        var q = {
+          drilldown: [],
+          aggregates: [],
+          cut: state.cut || [],
+          page: state.page || 0,
+          pagesize: state.pagesize || 30,
+          order: self.getSorts()
+        };
+        return q;
+      };
+
+      self.queryParams = function(q) {
+        q.order = self.mergeSorts(q.order);
+
+        // join arguments and remove empty arguments
+        for (var k in q) {
+          if (angular.isArray(q[k])) {
+            if (['order', 'fields'].indexOf(k) != -1) {
+              q[k] = q[k].join(',');
+            } else {
+              q[k] = q[k].join('|');
+            }
+          }
+          q[k] = q[k] + '';
+          if (!q[k].length) {
+            delete q[k];
+          }
+        }
+        return {params: q};
+      }
+    }]
   };
 }]);
 ;
@@ -717,144 +856,6 @@ ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootSco
 
     });
   }
-  };
-}]);
-;
-ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi',
-    function($http, $rootScope, $location, babbageApi) {
-  return {
-    restrict: 'E',
-    transclude: true,
-    scope: {
-      slicer: '@',
-      cube: '@',
-      state: '='
-    },
-    templateUrl: 'babbage-templates/babbage.html',
-    controller: ['$scope', function($scope) {
-      var self = this,
-          modelUpdate = 'babbageModelUpdate',
-          state = angular.extend({}, $scope.state || {}, $location.search());
-
-      self.queryModel = {};
-
-      self.init = function(queryModel) {
-        self.queryModel = queryModel;
-        babbageApi.getModel($scope.slicer, $scope.cube).then(function(model) {
-          $scope.$broadcast(self.modelUpdate, model, state);
-        });
-      };
-
-      self.subscribe = function(listener) {
-        return $scope.$on(self.modelUpdate, listener);
-      };
-
-      self.getState = function() {
-        return state;
-      };
-
-      self.isEmbedded = function() {
-        return state.embed == 'true';
-      };
-
-      self.setState = function(s) {
-        $location.search(s);
-      };
-
-      self.getApiUrl = function(endpoint) {
-        return babbageApi.getUrl($scope.slicer, $scope.cube, endpoint);
-      };
-
-      self.getDimensionMembers = function(dimension) {
-        return babbageApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
-      };
-
-      self.getSorts = function() {
-        var sorts = [],
-            order = state.order || '',
-            order = asArray(order.split(','));
-        for (var i in order) {
-          var parts = order[i].split(':'),
-              sort = {};
-          sort.ref = parts[0],
-          sort.direction = parts[1] || null;
-          sorts.push(sort);
-        }
-        return sorts;
-      };
-
-      self.getSort = function(ref) {
-        var sorts = self.getSorts();
-        for (var i in sorts) {
-          if (sorts[i].ref == ref) {
-            return sorts[i];
-          }
-        }
-        return {ref: ref};
-      };
-
-      self.pushSort = function(ref, direction) {
-        var sorts = self.getSorts().filter(function(s) {
-          return s.ref != ref;
-        });
-        sorts.unshift({ref: ref, direction: direction});
-        state.order = self.mergeSorts(sorts);
-        self.setState(state);
-      };
-
-      self.removeSorts = function(ref) {
-        var sorts = self.getSorts().filter(function(s) {
-          return s.ref != ref;
-        });
-        return self.mergeSorts(sorts);
-      };
-
-      self.mergeSorts = function(order) {
-        var sorts = [];
-        order = asArray(order);
-        for (var i in order) {
-          var o = order[i];
-          if (angular.isObject(o) && o.ref.length) {
-            o.direction = o.direction || 'asc';
-            o = o.ref + ':' + o.direction;
-            sorts.push(o);
-          }
-        }
-        return sorts.join(',');
-      };
-
-      self.getQuery = function() {
-        var q = {
-          drilldown: [],
-          aggregates: [],
-          cut: state.cut || [],
-          page: state.page || 0,
-          pagesize: state.pagesize || 30,
-          order: self.getSorts()
-        };
-        return q;
-      };
-
-      self.queryParams = function(q) {
-        q.order = self.mergeSorts(q.order);
-
-        // join arguments and remove empty arguments
-        for (var k in q) {
-          if (angular.isArray(q[k])) {
-            if (['order', 'fields'].indexOf(k) != -1) {
-              q[k] = q[k].join(',');
-            } else {
-              q[k] = q[k].join('|');
-            }
-          }
-          q[k] = q[k] + '';
-          if (!q[k].length) {
-            delete q[k];
-          }
-        }
-        return {params: q};
-      }
-    }]
   };
 }]);
 ;
@@ -1713,7 +1714,7 @@ ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
   return {
     restrict: 'EA',
     scope: {
-      slicer: '@',
+      endpoint: '@',
       cube: '@'
     },
     templateUrl: 'babbage-templates/workspace.html',
@@ -1732,7 +1733,7 @@ ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
         var qs = [],
             opts = angular.extend({}, $location.search(), {
               view: scope.view,
-              slicer: scope.slicer,
+              endpoint: scope.endpoint,
               cube: scope.cube,
               embed: true
             });

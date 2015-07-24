@@ -9,7 +9,7 @@
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
 </head>
 <body ng-controller='Ctrl'>
-  <babbage slicer="{{slicer}}" cube="{{cube}}" state="state">
+  <babbage endpoint="{{endpoint}}" cube="{{cube}}" state="state">
     <div ng-if="view == 'crosstab'">
       <babbage-crosstab></babbage-crosstab>
     </div>
@@ -35,7 +35,7 @@
     babbageEmbed.controller('Ctrl', function ($scope, $location) {
       $scope.state = $location.search();
       $scope.cube = $scope.state.cube;
-      $scope.slicer = $scope.state.slicer;
+      $scope.endpoint = $scope.state.endpoint;
       $scope.view = $scope.state.view || 'facts';
     });
 

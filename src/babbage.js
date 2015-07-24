@@ -5,7 +5,7 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
     restrict: 'E',
     transclude: true,
     scope: {
-      slicer: '@',
+      endpoint: '@',
       cube: '@',
       state: '='
     },
@@ -19,7 +19,7 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
 
       self.init = function(queryModel) {
         self.queryModel = queryModel;
-        babbageApi.getModel($scope.slicer, $scope.cube).then(function(model) {
+        babbageApi.getModel($scope.endpoint, $scope.cube).then(function(model) {
           $scope.$broadcast(self.modelUpdate, model, state);
         });
       };
@@ -41,11 +41,11 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
       };
 
       self.getApiUrl = function(endpoint) {
-        return babbageApi.getUrl($scope.slicer, $scope.cube, endpoint);
+        return babbageApi.getUrl($scope.endpoint, $scope.cube, endpoint);
       };
 
       self.getDimensionMembers = function(dimension) {
-        return babbageApi.getDimensionMembers($scope.slicer, $scope.cube, dimension);
+        return babbageApi.getDimensionMembers($scope.endpoint, $scope.cube, dimension);
       };
 
       self.getSorts = function() {

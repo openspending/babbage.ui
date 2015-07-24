@@ -1,4 +1,11 @@
-angular.module('ngBabbage.templates', ['babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/cubes.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
+angular.module('ngBabbage.templates', ['babbage-templates/babbage.html', 'babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
+
+angular.module("babbage-templates/babbage.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("babbage-templates/babbage.html",
+    "<div class=\"babbage-frame\" ng-transclude>\n" +
+    "</div>\n" +
+    "");
+}]);
 
 angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/barchart.html",
@@ -42,13 +49,6 @@ angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", fun
     "    <strong>You have not selected any data.</strong> Please choose a set of rows\n" +
     "    and columns to generate a cross-table.\n" +
     "  </div>\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("babbage-templates/cubes.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("babbage-templates/cubes.html",
-    "<div class=\"babbage-frame\" ng-transclude>\n" +
     "</div>\n" +
     "");
 }]);
@@ -244,7 +244,7 @@ angular.module("babbage-templates/treemap.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/workspace.html",
-    "<babbage slicer=\"{{slicer}}\" cube=\"{{cube}}\" state=\"state\">\n" +
+    "<babbage endpoint=\"{{endpoint}}\" cube=\"{{cube}}\" state=\"state\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
     "      <div class=\"pull-right\">\n" +
@@ -306,7 +306,7 @@ angular.module("babbage-templates/workspace.html", []).run(["$templateCache", fu
     "            <i class=\"fa fa-external-link-square\"></i>\n" +
     "          </span>\n" +
     "          <input type=\"text\" class=\"form-control\" readonly\n" +
-    "            value=\"<style>.ngCuEmb{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .ngCuEmb iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='ngCuEmb'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
+    "            value=\"<style>.babbage-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .babbage-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='babbage-embed'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\">\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +

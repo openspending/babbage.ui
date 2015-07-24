@@ -3,7 +3,7 @@ ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
   return {
     restrict: 'EA',
     scope: {
-      slicer: '@',
+      endpoint: '@',
       cube: '@'
     },
     templateUrl: 'babbage-templates/workspace.html',
@@ -22,7 +22,7 @@ ngBabbage.directive('babbageWorkspace', ['$location', function($location) {
         var qs = [],
             opts = angular.extend({}, $location.search(), {
               view: scope.view,
-              slicer: scope.slicer,
+              endpoint: scope.endpoint,
               cube: scope.cube,
               embed: true
             });
