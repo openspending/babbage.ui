@@ -67,14 +67,14 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         for (var ai in model.aggregates) {
           var agg = model.aggregates[ai];
           agg.type = 'aggregates';
-          agg.sortKey = '1' + agg.name;
+          agg.sortKey = '1' + ai;
           options.push(agg);
         }
 
         for (var mi in model.measures) {
           var mea = model.measures[mi];
           mea.type = 'measures';
-          mea.sortKey = '2' + mea.name;
+          mea.sortKey = '2' + mi;
           options.push(mea);
         }
 
@@ -128,7 +128,7 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         for (var i in options) {
           var opt = options[i];
           if (opt.type == 'attributes' && opt.dimension.cardinality_class != 'high') {
-            if (opt.dimension.label_attribute == opt.name) {
+            if (opt.dimension.label_ref == opt.ref) {
               filters.push(opt);
             }
           }
