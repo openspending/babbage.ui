@@ -34,43 +34,31 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
-      var facts = $http.get(babbageCtrl.getApiUrl('facts'),
-                            babbageCtrl.queryParams(q)),
-          aggs = $http.get(babbageCtrl.getApiUrl('aggregate'),
-                            babbageCtrl.queryParams(aq));
-      $q.all([facts, aggs]).then(function(res) {
-        queryResult(res[0].data, res[1].data, q, state, model);
+      var dfd = $http.get(babbageCtrl.getApiUrl('facts'),
+                          babbageCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, state, model);
       });
     };
 
-    var queryResult = function(data, aggs, q, state, model) {
-      if (!data.length) {
+    var queryResult = function(data, q, state, model) {
+      if (!data.data.length) {
         scope.columns = [];
         scope.data = [];
         scope.pagerCtx = {};
         return;
       };
 
-      var frst = data[0],
-          keys = [];
-
-      for (var k in frst) {
-        keys.push(k);
-      }
-      keys = keys.sort();
-
       var columns = [],
           prev = null,
           prev_idx = 0;
 
-      for (var i in keys) {
-        var ref = keys[i],
+      for (var i in data.fields) {
+        var ref = data.fields[i],
             column = model.refs[ref],
             header = column.dimension ? column.dimension : column;
 
-        column.ref = ref;
-
-        if (header.name == prev) {
+        if (prev && header.name == prev) {
           columns[prev_idx].span += 1;
           column.span = 0;
         } else {
@@ -84,12 +72,11 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
         columns.push(column);
       }
       scope.columns = columns;
-      scope.data = data;
+      scope.data = data.data;
       scope.pagerCtx = {
         page: q.page,
         pagesize: q.pagesize,
-        // FIXME: this is SpenDB-specific:
-        total: aggs.summary.fact_count
+        total: data.total_fact_count
       }
     };
 
@@ -101,13 +88,10 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
       }
       for (var i in model.dimensions) {
         var dim = model.dimensions[i];
-        for (var j in dim.levels) {
-          var lvl = dim.levels[j];
-          for (var k in lvl.attributes) {
-            var attr = lvl.attributes[k];
-            if (attr.name == lvl.label_attribute) {
-              defaults.push(attr.ref);
-            }
+        for (var k in dim.attributes) {
+          var attr = dim.attributes[k];
+          if (attr.name == dim.label_attribute) {
+            defaults.push(attr.ref);
           }
         }
       }

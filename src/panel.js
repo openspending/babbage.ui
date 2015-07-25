@@ -51,21 +51,17 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         var options = [];
         for (var di in model.dimensions) {
           var dim = model.dimensions[di];
-          for (var li in dim.levels) {
-            var lvl = dim.levels[li];
-            for (var ai in lvl.attributes) {
-              var attr = angular.copy(lvl.attributes[ai]);
-              attr.dimension = dim;
-              attr.level = lvl;
-              attr.type = 'attributes';
-              if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
-                attr.subLabel = '' + attr.label;
-              }
-              attr.sortKey = '0' + dim.label + attr.label;
-              attr.label = dim.label;
-              attr.cardinality = lvl.cardinality;
-              options.push(attr);
+          for (var ai in dim.attributes) {
+            var attr = angular.copy(dim.attributes[ai]);
+            attr.dimension = dim;
+            attr.type = 'attributes';
+            if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
+              attr.subLabel = '' + attr.label;
             }
+            attr.sortKey = '0' + dim.label + attr.label;
+            attr.label = dim.label;
+            attr.cardinality_class = dim.cardinality_class;
+            options.push(attr);
           }
         }
 
@@ -132,8 +128,8 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         var filters = [];
         for (var i in options) {
           var opt = options[i];
-          if (opt.type == 'attributes' && opt.cardinality != 'high') {
-            if (opt.level.label_attribute == opt.name) {
+          if (opt.type == 'attributes' && opt.cardinality_class != 'high') {
+            if (opt.dimension.label_attribute == opt.name) {
               filters.push(opt);
             }
           }

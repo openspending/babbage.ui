@@ -33,17 +33,14 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
 
       for (var di in model.dimensions) {
         var dim = model.dimensions[di];
-        for (var li in dim.levels) {
-          var lvl = dim.levels[li];
-          for (var ai in lvl.attributes) {
-            var attr = lvl.attributes[ai],
-                nested = attr.ref.indexOf('.') != -1;
-            attr.dimension = dim;
-            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
-            model.refs[attr.ref] = attr;
-            model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
-            model.refLabels[attr.ref] = nested ? dim.name + '.' + lvl.label_attribute : attr.ref;
-          }
+        for (var ai in dim.attributes) {
+          var attr = dim.attributes[ai],
+              nested = attr.ref.indexOf('.') != -1;
+          attr.dimension = dim;
+          attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
+          model.refs[attr.ref] = attr;
+          model.refKeys[attr.ref] = nested ? dim.name + '.' + dim.key_attribute : attr.ref;
+          model.refLabels[attr.ref] = nested ? dim.name + '.' + dim.label_attribute : attr.ref;
         }
       }
       return model;
