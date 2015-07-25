@@ -8,12 +8,11 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
     templateUrl: 'babbage-templates/barchart.html',
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
+
       var isAggregate = function(aggregates, type) {
-        var isAggregate = aggregates.some(function(a) {
-          return (a.name == type);
-        });
-        return isAggregate;
-      }
+        return angular.isDefined(aggregates[type]);
+      };
+
       var getAggregate = function(model, x, y) {
         var aggregate;
         if(isAggregate(model.aggregates, x)) {
@@ -23,7 +22,8 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
           aggregate = y;
         }
         return aggregate;
-      }
+      };
+
       var query = function(model, state) {
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
@@ -53,16 +53,19 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
 
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
-      dfd.then(function(res) {
-        queryResult(res.data, q, model, state);
-      });
+        dfd.then(function(res) {
+          queryResult(res.data, q, model, state);
+        });
       };
+
       var slugifyParameter = function(parameter) {
         return parameter.replace(/\./g,"-");
-      }
+      };
+
       var typeForParameter = function(model, parameter) {
         return isAggregate(model.aggregates, parameter) ? "Q" : "O";
-      }
+      };
+
       var slugifyData = function(data) {
         var dataCells = [];
         data.forEach(function(d) {
@@ -76,10 +79,12 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
         });
         return dataCells;
       }
+
       var widthForChart = function(element) {
         var textWidthDefaultFromVega = 200;
         return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
       }
+
       var renderChartForSpec = function(shorthand, wrapper) {
         spec = vl.compile(shorthand);
         vg.parse.spec(spec, function(chart) {
@@ -87,6 +92,7 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
             .update();
         });
       }
+
       var queryResult = function(data, q, model, state) {
         var ySlug, xSlug, shorthand;
         var x = asArray(state.x)[0],

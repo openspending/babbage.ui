@@ -191,9 +191,9 @@ angular.module("babbage-templates/panel.html", []).run(["$templateCache", functi
     "        </td>\n" +
     "        <td width=\"95%\">\n" +
     "          <ui-select ng-model=\"filter.value\" disable-search=\"false\" on-select=\"setFilter(filter, $item, $model)\">\n" +
-    "            <ui-select-match placeholder=\"Pick one...\">{{$select.selected.label}}</ui-select-match>\n" +
-    "            <ui-select-choices repeat=\"v.value as v in filter.values | filter: $select.search track by $index\">\n" +
-    "               <div ng-bind=\"v.label\"></div>\n" +
+    "            <ui-select-match placeholder=\"Pick one...\">{{$select.selected}}</ui-select-match>\n" +
+    "            <ui-select-choices repeat=\"v as v in filter.values | filter: $select.search track by $index\">\n" +
+    "               <div ng-bind=\"v\"></div>\n" +
     "            </ui-select-choices>\n" +
     "          </ui-select>\n" +
     "        </td>\n" +
@@ -257,7 +257,7 @@ angular.module("babbage-templates/workspace.html", []).run(["$templateCache", fu
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "            ng-click=\"setView('crosstab')\">\n" +
-    "            <i class=\"fa fa-babbage\"></i> Pivot table\n" +
+    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
     "          </a>\n" +
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'barchart'}\"\n" +

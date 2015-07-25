@@ -60,7 +60,6 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
             }
             attr.sortKey = '0' + dim.label + attr.label;
             attr.label = dim.label;
-            attr.cardinality_class = dim.cardinality_class;
             options.push(attr);
           }
         }
@@ -128,26 +127,13 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         var filters = [];
         for (var i in options) {
           var opt = options[i];
-          if (opt.type == 'attributes' && opt.cardinality_class != 'high') {
+          if (opt.type == 'attributes' && opt.dimension.cardinality_class != 'high') {
             if (opt.dimension.label_attribute == opt.name) {
               filters.push(opt);
             }
           }
         }
         return filters.sort(sortOptions);
-      };
-
-      var refToDimension = function(ref) {
-        return ref.split('.', 1);
-      };
-
-      var makeValues = function(ref, res) {
-        return res.data.data.map(function(e) {
-          return {
-            label: e[ref],
-            value: e[model.refKeys[ref]]
-          };
-        });
       };
 
       var getAttributeByRef = function(ref) {
@@ -174,12 +160,14 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
       };
 
       $scope.addFilter = function(attr, value) {
-        babbageCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
+        babbageCtrl.getDimensionMembers(attr.ref).then(function(res) {
           $scope.filters.push({
             ref: attr.ref,
             attr: attr,
             value: value,
-            values: makeValues(attr.ref, res)
+            values: res.data.data.map(function(e) {
+              return e[attr.ref];
+            })
           });
         });
       };

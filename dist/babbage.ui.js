@@ -191,9 +191,9 @@ angular.module("babbage-templates/panel.html", []).run(["$templateCache", functi
     "        </td>\n" +
     "        <td width=\"95%\">\n" +
     "          <ui-select ng-model=\"filter.value\" disable-search=\"false\" on-select=\"setFilter(filter, $item, $model)\">\n" +
-    "            <ui-select-match placeholder=\"Pick one...\">{{$select.selected.label}}</ui-select-match>\n" +
-    "            <ui-select-choices repeat=\"v.value as v in filter.values | filter: $select.search track by $index\">\n" +
-    "               <div ng-bind=\"v.label\"></div>\n" +
+    "            <ui-select-match placeholder=\"Pick one...\">{{$select.selected}}</ui-select-match>\n" +
+    "            <ui-select-choices repeat=\"v as v in filter.values | filter: $select.search track by $index\">\n" +
+    "               <div ng-bind=\"v\"></div>\n" +
     "            </ui-select-choices>\n" +
     "          </ui-select>\n" +
     "        </td>\n" +
@@ -257,7 +257,7 @@ angular.module("babbage-templates/workspace.html", []).run(["$templateCache", fu
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'crosstab'}\"\n" +
     "            ng-click=\"setView('crosstab')\">\n" +
-    "            <i class=\"fa fa-babbage\"></i> Pivot table\n" +
+    "            <i class=\"fa fa-cubes\"></i> Pivot table\n" +
     "          </a>\n" +
     "          <a class=\"btn btn-default\"\n" +
     "            ng-class=\"{'active': view == 'barchart'}\"\n" +
@@ -380,17 +380,14 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
 
       for (var di in model.dimensions) {
         var dim = model.dimensions[di];
-        for (var li in dim.levels) {
-          var lvl = dim.levels[li];
-          for (var ai in lvl.attributes) {
-            var attr = lvl.attributes[ai],
-                nested = attr.ref.indexOf('.') != -1;
-            attr.dimension = dim;
-            attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
-            model.refs[attr.ref] = attr;
-            model.refKeys[attr.ref] = nested ? dim.name + '.' + lvl.key : attr.ref;
-            model.refLabels[attr.ref] = nested ? dim.name + '.' + lvl.label_attribute : attr.ref;
-          }
+        for (var ai in dim.attributes) {
+          var attr = dim.attributes[ai],
+              nested = attr.ref.indexOf('.') != -1;
+          attr.dimension = dim;
+          attr.hideLabel = slugifyFilter(attr.label) == slugifyFilter(dim.label);
+          model.refs[attr.ref] = attr;
+          model.refKeys[attr.ref] = nested ? dim.name + '.' + dim.key_attribute : attr.ref;
+          model.refLabels[attr.ref] = nested ? dim.name + '.' + dim.label_attribute : attr.ref;
         }
       }
       return model;
@@ -560,12 +557,11 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
     templateUrl: 'babbage-templates/barchart.html',
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
+
       var isAggregate = function(aggregates, type) {
-        var isAggregate = aggregates.some(function(a) {
-          return (a.name == type);
-        });
-        return isAggregate;
-      }
+        return angular.isDefined(aggregates[type]);
+      };
+
       var getAggregate = function(model, x, y) {
         var aggregate;
         if(isAggregate(model.aggregates, x)) {
@@ -575,7 +571,8 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
           aggregate = y;
         }
         return aggregate;
-      }
+      };
+
       var query = function(model, state) {
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
@@ -605,16 +602,19 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
 
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
-      dfd.then(function(res) {
-        queryResult(res.data, q, model, state);
-      });
+        dfd.then(function(res) {
+          queryResult(res.data, q, model, state);
+        });
       };
+
       var slugifyParameter = function(parameter) {
         return parameter.replace(/\./g,"-");
-      }
+      };
+
       var typeForParameter = function(model, parameter) {
         return isAggregate(model.aggregates, parameter) ? "Q" : "O";
-      }
+      };
+
       var slugifyData = function(data) {
         var dataCells = [];
         data.forEach(function(d) {
@@ -628,10 +628,12 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
         });
         return dataCells;
       }
+
       var widthForChart = function(element) {
         var textWidthDefaultFromVega = 200;
         return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
       }
+
       var renderChartForSpec = function(shorthand, wrapper) {
         spec = vl.compile(shorthand);
         vg.parse.spec(spec, function(chart) {
@@ -639,6 +641,7 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
             .update();
         });
       }
+
       var queryResult = function(data, q, model, state) {
         var ySlug, xSlug, shorthand;
         var x = asArray(state.x)[0],
@@ -753,8 +756,8 @@ ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootSco
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
 
-      var aggregates = model.aggregates.filter(function(agg) {
-        return data.aggregates.indexOf(agg.ref) != -1;
+      var aggregates = data.aggregates.map(function(agg) {
+        return model.aggregates[agg];
       });
 
       // following code inspired by:
@@ -791,7 +794,7 @@ ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootSco
           }
 
           var key = [row_set, column_set].join(POS_KEY);
-          matrix[key] = cell[agg.name];
+          matrix[key] = cell[agg.ref];
         }
       }
 
@@ -894,43 +897,31 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
       var aq = angular.copy(q);
       aq.drilldown = aq.fields = [];
       aq.page = 0;
-      var facts = $http.get(babbageCtrl.getApiUrl('facts'),
-                            babbageCtrl.queryParams(q)),
-          aggs = $http.get(babbageCtrl.getApiUrl('aggregate'),
-                            babbageCtrl.queryParams(aq));
-      $q.all([facts, aggs]).then(function(res) {
-        queryResult(res[0].data, res[1].data, q, state, model);
+      var dfd = $http.get(babbageCtrl.getApiUrl('facts'),
+                          babbageCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, state, model);
       });
     };
 
-    var queryResult = function(data, aggs, q, state, model) {
-      if (!data.length) {
+    var queryResult = function(data, q, state, model) {
+      if (!data.data.length) {
         scope.columns = [];
         scope.data = [];
         scope.pagerCtx = {};
         return;
       };
 
-      var frst = data[0],
-          keys = [];
-
-      for (var k in frst) {
-        keys.push(k);
-      }
-      keys = keys.sort();
-
       var columns = [],
           prev = null,
           prev_idx = 0;
 
-      for (var i in keys) {
-        var ref = keys[i],
+      for (var i in data.fields) {
+        var ref = data.fields[i],
             column = model.refs[ref],
             header = column.dimension ? column.dimension : column;
 
-        column.ref = ref;
-
-        if (header.name == prev) {
+        if (prev && header.name == prev) {
           columns[prev_idx].span += 1;
           column.span = 0;
         } else {
@@ -944,12 +935,11 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
         columns.push(column);
       }
       scope.columns = columns;
-      scope.data = data;
+      scope.data = data.data;
       scope.pagerCtx = {
         page: q.page,
         pagesize: q.pagesize,
-        // FIXME: this is SpenDB-specific:
-        total: aggs.summary.fact_count
+        total: data.total_fact_count
       }
     };
 
@@ -961,13 +951,10 @@ ngBabbage.directive('babbageFacts', ['$rootScope', '$http', '$q', function($root
       }
       for (var i in model.dimensions) {
         var dim = model.dimensions[i];
-        for (var j in dim.levels) {
-          var lvl = dim.levels[j];
-          for (var k in lvl.attributes) {
-            var attr = lvl.attributes[k];
-            if (attr.name == lvl.label_attribute) {
-              defaults.push(attr.ref);
-            }
+        for (var k in dim.attributes) {
+          var attr = dim.attributes[k];
+          if (attr.name == dim.label_attribute) {
+            defaults.push(attr.ref);
           }
         }
       }
@@ -1107,21 +1094,16 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         var options = [];
         for (var di in model.dimensions) {
           var dim = model.dimensions[di];
-          for (var li in dim.levels) {
-            var lvl = dim.levels[li];
-            for (var ai in lvl.attributes) {
-              var attr = angular.copy(lvl.attributes[ai]);
-              attr.dimension = dim;
-              attr.level = lvl;
-              attr.type = 'attributes';
-              if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
-                attr.subLabel = '' + attr.label;
-              }
-              attr.sortKey = '0' + dim.label + attr.label;
-              attr.label = dim.label;
-              attr.cardinality = lvl.cardinality;
-              options.push(attr);
+          for (var ai in dim.attributes) {
+            var attr = angular.copy(dim.attributes[ai]);
+            attr.dimension = dim;
+            attr.type = 'attributes';
+            if (slugifyFilter(dim.label) != slugifyFilter(attr.label)) {
+              attr.subLabel = '' + attr.label;
             }
+            attr.sortKey = '0' + dim.label + attr.label;
+            attr.label = dim.label;
+            options.push(attr);
           }
         }
 
@@ -1188,26 +1170,13 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         var filters = [];
         for (var i in options) {
           var opt = options[i];
-          if (opt.type == 'attributes' && opt.cardinality != 'high') {
-            if (opt.level.label_attribute == opt.name) {
+          if (opt.type == 'attributes' && opt.dimension.cardinality_class != 'high') {
+            if (opt.dimension.label_attribute == opt.name) {
               filters.push(opt);
             }
           }
         }
         return filters.sort(sortOptions);
-      };
-
-      var refToDimension = function(ref) {
-        return ref.split('.', 1);
-      };
-
-      var makeValues = function(ref, res) {
-        return res.data.data.map(function(e) {
-          return {
-            label: e[ref],
-            value: e[model.refKeys[ref]]
-          };
-        });
       };
 
       var getAttributeByRef = function(ref) {
@@ -1234,12 +1203,14 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
       };
 
       $scope.addFilter = function(attr, value) {
-        babbageCtrl.getDimensionMembers(refToDimension(attr.ref)).then(function(res) {
+        babbageCtrl.getDimensionMembers(attr.ref).then(function(res) {
           $scope.filters.push({
             ref: attr.ref,
             attr: attr,
             value: value,
-            values: makeValues(attr.ref, res)
+            values: res.data.data.map(function(e) {
+              return e[attr.ref];
+            })
           });
         });
       };

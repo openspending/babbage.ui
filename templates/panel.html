@@ -77,9 +77,9 @@
         </td>
         <td width="95%">
           <ui-select ng-model="filter.value" disable-search="false" on-select="setFilter(filter, $item, $model)">
-            <ui-select-match placeholder="Pick one...">{{$select.selected.label}}</ui-select-match>
-            <ui-select-choices repeat="v.value as v in filter.values | filter: $select.search track by $index">
-               <div ng-bind="v.label"></div>
+            <ui-select-match placeholder="Pick one...">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="v as v in filter.values | filter: $select.search track by $index">
+               <div ng-bind="v"></div>
             </ui-select-choices>
           </ui-select>
         </td>

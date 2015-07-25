@@ -63,8 +63,8 @@ ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootSco
       state.rows = asArray(state.rows);
       state.columns = asArray(state.columns);
 
-      var aggregates = model.aggregates.filter(function(agg) {
-        return data.aggregates.indexOf(agg.ref) != -1;
+      var aggregates = data.aggregates.map(function(agg) {
+        return model.aggregates[agg];
       });
 
       // following code inspired by:
@@ -101,7 +101,7 @@ ngBabbage.directive('babbageCrosstab', ['$rootScope', '$http', function($rootSco
           }
 
           var key = [row_set, column_set].join(POS_KEY);
-          matrix[key] = cell[agg.name];
+          matrix[key] = cell[agg.ref];
         }
       }
 
