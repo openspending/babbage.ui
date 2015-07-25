@@ -608,7 +608,7 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
       };
 
       var slugifyParameter = function(parameter) {
-        return parameter.replace(/\./g,"-");
+        return parameter.replace(/\./g,"__");
       };
 
       var typeForParameter = function(model, parameter) {
@@ -627,12 +627,12 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
           dataCells.push(dCell);
         });
         return dataCells;
-      }
+      };
 
       var widthForChart = function(element) {
         var textWidthDefaultFromVega = 200;
         return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
-      }
+      };
 
       var renderChartForSpec = function(shorthand, wrapper) {
         spec = vl.compile(shorthand);
@@ -640,7 +640,7 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
           var view = chart({el:wrapper, renderer: "svg"})
             .update();
         });
-      }
+      };
 
       var queryResult = function(data, q, model, state) {
         var ySlug, xSlug, shorthand;
