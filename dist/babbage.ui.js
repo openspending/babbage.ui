@@ -1,4 +1,4 @@
-var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.6";angular.module('ngBabbage.templates', ['babbage-templates/babbage.html', 'babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
+var ngBabbageGlobals = ngBabbageGlobals || {}; ngBabbageGlobals.embedSite = "http://assets.pudo.org/libs/babbage.ui/0.1.7";angular.module('ngBabbage.templates', ['babbage-templates/babbage.html', 'babbage-templates/barchart.html', 'babbage-templates/crosstab.html', 'babbage-templates/facts.html', 'babbage-templates/pager.html', 'babbage-templates/panel.html', 'babbage-templates/sankey.html', 'babbage-templates/treemap.html', 'babbage-templates/workspace.html']);
 
 angular.module("babbage-templates/babbage.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/babbage.html",
@@ -350,7 +350,6 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
   var cache = {};
 
   var getUrl = function(endpoint, cube, path) {
-    console.log("Endpoint: ", endpoint)
     var api = endpoint.slice(),
         api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
         api = api + '/cubes/' + cube + '/' + path;

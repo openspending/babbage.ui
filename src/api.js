@@ -3,7 +3,6 @@ ngBabbage.factory('babbageApi', ['$http', '$q', 'slugifyFilter', function($http,
   var cache = {};
 
   var getUrl = function(endpoint, cube, path) {
-    console.log("Endpoint: ", endpoint)
     var api = endpoint.slice(),
         api = api.endsWith('/') ? api.slice(0, api.length - 1) : api,
         api = api + '/cubes/' + cube + '/' + path;
