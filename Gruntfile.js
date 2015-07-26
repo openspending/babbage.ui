@@ -60,6 +60,10 @@ module.exports = function(grunt) {
           module: 'ngBabbage.templates',
           rename: function(name) {
             return name.replace('templates', 'babbage-templates');
+          },
+          htmlmin: {
+            collapseWhitespace: true,
+            removeComments: true
           }
         },
         src: ['templates/**/*.html'],
