@@ -52,10 +52,9 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
                           babbageCtrl.queryParams(q));
 
       var wrapper = element.querySelectorAll('.sankey-babbage')[0],
-          width = wrapper.clientWidth,
-          height = document.documentElement.clientHeight;
+          size = babbageCtrl.size(wrapper, function(w) { return w * 0.6; });
 
-      unit = Math.max(400, height) / 40;
+      unit = Math.max(400, size.height) / 20;
 
       if (!svg) {
           svg = d3.select(wrapper).append("svg");
@@ -64,30 +63,26 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
       }
 
       dfd.then(function(res) {
-        queryResult(width, res.data, q, model, state);
+        queryResult(size, res.data, q, model, state);
       });
     };
 
-    var queryResult = function(width, data, q, model, state) {
+    var queryResult = function(size, data, q, model, state) {
       var sourceRef = asArray(state.source)[0],
           targetRef = asArray(state.target)[0]
           aggregateRef = asArray(state.aggregate)[0],
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
-          height = data.cells.length * unit;
+          size.height = data.cells.length * unit;
 
-      if (babbageCtrl.isEmbedded()) {
-        width = document.documentElement.clientWidth;
-        height = document.documentElement.clientHeight;
-      }
-
-      svg.attr("height", height + margin.top + margin.bottom);
-      svg.attr("width", width + margin.left + margin.right);
+      svg.attr("height", size.height + margin.top + margin.bottom);
+      svg.attr("width", size.width);
 
       var graph = {nodes: [], links: []},
           objs = {};
 
       var sourceScale = ngBabbageGlobals.colorScale.copy(),
-          targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
+          targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);
+
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
             targetId = cell[targetRef],
@@ -130,7 +125,7 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
       var sankey = d3.sankey()
          .nodeWidth(unit)
          .nodePadding(unit * 0.6)
-         .size([width, height]);
+         .size([size.width, size.height]);
 
       var path = sankey.link();
 
@@ -179,7 +174,7 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
           .attr("text-anchor", "end")
           .attr("transform", null)
           .text(function(d) { return d.name; })
-        .filter(function(d) { return d.x < width / 2; })
+        .filter(function(d) { return d.x < size.width / 2; })
           .attr("x", 6 + sankey.nodeWidth())
           .attr("text-anchor", "start");
 

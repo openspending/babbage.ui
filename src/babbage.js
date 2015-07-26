@@ -54,6 +54,19 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
         return babbageApi.getDimensionMembers($scope.endpoint, $scope.cube, dimension);
       };
 
+      self.size = function(element, height) {
+        if (self.isEmbedded()) {
+            return {
+              width: document.documentElement.clientWidth,
+              height: document.documentElement.clientHeight
+            }
+        }
+        return {
+          width: element.clientWidth,
+          height: height(element.clientWidth, element.clientHeight)
+        }
+      };
+
       self.getSorts = function() {
         var sorts = [],
             order = $scope.state.order || '',
@@ -61,9 +74,11 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
         for (var i in order) {
           var parts = order[i].split(':'),
               sort = {};
-          sort.ref = parts[0],
+          sort.ref = parts[0];
           sort.direction = parts[1] || null;
-          sorts.push(sort);
+          if (sort.ref.length) {
+              sorts.push(sort);
+          }
         }
         return sorts;
       };
