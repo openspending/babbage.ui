@@ -18,7 +18,6 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
       $scope.embedLink = null;
 
       var update = function() {
-        //$scope.state.page = 0;
         babbageCtrl.setState($scope.state);
       };
 

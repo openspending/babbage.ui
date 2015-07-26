@@ -61,6 +61,7 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
         .sort(function(a, b) { return a[area] - b[area]; })
         .value(function(d) { return d[area]; });
 
+      d3.select(wrapper).select("div").remove();
       div = d3.select(wrapper).append("div")
         .style("position", "relative")
         .style("width", width + "px")
