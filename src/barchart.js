@@ -51,7 +51,7 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
 
         q.order = order;
         q.page = 0;
-        q.pagesize = 50;
+        q.pagesize = 500;
 
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
@@ -60,60 +60,62 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
         });
       };
 
+      var getNames = function(model) {
+        var names = {};
+        for (var ref in model.refs) {
+          var concept = model.refs[ref];
+          names[ref] = concept.label || concept.name || ref;
+        }
+        return names;
+      };
+
       var queryResult = function(data, q, model, state) {
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
 
         var wrapper = element.querySelectorAll('.barchart-babbage')[0],
             size = babbageCtrl.size(wrapper, function(w) {
-              return 100 + (w * 0.035) * data.cells.length;
+              return w * 0.6;
             });
 
         d3.select(wrapper)
           .style("width", size.width + "px")
           .style("height", size.height + "px");
 
-        var insertLinebreaks = function (t, d, width) {
-          var el = d3.select(t);
-          var p = d3.select(t.parentNode);
-          p.append("foreignObject")
-              .attr('x', -width - 10)
-              .attr('y', -10)
-              .attr("width", width)
-              .attr("height", 200)
-            .append("xhtml:p")
-              .attr('style','word-wrap: break-word; text-align:right;')
-              .html(d);
-
-          el.remove();
-        };
-
-        nv.addGraph(function() {
-          var chart = nv.models.multiBarHorizontalChart()
-                .x(function(d) { return d[x]; })
-                .y(function(d) { return d[y]; })
-                .margin({left: size.width * 0.3, top: 0})
-                .barColor(ngBabbageGlobals.colorScale.range())
-                .showControls(false)
-                .showLegend(false)
-                .duration(250);
-
-          chart.xAxis
-            .staggerLabels(true);
-
-          chart.yAxis
-            .staggerLabels(true);
-
-          d3.select(wrapper).select('svg')
-              .datum([{values: data.cells}])
-              .call(chart);
-
-          d3.select(wrapper).select('.nv-x.nv-axis')
-            .selectAll('text')
-              .each(function(d, i) { insertLinebreaks(this, d, size.width * 0.3 ); });
-
-          nv.utils.windowResize(chart.update);
-          return chart;
+        var chart = c3.generate({
+          bindto: wrapper,
+          data: {
+              json: data.cells,
+              names: getNames(model),
+              color: ngBabbageGlobals.colorScale,
+              order: null,
+              keys: {
+                x: x,
+                value: [y]
+              },
+              type: 'bar'
+          },
+          grid: {
+            focus: {
+              show: false
+            }
+          },
+          axis: {
+              x: {
+                  type: 'category',
+                  tick: {
+                    culling: true,
+                    fit: true
+                  }
+              },
+              y : {
+                 tick: {
+                     format: ngBabbageGlobals.numberFormat,
+                     culling: true,
+                     fit: true
+                 }
+             }
+          }
         });
 
         scope.queryLoaded = true;

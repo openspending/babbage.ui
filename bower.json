@@ -38,5 +38,8 @@
   },
   "resolutions": {
     "angular": "1.2.28"
+  },
+  "devDependencies": {
+    "c3js-chart": "~0.4.10"
   }
 }
