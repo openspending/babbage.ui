@@ -7,7 +7,7 @@ angular.module("babbage-templates/babbage.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/barchart.html",
-    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose a breakdown for your treemap.</div></div><div class=\"barchart-babbage\"></div>");
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose the axes of your chart.</div></div><div class=\"barchart-babbage\"><svg></svg></div>");
 }]);
 
 angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {

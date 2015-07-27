@@ -7,7 +7,7 @@ angular.module("babbage-templates/babbage.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/barchart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/barchart.html",
-    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose a breakdown for your treemap.</div></div><div class=\"barchart-babbage\"></div>");
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose the axes of your chart.</div></div><div class=\"barchart-babbage\"><svg></svg></div>");
 }]);
 
 angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
@@ -193,6 +193,19 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
         return babbageApi.getDimensionMembers($scope.endpoint, $scope.cube, dimension);
       };
 
+      self.size = function(element, height) {
+        if (self.isEmbedded()) {
+            return {
+              width: document.documentElement.clientWidth,
+              height: document.documentElement.clientHeight
+            }
+        }
+        return {
+          width: element.clientWidth,
+          height: height(element.clientWidth, element.clientHeight)
+        }
+      };
+
       self.getSorts = function() {
         var sorts = [],
             order = $scope.state.order || '',
@@ -200,9 +213,11 @@ ngBabbage.directive('babbage', ['$http', '$rootScope', '$location', 'babbageApi'
         for (var i in order) {
           var parts = order[i].split(':'),
               sort = {};
-          sort.ref = parts[0],
+          sort.ref = parts[0];
           sort.direction = parts[1] || null;
-          sorts.push(sort);
+          if (sort.ref.length) {
+              sorts.push(sort);
+          }
         }
         return sorts;
       };
@@ -292,19 +307,19 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
 
-      var isAggregate = function(aggregates, type) {
-        return angular.isDefined(aggregates[type]);
+      var isAggregate = function(aggregates, ref) {
+        return angular.isDefined(aggregates[ref]);
       };
 
-      var getAggregate = function(model, x, y) {
-        var aggregate;
-        if(isAggregate(model.aggregates, x)) {
-          aggregate = x;
+      var getAggregates = function(model, x, y) {
+        var aggregates = [];
+        if (isAggregate(model.aggregates, x)) {
+          aggregates.push(x);
         }
-        if(isAggregate(model.aggregates, y)) {
-          aggregate = y;
+        if (isAggregate(model.aggregates, y)) {
+          aggregates.push(y);
         }
-        return aggregate;
+        return aggregates;
       };
 
       var query = function(model, state) {
@@ -312,12 +327,14 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
             y = asArray(state.y)[0];
 
         var q = babbageCtrl.getQuery();
-        q.aggregates = getAggregate(model, x, y);
-        if (!q.aggregates) {
+        q.aggregates = getAggregates(model, x, y);
+        if (!q.aggregates.length) {
           return;
         }
-        var drilldown = (q.aggregates == y) ? x : y;
-        q.drilldown = [drilldown];
+
+        q.drilldown = [x, y].filter(function(e) {
+          return q.aggregates.indexOf(e) == -1;
+        });
 
         var order = [];
         for (var i in q.order) {
@@ -341,61 +358,62 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
         });
       };
 
-      var slugifyParameter = function(parameter) {
-        return parameter.replace(/\./g,"__");
-      };
-
-      var typeForParameter = function(model, parameter) {
-        return isAggregate(model.aggregates, parameter) ? "Q" : "O";
-      };
-
-      var slugifyData = function(data) {
-        var dataCells = [];
-        data.forEach(function(d) {
-          var dCell = {};
-          Object.keys(d).forEach(function(key){
-              var value = d[key];
-              key = slugifyParameter(key);
-              dCell[key] = value;
-          });
-          dataCells.push(dCell);
-        });
-        return dataCells;
-      };
-
-      var widthForChart = function(element) {
-        var textWidthDefaultFromVega = 200;
-        return parseInt(d3.selectAll(element).node().getBoundingClientRect().width) - textWidthDefaultFromVega;
-      };
-
-      var renderChartForSpec = function(shorthand, wrapper) {
-        spec = vl.compile(shorthand);
-        vg.parse.spec(spec, function(chart) {
-          var view = chart({el:wrapper, renderer: "svg"})
-            .update();
-        });
-      };
-
       var queryResult = function(data, q, model, state) {
-        var ySlug, xSlug, shorthand;
         var x = asArray(state.x)[0],
             y = asArray(state.y)[0];
-        xSlug = slugifyParameter(x);
-        ySlug = slugifyParameter(y);
-        shorthand = {
-          "data": {
-            "values": slugifyData(data.cells)
-          },
-          "marktype": "bar",
-          "encoding": {
-            "y": {"type": typeForParameter(model, y), "name": ySlug},
-            "x": {"type": typeForParameter(model, x), "name": xSlug},
-          },
-          "config": {
-            "singleWidth": widthForChart(element)
-          }
+
+        var wrapper = element.querySelectorAll('.barchart-babbage')[0],
+            size = babbageCtrl.size(wrapper, function(w) {
+              return 100 + (w * 0.035) * data.cells.length;
+            });
+
+        d3.select(wrapper)
+          .style("width", size.width + "px")
+          .style("height", size.height + "px");
+
+        var insertLinebreaks = function (t, d, width) {
+          var el = d3.select(t);
+          var p = d3.select(t.parentNode);
+          p.append("foreignObject")
+              .attr('x', -width - 10)
+              .attr('y', -10)
+              .attr("width", width)
+              .attr("height", 200)
+            .append("xhtml:p")
+              .attr('style','word-wrap: break-word; text-align:right;')
+              .html(d);
+
+          el.remove();
         };
-        renderChartForSpec(shorthand, element.querySelectorAll('.barchart-babbage')[0])
+
+        nv.addGraph(function() {
+          var chart = nv.models.multiBarHorizontalChart()
+                .x(function(d) { return d[x]; })
+                .y(function(d) { return d[y]; })
+                .margin({left: size.width * 0.3, top: 0})
+                .barColor(ngBabbageGlobals.colorScale.range())
+                .showControls(false)
+                .showLegend(false)
+                .duration(250);
+
+          chart.xAxis
+            .staggerLabels(true);
+
+          chart.yAxis
+            .staggerLabels(true);
+
+          d3.select(wrapper).select('svg')
+              .datum([{values: data.cells}])
+              .call(chart);
+
+          d3.select(wrapper).select('.nv-x.nv-axis')
+            .selectAll('text')
+              .each(function(d, i) { insertLinebreaks(this, d, size.width * 0.3 ); });
+
+          nv.utils.windowResize(chart.update);
+          return chart;
+        });
+
         scope.queryLoaded = true;
       };
 
@@ -1051,10 +1069,9 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
                           babbageCtrl.queryParams(q));
 
       var wrapper = element.querySelectorAll('.sankey-babbage')[0],
-          width = wrapper.clientWidth,
-          height = document.documentElement.clientHeight;
+          size = babbageCtrl.size(wrapper, function(w) { return w * 0.6; });
 
-      unit = Math.max(400, height) / 40;
+      unit = Math.max(400, size.height) / 20;
 
       if (!svg) {
           svg = d3.select(wrapper).append("svg");
@@ -1063,30 +1080,26 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
       }
 
       dfd.then(function(res) {
-        queryResult(width, res.data, q, model, state);
+        queryResult(size, res.data, q, model, state);
       });
     };
 
-    var queryResult = function(width, data, q, model, state) {
+    var queryResult = function(size, data, q, model, state) {
       var sourceRef = asArray(state.source)[0],
           targetRef = asArray(state.target)[0]
           aggregateRef = asArray(state.aggregate)[0],
           aggregateRef = aggregateRef ? [aggregateRef] : defaultAggregate(model),
-          height = data.cells.length * unit;
+          size.height = data.cells.length * unit;
 
-      if (babbageCtrl.isEmbedded()) {
-        width = document.documentElement.clientWidth;
-        height = document.documentElement.clientHeight;
-      }
-
-      svg.attr("height", height + margin.top + margin.bottom);
-      svg.attr("width", width + margin.left + margin.right);
+      svg.attr("height", size.height + margin.top + margin.bottom);
+      svg.attr("width", size.width);
 
       var graph = {nodes: [], links: []},
           objs = {};
 
       var sourceScale = ngBabbageGlobals.colorScale.copy(),
-          targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);;
+          targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);
+
       data.cells.forEach(function(cell) {
         var sourceId = cell[sourceRef],
             targetId = cell[targetRef],
@@ -1129,7 +1142,7 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
       var sankey = d3.sankey()
          .nodeWidth(unit)
          .nodePadding(unit * 0.6)
-         .size([width, height]);
+         .size([size.width, size.height]);
 
       var path = sankey.link();
 
@@ -1178,7 +1191,7 @@ ngBabbage.directive('babbageSankey', ['$rootScope', '$http', '$document', functi
           .attr("text-anchor", "end")
           .attr("transform", null)
           .text(function(d) { return d.name; })
-        .filter(function(d) { return d.x < width / 2; })
+        .filter(function(d) { return d.x < size.width / 2; })
           .attr("x", 6 + sankey.nodeWidth())
           .attr("text-anchor", "start");
 
@@ -1280,16 +1293,10 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
                           babbageCtrl.queryParams(q));
 
       var wrapper = element.querySelectorAll('.treemap-babbage')[0],
-          width = wrapper.clientWidth,
-          height = width * 0.6;
-
-      if (babbageCtrl.isEmbedded()) {
-        width = document.documentElement.clientWidth;
-        height = document.documentElement.clientHeight;
-      }
+          size = babbageCtrl.size(wrapper, function(w) { return w * 0.6; });
 
       treemap = d3.layout.treemap()
-        .size([width, height])
+        .size([size.width, size.height])
         .sticky(true)
         .sort(function(a, b) { return a[area] - b[area]; })
         .value(function(d) { return d[area]; });
@@ -1297,8 +1304,8 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
       d3.select(wrapper).select("div").remove();
       div = d3.select(wrapper).append("div")
         .style("position", "relative")
-        .style("width", width + "px")
-        .style("height", height + "px");
+        .style("width", size.width + "px")
+        .style("height", size.height + "px");
 
       dfd.then(function(res) {
         queryResult(res.data, q, model, state);
