@@ -1,47 +1,37 @@
 
-ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootScope, $http) {
+ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope, $http) {
   return {
     restrict: 'EA',
     require: '^babbage',
     scope: {
     },
-    templateUrl: 'babbage-templates/barchart.html',
+    templateUrl: 'babbage-templates/chart.html',
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
 
-      var isAggregate = function(aggregates, ref) {
-        return angular.isDefined(aggregates[ref]);
-      };
-
-      var getAggregates = function(model, x, y) {
-        var aggregates = [];
-        if (isAggregate(model.aggregates, x)) {
-          aggregates.push(x);
+      var getNames = function(model) {
+        var names = {};
+        for (var ref in model.refs) {
+          var concept = model.refs[ref];
+          names[ref] = concept.label || concept.name || ref;
         }
-        if (isAggregate(model.aggregates, y)) {
-          aggregates.push(y);
-        }
-        return aggregates;
+        return names;
       };
 
       var query = function(model, state) {
-        var x = asArray(state.x)[0],
-            y = asArray(state.y)[0];
+        var category = asArray(state.category)[0],
+            value = asArray(state.value)[0];
+
+        if (!value || !category) return;
 
         var q = babbageCtrl.getQuery();
-        q.aggregates = getAggregates(model, x, y);
-        if (!q.aggregates.length) {
-          return;
-        }
-
-        q.drilldown = [x, y].filter(function(e) {
-          return q.aggregates.indexOf(e) == -1;
-        });
+        q.aggregates = [value];
+        q.drilldown = [category];
 
         var order = [];
         for (var i in q.order) {
           var o = q.order[i];
-          if ([x, y].indexOf(o.ref) != -1) {
+          if ([value, category].indexOf(o.ref) != -1) {
             order.push(o);
           }
         }
@@ -56,24 +46,12 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
         dfd.then(function(res) {
-          queryResult(res.data, q, model, state);
+          queryResult(res.data, q, model, state, category, value);
         });
       };
 
-      var getNames = function(model) {
-        var names = {};
-        for (var ref in model.refs) {
-          var concept = model.refs[ref];
-          names[ref] = concept.label || concept.name || ref;
-        }
-        return names;
-      };
-
-      var queryResult = function(data, q, model, state) {
-        var x = asArray(state.x)[0],
-            y = asArray(state.y)[0];
-
-        var wrapper = element.querySelectorAll('.barchart-babbage')[0],
+      var queryResult = function(data, q, model, state, category, value) {
+        var wrapper = element.querySelectorAll('.chart-babbage')[0],
             size = babbageCtrl.size(wrapper, function(w) {
               return w * 0.6;
             });
@@ -90,8 +68,8 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
               color: ngBabbageGlobals.colorScale,
               order: null,
               keys: {
-                x: x,
-                value: [y]
+                x: category,
+                value: [value]
               },
               type: 'bar'
           },
@@ -127,22 +105,22 @@ ngBabbage.directive('babbageBarchart', ['$rootScope', '$http', function($rootSco
       scope.$on('$destroy', unsubscribe);
 
       babbageCtrl.init({
-        y: {
-          label: 'Y Axis',
-          addLabel: 'set Y axis',
-          types: ['attributes', 'aggregates'],
+        category: {
+          label: 'Categories',
+          addLabel: 'set bar division',
+          types: ['attributes'],
           defaults: [],
           sortId: 0,
           multiple: false
         },
-        x: {
-          label: 'X Axis',
-          addLabel: 'set X axis',
-          types: ['attributes', 'aggregates'],
+        value: {
+          label: 'Value',
+          addLabel: 'set bar height',
+          types: ['aggregates'],
           defaults: [],
           sortId: 1,
           multiple: false
-        },
+        }
       });
     }
   }
