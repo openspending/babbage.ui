@@ -4,10 +4,13 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
     restrict: 'EA',
     require: '^babbage',
     scope: {
+      chartType: '@'
     },
     templateUrl: 'babbage-templates/chart.html',
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
+      scope.cutoffWarning = false;
+      scope.cutoff = 0;
 
       var getNames = function(model) {
         var names = {};
@@ -20,6 +23,7 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
 
       var query = function(model, state) {
         var category = asArray(state.category)[0],
+            grouping = asArray(state.grouping)[0],
             value = asArray(state.value)[0];
 
         if (!value || !category) return;
@@ -36,21 +40,25 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
           }
         }
         if (!order.length) {
-          order = [{ref: y, direction: 'desc'}];
+          order = [{ref: value, direction: 'desc'}];
         }
+        if (grouping && order[0] && order[0].ref != grouping) {
+          order.unshift({ref: grouping, direction: 'asc'});
+        }
+        console.log('Grouping', grouping);
 
         q.order = order;
         q.page = 0;
-        q.pagesize = 500;
+        q.pagesize = 10000;
 
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
         dfd.then(function(res) {
-          queryResult(res.data, q, model, state, category, value);
+          queryResult(res.data, q, model, state, category, grouping, value);
         });
       };
 
-      var queryResult = function(data, q, model, state, category, value) {
+      var queryResult = function(data, q, model, state, category, grouping, value) {
         var wrapper = element.querySelectorAll('.chart-babbage')[0],
             size = babbageCtrl.size(wrapper, function(w) {
               return w * 0.6;
@@ -71,7 +79,8 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
                 x: category,
                 value: [value]
               },
-              type: 'bar'
+              groups: [],
+              type: scope.chartType === 'bar' ? 'bar' : 'line'
           },
           grid: {
             focus: {
@@ -97,6 +106,8 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
         });
 
         scope.queryLoaded = true;
+        scope.cutoffWarning = data.total_cell_count > q.pagesize;
+        scope.cutoff = q.pagesize;
       };
 
       var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
@@ -104,24 +115,49 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
       });
       scope.$on('$destroy', unsubscribe);
 
-      babbageCtrl.init({
-        category: {
-          label: 'Categories',
-          addLabel: 'set bar division',
-          types: ['attributes'],
-          defaults: [],
-          sortId: 0,
-          multiple: false
-        },
+      var queryModel = {
         value: {
           label: 'Value',
-          addLabel: 'set bar height',
+          addLabel: 'set height',
           types: ['aggregates'],
           defaults: [],
           sortId: 1,
           multiple: false
+        },
+        grouping: {
+          label: 'Grouping (opt)',
+          addLabel: 'select',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 2,
+          remove: true,
+          multiple: false
         }
-      });
+      };
+
+      if (scope.chartType == 'line') {
+        queryModel.category = {
+          label: 'Series',
+          addLabel: 'set series',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 0,
+          multiple: false
+        };
+      }
+
+      if (scope.chartType == 'bar') {
+        queryModel.category = {
+          label: 'Categories',
+          addLabel: 'set bars',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 0,
+          multiple: false
+        };
+      }
+
+      babbageCtrl.init(queryModel);
     }
   }
 }]);

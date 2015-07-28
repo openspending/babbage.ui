@@ -7,7 +7,7 @@ angular.module("babbage-templates/babbage.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/chart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/chart.html",
-    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose the configuration for your chart.</div></div><div class=\"chart-babbage\"><svg></svg></div>");
+    "<div class=\"table-babbage\" ng-hide=\"queryLoaded\"><div class=\"alert alert-info\"><strong>You have not selected any data.</strong> Please choose the configuration for your chart.</div></div><div class=\"alert alert-warning\" ng-show=\"cutoffWarning\"><strong>Too many categories.</strong> There are more than {{cutoff}} items in the selected drilldown.</div><div class=\"chart-babbage\"><svg></svg></div>");
 }]);
 
 angular.module("babbage-templates/crosstab.html", []).run(["$templateCache", function($templateCache) {
@@ -27,7 +27,7 @@ angular.module("babbage-templates/pager.html", []).run(["$templateCache", functi
 
 angular.module("babbage-templates/panel.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/panel.html",
-    "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\"><div class=\"panel-heading\"><strong>{{axis.label}}</strong><div class=\"btn-group\" dropdown ng-show=\"axis.available.length\">&mdash; <a dropdown-toggle class=\"ng-link\">{{axis.addLabel}}</a><ul class=\"dropdown-menu\" role=\"menu\"><li ng-repeat=\"opt in axis.available\"><a ng-click=\"add(axis, opt.ref)\"><strong>{{opt.label}}</strong> {{opt.subLabel}}</a></li></ul></div></div><table class=\"table\"><tr ng-repeat=\"opt in axis.active\"><td colspan=\"2\"><div class=\"pull-right\"><span ng-switch=\"getSort(opt.ref).direction\"><a ng-switch-when=\"desc\" ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-desc\"></i></a> <a ng-switch-when=\"asc\" ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-asc\"></i></a> <a ng-switch-default ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-desc\"></i></a></span> <a ng-click=\"remove(axis, opt.ref)\" ng-show=\"axis.multiple\" class=\"ng-link ng-icon\"><i class=\"fa fa-times\"></i></a></div><strong>{{opt.label}}</strong> {{opt.subLabel}}</td></tr></table></div><div class=\"panel panel-default\"><div class=\"panel-heading\"><strong>Filters</strong><div class=\"btn-group\" dropdown ng-show=\"filterAttributes.length\">&mdash; <a dropdown-toggle class=\"ng-link\">add filter</a><ul class=\"dropdown-menu\" role=\"menu\"><li ng-repeat=\"attr in filterAttributes\"><a ng-click=\"addFilter(attr)\"><strong>{{attr.label}}</strong> {{attr.subLabel}}</a></li></ul></div></div><table class=\"table table-panel\"><tbody ng-repeat=\"filter in filters\"><tr><td colspan=\"2\"><strong>{{filter.attr.label}}</strong> {{filter.attr.subLabel}}</td><td width=\"1%\"><span class=\"pull-right\"><a ng-click=\"removeFilter(filter)\" class=\"ng-link\"><i class=\"fa fa-times\"></i></a></span></td></tr><tr class=\"adjoined\"><td width=\"1%\" class=\"middle\">is</td><td width=\"95%\"><ui-select ng-model=\"filter.value\" disable-search=\"false\" on-select=\"setFilter(filter, $item, $model)\"><ui-select-match placeholder=\"Pick one...\">{{$select.selected}}</ui-select-match><ui-select-choices repeat=\"v as v in filter.values | filter: $select.search track by $index\"><div ng-bind=\"v\"></div></ui-select-choices></ui-select></td><td class=\"middle\"></td></tr></tbody></table></div>");
+    "<div class=\"panel panel-default\" ng-repeat=\"axis in axes\"><div class=\"panel-heading\"><strong>{{axis.label}}</strong><div class=\"btn-group\" dropdown ng-show=\"axis.available.length\">&mdash; <a dropdown-toggle class=\"ng-link\">{{axis.addLabel}}</a><ul class=\"dropdown-menu\" role=\"menu\"><li ng-repeat=\"opt in axis.available\"><a ng-click=\"add(axis, opt.ref)\"><strong>{{opt.label}}</strong> {{opt.subLabel}}</a></li></ul></div></div><table class=\"table\"><tr ng-repeat=\"opt in axis.active\"><td colspan=\"2\"><div class=\"pull-right\"><span ng-switch=\"getSort(opt.ref).direction\"><a ng-switch-when=\"desc\" ng-click=\"pushSort(opt.ref, 'asc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-desc\"></i></a> <a ng-switch-when=\"asc\" ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-asc\"></i></a> <a ng-switch-default ng-click=\"pushSort(opt.ref, 'desc')\" class=\"ng-link ng-icon\"><i class=\"fa fa-sort-amount-desc\"></i></a></span> <a ng-click=\"remove(axis, opt.ref)\" ng-show=\"axis.remove\" class=\"ng-link ng-icon\"><i class=\"fa fa-times\"></i></a></div><strong>{{opt.label}}</strong> {{opt.subLabel}}</td></tr></table></div><div class=\"panel panel-default\"><div class=\"panel-heading\"><strong>Filters</strong><div class=\"btn-group\" dropdown ng-show=\"filterAttributes.length\">&mdash; <a dropdown-toggle class=\"ng-link\">add filter</a><ul class=\"dropdown-menu\" role=\"menu\"><li ng-repeat=\"attr in filterAttributes\"><a ng-click=\"addFilter(attr)\"><strong>{{attr.label}}</strong> {{attr.subLabel}}</a></li></ul></div></div><table class=\"table table-panel\"><tbody ng-repeat=\"filter in filters\"><tr><td colspan=\"2\"><strong>{{filter.attr.label}}</strong> {{filter.attr.subLabel}}</td><td width=\"1%\"><span class=\"pull-right\"><a ng-click=\"removeFilter(filter)\" class=\"ng-link\"><i class=\"fa fa-times\"></i></a></span></td></tr><tr class=\"adjoined\"><td width=\"1%\" class=\"middle\">is</td><td width=\"95%\"><ui-select ng-model=\"filter.value\" disable-search=\"false\" on-select=\"setFilter(filter, $item, $model)\"><ui-select-match placeholder=\"Pick one...\">{{$select.selected}}</ui-select-match><ui-select-choices repeat=\"v as v in filter.values | filter: $select.search track by $index\"><div ng-bind=\"v\"></div></ui-select-choices></ui-select></td><td class=\"middle\"></td></tr></tbody></table></div>");
 }]);
 
 angular.module("babbage-templates/sankey.html", []).run(["$templateCache", function($templateCache) {
@@ -42,7 +42,7 @@ angular.module("babbage-templates/treemap.html", []).run(["$templateCache", func
 
 angular.module("babbage-templates/workspace.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("babbage-templates/workspace.html",
-    "<babbage endpoint=\"{{endpoint}}\" cube=\"{{cube}}\" state=\"state\" update=\"update(state)\"><div class=\"row\"><div class=\"col-md-12\"><div class=\"pull-right\"><div class=\"btn-group spaced\" role=\"group\"><a class=\"btn btn-default\" ng-class=\"{'active': view == 'facts'}\" ng-click=\"setView('facts')\"><i class=\"fa fa-table\"></i> Items</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'crosstab'}\" ng-click=\"setView('crosstab')\"><i class=\"fa fa-cubes\"></i> Pivot table</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'barchart'}\" ng-click=\"setView('barchart')\"><i class=\"fa fa-bar-chart\"></i> Bar chart</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'treemap'}\" ng-click=\"setView('treemap')\"><i class=\"fa fa-th-large\"></i> Treemap</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'sankey'}\" ng-click=\"setView('sankey')\"><i class=\"fa fa-random\"></i> Flow</a></div></div></div></div><div class=\"row\"><div class=\"col-md-9\"><div ng-if=\"view == 'crosstab'\"><babbage-crosstab></babbage-crosstab></div><div ng-if=\"view == 'facts'\"><babbage-facts></babbage-facts></div><div ng-if=\"view == 'treemap'\"><babbage-treemap></babbage-treemap></div><div ng-if=\"view == 'barchart'\"><babbage-chart chart-type=\"bar\"></babbage-chart></div><div ng-if=\"view == 'sankey'\"><babbage-sankey></babbage-sankey></div></div><div class=\"col-md-3\"><babbage-panel></babbage-panel><div class=\"embed-link\"><p class=\"help-block\">Embed this view into another website:</p><div class=\"input-group\"><span class=\"input-group-addon\"><i class=\"fa fa-external-link-square\"></i></span> <input type=\"text\" class=\"form-control\" readonly=\"readonly\" value=\"<style>.babbage-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .babbage-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='babbage-embed'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\"></div></div></div></div></babbage>");
+    "<babbage endpoint=\"{{endpoint}}\" cube=\"{{cube}}\" state=\"state\" update=\"update(state)\"><div class=\"row\"><div class=\"col-md-12\"><div class=\"pull-right\"><div class=\"btn-group spaced\" role=\"group\"><a class=\"btn btn-default\" ng-class=\"{'active': view == 'facts'}\" ng-click=\"setView('facts')\"><i class=\"fa fa-table\"></i> Items</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'crosstab'}\" ng-click=\"setView('crosstab')\"><i class=\"fa fa-cubes\"></i> Pivot table</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'barchart'}\" ng-click=\"setView('barchart')\"><i class=\"fa fa-bar-chart\"></i> Bar chart</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'linechart'}\" ng-click=\"setView('linechart')\"><i class=\"fa fa-line-chart\"></i> Line chart</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'treemap'}\" ng-click=\"setView('treemap')\"><i class=\"fa fa-th-large\"></i> Treemap</a> <a class=\"btn btn-default\" ng-class=\"{'active': view == 'sankey'}\" ng-click=\"setView('sankey')\"><i class=\"fa fa-random\"></i> Flow</a></div></div></div></div><div class=\"row\"><div class=\"col-md-9\"><div ng-if=\"view == 'crosstab'\"><babbage-crosstab></babbage-crosstab></div><div ng-if=\"view == 'facts'\"><babbage-facts></babbage-facts></div><div ng-if=\"view == 'treemap'\"><babbage-treemap></babbage-treemap></div><div ng-if=\"view == 'barchart'\"><babbage-chart chart-type=\"bar\"></babbage-chart></div><div ng-if=\"view == 'linechart'\"><babbage-chart chart-type=\"line\"></babbage-chart></div><div ng-if=\"view == 'sankey'\"><babbage-sankey></babbage-sankey></div></div><div class=\"col-md-3\"><babbage-panel></babbage-panel><div class=\"embed-link\"><p class=\"help-block\">Embed this view into another website:</p><div class=\"input-group\"><span class=\"input-group-addon\"><i class=\"fa fa-external-link-square\"></i></span> <input type=\"text\" class=\"form-control\" readonly=\"readonly\" value=\"<style>.babbage-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;} .babbage-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style><div class='babbage-embed'><iframe src='{{embedLink}}' frameborder='0' allowfullscreen></iframe></div>\"></div></div></div></div></babbage>");
 }]);
 ;var ngBabbage = angular.module('ngBabbage', ['ngBabbage.templates']);
 
@@ -309,10 +309,13 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
     restrict: 'EA',
     require: '^babbage',
     scope: {
+      chartType: '@'
     },
     templateUrl: 'babbage-templates/chart.html',
     link: function(scope, element, attrs, babbageCtrl) {
       scope.queryLoaded = false;
+      scope.cutoffWarning = false;
+      scope.cutoff = 0;
 
       var getNames = function(model) {
         var names = {};
@@ -325,6 +328,7 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
 
       var query = function(model, state) {
         var category = asArray(state.category)[0],
+            grouping = asArray(state.grouping)[0],
             value = asArray(state.value)[0];
 
         if (!value || !category) return;
@@ -341,21 +345,25 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
           }
         }
         if (!order.length) {
-          order = [{ref: y, direction: 'desc'}];
+          order = [{ref: value, direction: 'desc'}];
         }
+        if (grouping && order[0] && order[0].ref != grouping) {
+          order.unshift({ref: grouping, direction: 'asc'});
+        }
+        console.log('Grouping', grouping);
 
         q.order = order;
         q.page = 0;
-        q.pagesize = 500;
+        q.pagesize = 10000;
 
         var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
                             babbageCtrl.queryParams(q));
         dfd.then(function(res) {
-          queryResult(res.data, q, model, state, category, value);
+          queryResult(res.data, q, model, state, category, grouping, value);
         });
       };
 
-      var queryResult = function(data, q, model, state, category, value) {
+      var queryResult = function(data, q, model, state, category, grouping, value) {
         var wrapper = element.querySelectorAll('.chart-babbage')[0],
             size = babbageCtrl.size(wrapper, function(w) {
               return w * 0.6;
@@ -376,7 +384,8 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
                 x: category,
                 value: [value]
               },
-              type: 'bar'
+              groups: [],
+              type: scope.chartType === 'bar' ? 'bar' : 'line'
           },
           grid: {
             focus: {
@@ -402,6 +411,8 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
         });
 
         scope.queryLoaded = true;
+        scope.cutoffWarning = data.total_cell_count > q.pagesize;
+        scope.cutoff = q.pagesize;
       };
 
       var unsubscribe = babbageCtrl.subscribe(function(event, model, state) {
@@ -409,24 +420,49 @@ ngBabbage.directive('babbageChart', ['$rootScope', '$http', function($rootScope,
       });
       scope.$on('$destroy', unsubscribe);
 
-      babbageCtrl.init({
-        category: {
-          label: 'Categories',
-          addLabel: 'set bar division',
-          types: ['attributes'],
-          defaults: [],
-          sortId: 0,
-          multiple: false
-        },
+      var queryModel = {
         value: {
           label: 'Value',
-          addLabel: 'set bar height',
+          addLabel: 'set height',
           types: ['aggregates'],
           defaults: [],
           sortId: 1,
           multiple: false
+        },
+        grouping: {
+          label: 'Grouping (opt)',
+          addLabel: 'select',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 2,
+          remove: true,
+          multiple: false
         }
-      });
+      };
+
+      if (scope.chartType == 'line') {
+        queryModel.category = {
+          label: 'Series',
+          addLabel: 'set series',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 0,
+          multiple: false
+        };
+      }
+
+      if (scope.chartType == 'bar') {
+        queryModel.category = {
+          label: 'Categories',
+          addLabel: 'set bars',
+          types: ['attributes'],
+          defaults: [],
+          sortId: 0,
+          multiple: false
+        };
+      }
+
+      babbageCtrl.init(queryModel);
     }
   }
 }]);
@@ -874,6 +910,9 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         for (var name in babbageCtrl.queryModel) {
           var axis = babbageCtrl.queryModel[name];
           axis.name = name;
+          if (!angular.isDefined(axis.remove)) {
+            axis.remove = axis.multiple;
+          }
           axis.sortId = axis.sortId || 1;
           axis.available = [];
           axis.active = [];

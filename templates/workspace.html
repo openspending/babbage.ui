@@ -19,6 +19,11 @@
             <i class="fa fa-bar-chart"></i> Bar chart
           </a>
           <a class="btn btn-default"
+            ng-class="{'active': view == 'linechart'}"
+            ng-click="setView('linechart')">
+            <i class="fa fa-line-chart"></i> Line chart
+          </a>
+          <a class="btn btn-default"
             ng-class="{'active': view == 'treemap'}"
             ng-click="setView('treemap')">
             <i class="fa fa-th-large"></i> Treemap
@@ -45,6 +50,9 @@
       </div>
       <div ng-if="view == 'barchart'">
         <babbage-chart chart-type="bar"></babbage-chart>
+      </div>
+      <div ng-if="view == 'linechart'">
+        <babbage-chart chart-type="line"></babbage-chart>
       </div>
       <div ng-if="view == 'sankey'">
         <babbage-sankey></babbage-sankey>

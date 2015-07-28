@@ -91,6 +91,9 @@ ngBabbage.directive('babbagePanel', ['$rootScope', 'slugifyFilter', function($ro
         for (var name in babbageCtrl.queryModel) {
           var axis = babbageCtrl.queryModel[name];
           axis.name = name;
+          if (!angular.isDefined(axis.remove)) {
+            axis.remove = axis.multiple;
+          }
           axis.sortId = axis.sortId || 1;
           axis.available = [];
           axis.active = [];
