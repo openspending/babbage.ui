@@ -29,7 +29,7 @@ Or, with inline config:
 
 ### A few links
 
-* [Sample API result](https://spendb-dev.herokuapp.com/api/slicer/cube/wb_contract_awards/aggregate?drilldown=supplier_country)
+* [Sample API result](https://spendb-dev.herokuapp.com/api/slicer/cube/wb-contract-awards/aggregate?drilldown=supplier_country)
 * [vega tutorial](https://github.com/trifacta/vega/wiki/Tutorial)
 * [nvd3](https://github.com/novus/nvd3) and [angular-nvd3](https://github.com/krispo/angular-nvd3)
 * [OffenerHaushalt Treemaps](https://github.com/okfde/offenerhaushalt.de/blob/master/offenerhaushalt/static/js/treemap.js)
