@@ -31,6 +31,12 @@ Or, with inline config:
 
 Clone the repository and open ``index.html`` to see ``babbage`` in action, no pre-config required.
 
+### Dev installation
+
+* Dev tool installation with [npm](https://www.npmjs.com/): ``npm install`` (see ``package.json``)
+* Web packaging with [Bower](http://bower.io/): ``bower install`` (see ``bower.json``)
+* Build automation with [Grunt](http://gruntjs.com/): ``grunt`` without arguments runs the ``default`` task (see ``Gruntfile.js``)
+
 ### A few links
 
 * [Sample API result](https://spendb-dev.herokuapp.com/api/slicer/cube/wb-contract-awards/aggregate?drilldown=supplier_country)
