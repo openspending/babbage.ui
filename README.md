@@ -27,6 +27,10 @@ Or, with inline config:
 </babbage>
 ```
 
+### Example
+
+Clone the repository and open ``index.html`` to see ``babbage`` in action, no pre-config required.
+
 ### A few links
 
 * [Sample API result](https://spendb-dev.herokuapp.com/api/slicer/cube/wb-contract-awards/aggregate?drilldown=supplier_country)
