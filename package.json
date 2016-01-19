@@ -53,4 +53,31 @@
   "bugs": {
     "url": "https://github.com/openspending/babbage.ui/issues"
   },
+  "author": {
+    "name": "Open Spending",
+    "email": "",
+    "url": "https://openspending.org/"
+  },
+  "contributors": [
+    {
+      "name": "Friedrich Lindenberg",
+      "email": "friedrich@pudo.org",
+      "url": "http://pudo.org/"
+    },
+    {
+      "name": "Mila Frerichs",
+      "email": "",
+      "url": "http://milafrerichs.de"
+    },
+    {
+      "name": "Holger Drewes",
+      "email": "",
+      "url": ""
+    },
+    {
+      "name": "Paul Walsh",
+      "email": "paulywalsh@gmail.com",
+      "url": "http://pwalsh.me/"
+    }
+  ]
 }
