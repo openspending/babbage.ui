@@ -3,3 +3,6 @@ _site/
 node_modules/*
 bower_components/*
 .env
+.idea
+.tern-port
+npm-debug.log
