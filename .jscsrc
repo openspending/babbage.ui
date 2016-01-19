@@ -1,0 +1,14 @@
+{
+  "esnext": true,
+  "disallowSemicolons": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": true,
+  "requireDotNotation": true,
+  "requireCurlyBraces": [ "if", "else", "for", "while", "do", "try", "catch" ],
+  "requireSpaceAfterBinaryOperators": true,
+  "requireSpaceBeforeBinaryOperators": true,
+  "requireSpaceAfterComma": { "allExcept": [ "trailing" ] },
+  "requireSpaceBetweenArguments": true,
+  "requireSpaceAfterKeywords": true,
+  "requireSpacesInsideBrackets": true,
+  "validateQuoteMarks": "'"
+}

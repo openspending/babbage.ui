@@ -5,6 +5,8 @@
   "license": "MIT",
   "version": "0.2.0",
   "scripts": {
+    "build:dist": "webpack --config webpack.config.development.js",
+    "build:dist:min": "webpack --config webpack.config.production.js",
     "test": "mocha"
   },
   "devDependencies": {
@@ -25,6 +27,8 @@
     "jsdom": "^7.2.2",
     "mocha": "^2.3.4",
     "mocha-jsdom": "^1.0.0",
+    "webpack": "^1.12.11",
+    "webpack-dev-server": "^1.14.1"
   },
   "deployBucket": "assets.pudo.org",
   "deployBase": "libs/babbage.ui",
