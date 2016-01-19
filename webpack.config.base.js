@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  entry:  './src/app.js',
+  entry:  './src/index.js',
   devtool: 'source-map',
   module: {
     loaders: [

@@ -4,10 +4,19 @@
   "homepage": "https://github.com/openspending/babbage.ui",
   "license": "MIT",
   "version": "0.2.0",
+  "main": "lib/index.js",
   "scripts": {
+    "build:lib": "babel src --out-dir lib",
     "build:dist": "webpack --config webpack.config.development.js",
     "build:dist:min": "webpack --config webpack.config.production.js",
+    "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
+    "prepublish": "npm run build",
+    "review": "jscs lib test",
+    "fix": "jscs lib test --fix",
     "test": "mocha"
+  },
+  "dependencies": {
+    "lodash": "^4.0.0"
   },
   "devDependencies": {
     "bootstrap": "3.3.4",

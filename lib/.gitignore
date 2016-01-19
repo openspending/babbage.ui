@@ -1,0 +1,3 @@
+# Code transpiled to ES5 is built in `lib` when pushing to npm.
+*
+!.gitignore
