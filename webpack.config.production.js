@@ -7,7 +7,7 @@ var baseConfig = require('./webpack.config.base')
 var productionConfig = {
   output: {
     filename: 'babbage.min.js',
-    path: './dist'
+    path: './dist2'
   },
   plugins:  [
     new webpack.optimize.OccurenceOrderPlugin(),
