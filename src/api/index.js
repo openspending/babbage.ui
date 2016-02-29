@@ -4,17 +4,20 @@ import Promise from 'bluebird'
 import querystring from 'querystring'
 import url from 'url'
 
-class Api {
-  var cache = {};
+export class Api {
+  constructor() {
+    this.cache = {};
+  }
 
   get(url) {
+    var that = this;
     if (this.cache[url]) {
       return Promise.resolve(this.cache[url]);
     } else {
       return fetch(url).then(function(response) {
         return response.text()
       }).then(function(text) {
-        return this.cache[url] = text
+        return that.cache[url] = text
       });
     }
   }
@@ -31,13 +34,13 @@ class Api {
     params = params || {};
     var api = endpoint;
     api = endpoint[api.length - 1] == '/' ? api.slice(0, api.length - 1) : api;
-    api = api + '/cubes/' + cube + '/' + path;
+    api = `${api}/cubes/${cube}/${path}`;
     var urlObj = url.parse(api);
 
     if (urlObj.query) {
       params = _.extend(querystring.parse(urlObj.jquery), params);
-      urlObj.query = querystring.stringify(params);
     }
+    urlObj.search = querystring.stringify(params);
 
     return url.format(urlObj);
   }
@@ -58,7 +61,7 @@ class Api {
       (response) => {
         var result = [];
         var valueField = _.first(response.aggregates);
-        var keyField = _.first(response.attributes);
+        var keyField = _.first(params.groupBy);
         var nameField = keyField;
 
         _.each(response.cells, (cell => {

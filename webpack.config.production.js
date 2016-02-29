@@ -1,6 +1,6 @@
 'use strict'
 
-var _ = require('lodash')
+var _ = require('underscore')
 var webpack = require('webpack')
 var baseConfig = require('./webpack.config.base')
 
@@ -23,6 +23,6 @@ var productionConfig = {
   ]
 }
 
-var config = _.merge({}, baseConfig, productionConfig)
+var config = _.extend({}, baseConfig, productionConfig)
 
 module.exports = config

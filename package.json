@@ -16,9 +16,12 @@
     "test": "mocha"
   },
   "dependencies": {
-    "lodash": "^4.0.0"
+    "bluebird": "^3.3.3",
+    "isomorphic-fetch": "^2.2.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "babel": "^6.5.2",
     "babel-cli": "^6.4.0",
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
@@ -41,6 +44,7 @@
     "jsdom": "^7.2.2",
     "mocha": "^2.3.4",
     "mocha-jsdom": "^1.0.0",
+    "nock": "^7.2.2",
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1"
   },
