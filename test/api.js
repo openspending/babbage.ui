@@ -1,6 +1,6 @@
 var nock = require('nock');
 var assert = require('chai').assert;
-var _ = require('underscore');
+var _ = require('lodash');
 
 describe('Babbage.ui API', function() {
   var api = new (require('../lib/api/').Api)();

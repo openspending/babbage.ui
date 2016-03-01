@@ -1,5 +1,5 @@
 import 'isomorphic-fetch'
-import _ from 'underscore'
+import _ from 'lodash'
 import Promise from 'bluebird'
 import querystring from 'querystring'
 import url from 'url'
@@ -38,7 +38,7 @@ export class Api {
     var urlObj = url.parse(api);
 
     if (urlObj.query) {
-      params = _.extend(querystring.parse(urlObj.jquery), params);
+      params = _.assign(querystring.parse(urlObj.jquery), params);
     }
     urlObj.search = querystring.stringify(params);
 
