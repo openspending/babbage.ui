@@ -2,12 +2,13 @@ import Api from '../../api'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'underscore'
-
+import events from 'events'
 var api = new Api();
 
-class PieChartComponent {
+class PieChartComponent extends events.EventEmitter {
 
   constructor() {
+    super();
     this.wrapper = null;
     this.chart = null;
   }
@@ -21,20 +22,27 @@ class PieChartComponent {
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
+    var that = this;
     this.wrapper = wrapper;
 
-    var data = api.aggregate(endpoint, cube, params);
+    this.emit('beginAggregate', this);
 
-    this.chart = c3.generate({
-      bindto: this.wrapper,
-      data: {
-        names: Utils.buildNames(data),
-        columns: Utils.buildColumns(data),
-        colors: Utils.buildColors(data, colorSchema),
-        type: 'pie'
-      }
+    api.aggregate(endpoint, cube, params).then((data) => {
+      that.chart = c3.generate({
+        bindto: that.wrapper,
+        data: {
+          names: Utils.buildC3Names(data),
+          columns: Utils.buildC3Columns(data),
+          colors: Utils.buildC3Colors(data, colorSchema),
+          type: 'pie',
+          onclick: (d, element) => {
+            that.emit('click', that, d);
+          }
+        }
+      });
+
+      this.emit('endAggregate', that, data);
     });
-
   }
 }
 

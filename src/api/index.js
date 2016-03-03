@@ -40,6 +40,12 @@ export class Api {
     if (urlObj.query) {
       params = _.assign(querystring.parse(urlObj.jquery), params);
     }
+    _.each(params, (value, key) => {
+      if (_.isArray(value)) {
+        params[key] = value.join('|');
+      }
+    });
+
     urlObj.search = querystring.stringify(params);
 
     return url.format(urlObj);
@@ -51,21 +57,62 @@ export class Api {
     );
   }
 
+  getPackageModel(endpoint, cube) {
+    return this.getJson(
+      this.buildUrl(endpoint, cube, 'model')
+    ).then((result) => {
+      return result.model;
+    });
+  }
+
+  getDisplayField(model, field) {
+    var result = field;
+    var dimension = _.find(model.dimensions, {label: field});
+
+    if (dimension) {
+      result = `${dimension.hierarchy}.${dimension.label_attribute}`;
+    }
+
+    return result;
+  }
 
   aggregate(endpoint, cube, params) {
-    var promise = this.getJson(
-      this.buildUrl(endpoint, cube, 'aggregate', params)
-    );
+    var that = this;
+    params = params || {};
+    params.page = params.page || 0;
+    params.pagesize = params.pagesize || 30;
+    if (params.aggregates) {
+      params.sort = params.sort || `${params.aggregates}:desc`;
+    }
 
-    return promise.then(
-      (response) => {
-        var result = [];
-        var valueField = _.first(response.aggregates);
-        var keyField = _.first(params.groupBy);
-        var nameField = keyField;
+    return this.getPackageModel(endpoint, cube).then((model) => {
+      if (params.group) {
+        var displayField = that.getDisplayField(model, _.first(params.group));
 
-        _.each(response.cells, (cell => {
-          result.push({
+        var keyField = _.first(params.group);
+        if (params.group.indexOf(displayField) == -1) {
+          params.group.push(displayField);
+        }
+      }
+
+      var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
+
+      return that.getJson(aggregateUrl).then((data) => {
+
+        var result = {};
+        var valueField = _.first(data.aggregates);
+        var nameField = displayField;
+
+        if (!params.group) {
+          keyField = valueField;
+          nameField = valueField;
+        }
+        result.summary = data.summary[valueField];
+        result.count = data.total_cell_count;
+        result.cells = [];
+
+        _.each(data.cells, (cell => {
+          result.cells.push({
               key: cell[keyField],
               name: cell[nameField],
               value: cell[valueField]
@@ -73,8 +120,9 @@ export class Api {
           );
         }));
         return result;
-      }
-    );
+      });
+    });
+
   }
 }
 
