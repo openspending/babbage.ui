@@ -1,11 +1,11 @@
-import Api from '../../api'
+import {Api} from '../../api'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'underscore'
 import events from 'events'
 var api = new Api();
 
-class PieChartComponent extends events.EventEmitter {
+export class PieChartComponent extends events.EventEmitter {
 
   constructor() {
     super();
@@ -14,11 +14,11 @@ class PieChartComponent extends events.EventEmitter {
   }
 
   refresh() {
-    var bounds = wrapper.getBoundingClientRect();
-    this.chart.resize({
-      height: bounds.height,
-      width: bounds.width
-    });
+    var bounds = this.wrapper.getBoundingClientRect();
+    //this.chart.resize({
+    //  height: bounds.height,
+    //  width: bounds.width
+    //});
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {

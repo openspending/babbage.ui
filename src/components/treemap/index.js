@@ -6,7 +6,7 @@ import events from 'events'
 
 var api = new Api();
 
-class TreeMapComponent extends events.EventEmitter {
+export class TreeMapComponent extends events.EventEmitter {
   constructor() {
     super();
     this.wrapper = null;
@@ -14,7 +14,7 @@ class TreeMapComponent extends events.EventEmitter {
   }
 
   refresh() {
-    //var bounds = wrapper.getBoundingClientRect();
+    //var bounds = this.wrapper.getBoundingClientRect();
     //this.chart.resize({
     //  height: bounds.height,
     //  width: bounds.width

@@ -1,4 +1,4 @@
-import TreeMapComponent from '../../components/treemap'
+import TreeMapComponent from '../../../components/treemap'
 
 class PieChartDirective {
   init(angularModule) {
@@ -15,10 +15,11 @@ class PieChartDirective {
           template: 'template.html',
           replace: false,
           link: function($scope, element) {
-            var resizeEvent = TreeMapComponent.refresh().bind(TreeMapComponent);
+            var treeMap = new TreeMapComponent();
+            var resizeEvent = treeMap.refresh.bind(treeMap);
             var wrapper = element.find('.treemap-chart')[0];
 
-            TreeMapComponent.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);

@@ -1,6 +1,6 @@
-import ChartComponent from '../../../components/chart'
+import BubbleTreeComponent from '../../../components/bubbletree'
 
-export class ChartDirective {
+export class BubbleTreeDirective {
   init(angularModule) {
     angularModule.directive('chart', [
       '$window',
@@ -16,11 +16,11 @@ export class ChartDirective {
           templateUrl: 'template.html',
           replace: false,
           link: function($scope, element) {
-            var chart = new ChartComponent();
-            var resizeEvent = chart.refresh.bind(chart);
+            var bubbleTree = new BubbleTreeComponent();
+            var resizeEvent = bubbleTree.refresh.bind(bubbleTree);
             var wrapper = element.find('.pie-chart')[0];
 
-            chart.build($scope.type, $scope.endpoint, $scope.cube, $scope.state, wrapper);
+            bubbleTree.build($scope.type, $scope.endpoint, $scope.cube, $scope.state, wrapper);
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
@@ -32,4 +32,4 @@ export class ChartDirective {
   }
 }
 
-export default ChartDirective
+export default BubbleTreeDirective
