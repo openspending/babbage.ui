@@ -3,23 +3,28 @@ var _ = require('lodash');
 
 describe('Babbage.ui component utils', function() {
   var Utils = require('../lib/components/utils.js');
-  var data = [
-    {
-      key: 10,
-      name: 'Some name1',
-      value: 100,
-    },
-    {
-      key: 20,
-      name: 'Some name2',
-      value: 300,
-    },
-    {
-      key: 30,
-      name: 'Some name3',
-      value: 5,
-    }
-  ];
+  var data = {
+    summary: 405,
+    count: 3,
+    cells: [
+      {
+        key: 10,
+        name: 'Some name1',
+        value: 100,
+      },
+      {
+        key: 20,
+        name: 'Some name2',
+        value: 300,
+      }
+      ,
+      {
+        key: 30,
+        name: 'Some name3',
+        value: 5,
+      }
+    ]
+  };
 
   it('Should exists', function(done) {
     assert(_.isObject(Utils));
@@ -27,7 +32,7 @@ describe('Babbage.ui component utils', function() {
   });
 
   it('Should build `names`', function(done) {
-    var result = Utils.buildNames(data);
+    var result = Utils.buildC3Names(data);
     assert.deepEqual(result, {
       10: 'Some name1',
       20: 'Some name2',
@@ -37,7 +42,7 @@ describe('Babbage.ui component utils', function() {
   });
 
   it('Should build `columns`', function(done) {
-    var result = Utils.buildColumns(data);
+    var result = Utils.buildC3Columns(data);
     assert.deepEqual(result, [
       [10, 100],
       [20, 300],
@@ -47,7 +52,7 @@ describe('Babbage.ui component utils', function() {
   });
 
   it('Should build `colors`', function(done) {
-    var result = Utils.buildColors(data);
+    var result = Utils.buildC3Colors(data);
     assert.deepEqual(result, [
       [10, '#CF3D1E'],
       [20, '#F15623'],
