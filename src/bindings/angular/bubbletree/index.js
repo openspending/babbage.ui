@@ -1,4 +1,4 @@
-import BubbleTreeComponent from '../../../components/pie'
+import BubbleTreeComponent from '../../../components/bubbletree'
 
 export class BubbleTreeDirective {
   init(angularModule) {

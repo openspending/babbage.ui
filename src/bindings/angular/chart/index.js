@@ -1,4 +1,4 @@
-import ChartComponent from '../../../components/pie'
+import ChartComponent from '../../../components/chart'
 
 export class ChartDirective {
   init(angularModule) {
