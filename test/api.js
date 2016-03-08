@@ -34,15 +34,16 @@ describe('Babbage.ui API', function() {
     nock('http://site.com/')
       .persist()
       .get('/cubes/test/aggregate?' +
-        'group=administrative_classification.admin1&' +
-        'page=0&pagesize=30')
+        'drilldown=administrative_classification.admin1&' +
+        'pagesize=30')
       .reply(200, aggregate1, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
       .persist()
       .get('/cubes/test2/aggregate?' +
-        'group=administrative_classification.admin3_code%7Cadministrative_classification.admin3_label&' +
-        'page=0&pagesize=30')
+        'drilldown=administrative_classification_admin3_code.admin3_code%7C' +
+        'administrative_classification_admin3_code.admin3_label&' +
+        'pagesize=30')
       .reply(200, aggregate2, {'access-control-allow-origin': '*'});
 
 
@@ -125,12 +126,12 @@ describe('Babbage.ui API', function() {
 
   it('Should build URL with params', function(done) {
     var url = api.buildUrl('http://api.com', 'test', 'aggregate', {
-      cut: 'cut1',
-      filter: 'filter'
+      filter: 'filter',
+      group: 'group'
     });
     assert.equal(
       url,
-      'http://api.com/cubes/test/aggregate?cut=cut1&filter=filter'
+      'http://api.com/cubes/test/aggregate?drilldown=group&cut=filter'
     );
 
     done();
@@ -168,7 +169,7 @@ describe('Babbage.ui API', function() {
 
   it('Should return aggregate data grouped by field with `label-for`', function(done) {
     api.aggregate('http://site.com/', 'test2', {
-      group: ['administrative_classification.admin3_code']
+      group: ['administrative_classification_admin3_code.admin3_code']
     }).then(function(data) {
       assert.deepEqual(data, {
         summary: 350,
@@ -206,15 +207,15 @@ describe('Babbage.ui API', function() {
   it('Should return `Display field`', function(done) {
     api.getPackageModel('http://site.com/', 'test').then(function(model) {
       var displayField = api.getDisplayField(model, 'to');
-      assert.equal(displayField, 'to.name');
+      assert.equal(displayField, 'to');
       done();
     });
   });
 
   it('Should return `Display field` for field with `label-for`', function(done) {
     api.getPackageModel('http://site.com/', 'test2').then(function(model) {
-      var displayField = api.getDisplayField(model, 'administrative_classification.admin3_code');
-      assert.equal(displayField, 'administrative_classification.admin3_label');
+      var displayField = api.getDisplayField(model, 'administrative_classification_admin3_code.admin3_code');
+      assert.equal(displayField, 'administrative_classification_admin3_code.admin3_label');
       done();
     });
   });

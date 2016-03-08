@@ -23,11 +23,23 @@ export class Api {
   }
 
   getJson(url) {
-    return this.get(url).then(JSON.parse)
+    return this.get(url).then(JSON.parse);
   }
 
   flush() {
     this.cache = {}
+  }
+
+  transformParams (params) {
+    var result = {};
+    result.drilldown = params.group;
+    result.aggregates = params.aggregates;
+    result.pagesize = params.pagesize;
+    result.cut = params.filter;
+    result.page = params.page;
+    result.order = params.order;
+
+    return _.pickBy(result);
   }
 
   buildUrl(endpoint, cube, path, params) {
@@ -46,7 +58,7 @@ export class Api {
       }
     });
 
-    urlObj.search = querystring.stringify(params);
+    urlObj.search = querystring.stringify(this.transformParams(params));
 
     return url.format(urlObj);
   }
@@ -67,10 +79,11 @@ export class Api {
 
   getDisplayField(model, field) {
     var result = field;
-    var dimension = _.find(model.dimensions, {label: field});
+    var dimension = _.find(model.dimensions, {key_ref: field});
 
     if (dimension) {
-      result = `${dimension.hierarchy}.${dimension.label_attribute}`;
+//      result = `${dimension.hierarchy}.${dimension.label_attribute}`;
+      result = dimension.label_ref;
     }
 
     return result;
@@ -82,22 +95,27 @@ export class Api {
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 30;
     if (params.aggregates) {
-      params.sort = params.sort || `${params.aggregates}:desc`;
+      params.order = params.order || `${params.aggregates}:desc`;
     }
+    var keyField = '';
+    var displayField = '';
 
-    return this.getPackageModel(endpoint, cube).then((model) => {
-      if (params.group) {
-        var displayField = that.getDisplayField(model, _.first(params.group));
+    return this.getPackageModel(endpoint, cube)
+      .then((model) => {
+        if (params.group) {
+          displayField = that.getDisplayField(model, _.first(params.group));
 
-        var keyField = _.first(params.group);
-        if (params.group.indexOf(displayField) == -1) {
-          params.group.push(displayField);
+          keyField = _.first(params.group);
+          if (params.group.indexOf(displayField) == -1) {
+            params.group.push(displayField);
+          }
         }
-      }
 
-      var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
+        var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
 
-      return that.getJson(aggregateUrl).then((data) => {
+        return that.getJson(aggregateUrl);
+      })
+      .then((data) => {
 
         var result = {};
         var valueField = _.first(data.aggregates);
@@ -121,7 +139,6 @@ export class Api {
         }));
         return result;
       });
-    });
 
   }
 }

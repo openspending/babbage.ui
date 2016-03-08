@@ -1,6 +1,6 @@
 import Api from '../../api'
 
-class TableComponent {
+export class TableComponent {
 
 }
 

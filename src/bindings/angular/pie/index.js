@@ -1,6 +1,6 @@
-import PieChartComponent from '../../components/pie'
+import PieChartComponent from '../../../components/pie'
 
-class PieChartDirective {
+export class PieChartDirective {
   init(angularModule) {
     angularModule.directive('pieChart', [
       '$window',
@@ -15,10 +15,11 @@ class PieChartDirective {
           template: 'template.html',
           replace: false,
           link: function($scope, element) {
-            var resizeEvent = PieChartComponent.refresh().bind(PieChartComponent);
+            var pieChart = new PieChartComponent();
+            var resizeEvent = pieChart.refresh.bind(pieChart);
             var wrapper = element.find('.pie-chart')[0];
 
-            PieChartComponent.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            pieChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);

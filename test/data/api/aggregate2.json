@@ -19,19 +19,19 @@
   ],
   "cells": [
     {
-      "administrative_classification.admin3_label": "National Social Insurance Company",
+      "administrative_classification_admin3_code.admin3_label": "National Social Insurance Company",
       "approved.sum": 100,
-      "administrative_classification.admin3_code": "289"
+      "administrative_classification_admin3_code.admin3_code": "289"
     },
     {
-      "administrative_classification.admin3_label": "National Health Insurance Company",
+      "administrative_classification_admin3_code.admin3_label": "National Health Insurance Company",
       "approved.sum": 200,
-      "administrative_classification.admin3_code": "322"
+      "administrative_classification_admin3_code.admin3_code": "322"
     },
     {
-      "administrative_classification.admin3_label": "General actions",
+      "administrative_classification_admin3_code.admin3_label": "General actions",
       "approved.sum": 50,
-      "administrative_classification.admin3_code": "200"
+      "administrative_classification_admin3_code.admin3_code": "200"
     }
   ],
   "aggregates": [

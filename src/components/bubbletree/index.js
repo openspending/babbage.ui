@@ -6,7 +6,7 @@ import events from 'events'
 var api = new Api();
 
 
-export class ChartComponent extends events.EventEmitter {
+export class BubbleTreeComponent extends events.EventEmitter {
 
   constructor() {
     super();
@@ -29,22 +29,28 @@ export class ChartComponent extends events.EventEmitter {
     this.emit('beginAggregate', this);
 
     api.aggregate(endpoint, cube, params).then((data) => {
-      that.chart = c3.generate({
-        bindto: that.wrapper,
-        data: {
-          names: Utils.buildC3Names(data),
-          columns: Utils.buildC3Columns(data),
-          colors: Utils.buildC3Colors(data, colorSchema),
-          type: chartType,
-          onclick: (d, element) => {
-            that.emit('click', that, d);
-          }
-        }
+      this.bubbleTree = new BubbleTree({
+        autoColors: true,
+        data: data,
+        container: wrapper
       });
+
+      //that.chart = c3.generate({
+      //  bindto: that.wrapper,
+      //  data: {
+      //    names: Utils.buildC3Names(data),
+      //    columns: Utils.buildC3Columns(data),
+      //    colors: Utils.buildC3Colors(data, colorSchema),
+      //    type: chartType,
+      //    onclick: (d, element) => {
+      //      that.emit('click', that, d);
+      //    }
+      //  }
+      //});
 
       this.emit('endAggregate', that, data);
     });
   }
 }
 
-export default ChartComponent
+export default BubbleTreeComponent

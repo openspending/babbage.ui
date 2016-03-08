@@ -1,8 +1,8 @@
-import TreeMapComponent from '../../../components/treemap'
+import BubbleTreeComponent from '../../../components/pie'
 
-class PieChartDirective {
+export class BubbleTreeDirective {
   init(angularModule) {
-    angularModule.directive('treeMap', [
+    angularModule.directive('chart', [
       '$window',
       function($window) {
         return {
@@ -10,16 +10,17 @@ class PieChartDirective {
           scope: {
             endpoint: '@',
             cube: '@',
+            type: '@',
             state: '='
           },
-          template: 'template.html',
+          templateUrl: 'template.html',
           replace: false,
           link: function($scope, element) {
-            var treeMap = new TreeMapComponent();
-            var resizeEvent = treeMap.refresh.bind(treeMap);
-            var wrapper = element.find('.treemap-chart')[0];
+            var bubbleTree = new BubbleTreeComponent();
+            var resizeEvent = bubbleTree.refresh.bind(bubbleTree);
+            var wrapper = element.find('.pie-chart')[0];
 
-            treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            bubbleTree.build($scope.type, $scope.endpoint, $scope.cube, $scope.state, wrapper);
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
@@ -31,4 +32,4 @@ class PieChartDirective {
   }
 }
 
-export default PieChartDirective
+export default BubbleTreeDirective
