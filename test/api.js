@@ -219,4 +219,189 @@ describe('Babbage.ui API', function() {
       done();
     });
   });
+
+  it('Should return `Measures` by model', function(done) {
+    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
+      var measures = api.getMeasuresFromModel(model);
+      assert.deepEqual(measures, [
+        {key: 'executed.sum', value: 'executed'},
+        {key: 'adjusted.sum', value: 'adjusted'},
+        {key: 'approved.sum', value: 'approved'}
+      ]);
+      done();
+    });
+  });
+
+  it('Should return `Measures` by endpoint and cube', function(done) {
+    api.getMeasures('http://site.com/', 'test2').then(function(measures) {
+      assert.deepEqual(measures, [
+        {key: 'executed.sum', value: 'executed'},
+        {key: 'adjusted.sum', value: 'adjusted'},
+        {key: 'approved.sum', value: 'approved'}
+      ]);
+      done();
+    });
+  });
+
+  it('Should return dimension key by id', function(done) {
+    api.getPackageModel('http://site.com/', 'test').then(function(model) {
+      var dimensionKey = api.getDimensionKeyById(model, 'from');
+      assert.equal(dimensionKey, 'from.name');
+
+      var dimensionKey = api.getDimensionKeyById(model, 'time_day');
+      assert.equal(dimensionKey, 'time_day.day');
+
+      done();
+    });
+  });
+
+  it('Should return undefined  for dimension when model doesn\'t ' +
+    'have hierarchy for that dimension', function(done) {
+    api.getPackageModel('http://site.com/', 'test').then(function(model) {
+      var dimensionKey = api.getDrillDownDimensionKey(model, 'from');
+      assert(_.isUndefined(dimensionKey));
+      done();
+    });
+  });
+
+  it('Should return DrillDown Dimension Key for dimension', function(done) {
+    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
+      var dimensionKey = api.getDrillDownDimensionKey(
+        model,
+        'administrative_classification_admin1'
+      );
+      assert.equal(dimensionKey, 'administrative_classification_admin2_code.admin2_code');
+      done();
+    });
+  });
+
+  it('Should return dimensions from model', function(done) {
+    api.getPackageModel('http://site.com/', 'test').then(function(model) {
+      var dimensions = api.getDimensionsFromModel(model);
+      assert.isArray(dimensions);
+      assert.deepEqual(dimensions, [
+        {
+          id: 'from',
+          key: 'from.name',
+          code: 'from',
+          hierarchy: 'from',
+          name: 'from_name',
+          label: 'from.name',
+          drillDown: undefined
+        },
+        {
+          id: 'time_day',
+          key: 'time_day.day',
+          code: 'time.day',
+          hierarchy: 'time',
+          name: 'time_day',
+          label: 'time.day',
+          drillDown: undefined
+        },
+        {
+          id: 'time_month',
+          key: 'time_month.month',
+          code: 'time.month',
+          hierarchy: 'time',
+          name: 'time_month',
+          label: 'time.month',
+          drillDown: 'time_day.day'
+        },
+        {
+          id: 'time_year',
+          key: 'time_year.year',
+          code: 'time.year',
+          hierarchy: 'time',
+          name: 'time_year',
+          label: 'time.year',
+          drillDown: 'time_month.month'
+        },
+        {
+          id: 'to',
+          key: 'to.name',
+          code: 'to',
+          hierarchy: 'to',
+          name: 'to_name',
+          label: 'to.name',
+          drillDown: undefined
+        }]
+      );
+      done();
+    });
+  });
+
+  it('Should return correct dimensions from model', function(done) {
+    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
+      var dimensions = api.getDimensionsFromModel(model);
+      assert.isArray(dimensions);
+
+      assert.deepEqual(dimensions, [
+        {
+          id: 'administrative_classification_admin1',
+          key: 'administrative_classification_admin1.admin1',
+          code: 'administrative_classification.admin1',
+          hierarchy: 'administrative_classification',
+          name: 'admin1',
+          label: 'administrative_classification.admin1',
+          drillDown: 'administrative_classification_admin2_code.admin2_code'
+        },
+        {
+          id: 'administrative_classification_admin2_code',
+          key: 'administrative_classification_admin2_code.admin2_code',
+          code: 'administrative_classification.admin2_code',
+          hierarchy: 'administrative_classification',
+          name: 'admin2_code',
+          label: 'administrative_classification.admin2_label',
+          drillDown: 'administrative_classification_admin3_code.admin3_code'
+        },
+        {
+          id: 'administrative_classification_admin3_code',
+          key: 'administrative_classification_admin3_code.admin3_code',
+          code: 'administrative_classification.admin3_code',
+          hierarchy: 'administrative_classification',
+          name: 'admin3_code',
+          label: 'administrative_classification.admin3_label',
+          drillDown: undefined
+        },
+        {
+          id: 'location',
+          key: 'location.title',
+          code: 'location',
+          hierarchy: 'location',
+          name: 'admin2_label',
+          label: 'location.title',
+          drillDown: undefined
+        },
+        {
+          id: 'other_exp_type',
+          key: 'other_exp_type.exp_type',
+          code: 'other.exp_type',
+          hierarchy: 'other',
+          name: 'exp_type',
+          label: 'other.exp_type',
+          drillDown: 'other_transfer.transfer'
+        },
+        {
+          id: 'other_fin_source',
+          key: 'other_fin_source.fin_source',
+          code: 'other.fin_source',
+          hierarchy: 'other',
+          name: 'fin_source',
+          label: 'other.fin_source',
+          drillDown: 'other_exp_type.exp_type'
+        },
+        {
+          id: 'other_transfer',
+          key: 'other_transfer.transfer',
+          code: 'other.transfer',
+          hierarchy: 'other',
+          name: 'transfer',
+          label: 'other.transfer',
+          drillDown: undefined
+        }
+      ]);
+      done();
+    });
+  });
+
 });

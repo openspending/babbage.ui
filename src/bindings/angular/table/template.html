@@ -1,20 +1,16 @@
 <div class="table-babbage" ng-show="rows.length">
   <table class="table table-bordered table-condensed">
     <thead>
-    <tr ng-repeat="x in columns[0]">
-      <th ng-repeat="r in rows[0]"></th>
-      <th ng-repeat="c in columns">
-        {{c[$parent.$index]}}
+    <tr ng-repeat="header in tableData.headers">
+      <th ng-repeat="row in header"></th>
+        {{row}}
       </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="row in rows">
-      <th ng-repeat="r in row">
-        {{r}}
-      </th>
-      <td ng-repeat="val in table[$index] track by $index" class="numeric">
-        {{val | numeric}}
+    <tr ng-repeat="rows in tableData.columns">
+      <td ng-repeat="row in rows">
+        {{row}}
       </td>
     </tr>
     </tbody>

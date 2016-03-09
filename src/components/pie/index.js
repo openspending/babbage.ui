@@ -1,4 +1,4 @@
-import {Api} from '../../api'
+import {Api} from '../../api/index.js'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'underscore'
