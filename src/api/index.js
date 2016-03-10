@@ -30,7 +30,7 @@ export class Api {
     this.cache = {}
   }
 
-  transformParams (params) {
+  transformParams(params) {
     var result = {};
     result.drilldown = params.group;
     result.aggregates = params.aggregates;
@@ -89,6 +89,73 @@ export class Api {
     return result;
   }
 
+  getMeasuresFromModel(model) {
+    var result = [];
+    _.each(model.aggregates, function(value, key) {
+      if (value.measure) {
+        result.push({
+          key: key,
+          value: value.label
+        });
+      }
+    });
+    return result;
+  }
+
+  getMeasures(endpoint, cube) {
+    var that = this;
+    return this.getPackageModel(endpoint, cube)
+      .then((model) => {
+        return that.getMeasuresFromModel(model);
+      });
+  }
+
+  getDimensionKeyById(model, id) {
+    return model.dimensions[id].key_ref;
+  }
+
+  getDrillDownDimensionKey(model, dimensionId) {
+    var result = undefined;
+    var dimension = model.dimensions[dimensionId];
+    var hierarchy = model.hierarchies[dimension.hierarchy];
+    if (hierarchy) {
+      var dimensionLevel = hierarchy.levels.indexOf(dimensionId);
+      if (dimensionLevel > -1) {
+        var drillDownDimensionId = hierarchy.levels[dimensionLevel + 1];
+        if (drillDownDimensionId) {
+          result = this.getDimensionKeyById(model, drillDownDimensionId);
+        }
+      }
+    }
+    return result;
+  }
+
+  getDimensionsFromModel(model) {
+    var that = this;
+    var result = [];
+    _.each(model.dimensions, function(value, id) {
+
+      // jscs:disable
+      var keyAttribute = value.key_attribute;
+      var labelAttribute = value.label_attribute;
+      // jscs:enable
+
+      result.push({
+        id: id,
+        key: that.getDimensionKeyById(model, id),
+        code: value.label,
+        hierarchy: value.hierarchy,
+        name: value.attributes[keyAttribute].column,
+        label: value.hierarchy + '.' + labelAttribute,
+        drillDown: that.getDrillDownDimensionKey(model, id)
+      });
+    });
+
+    return _.sortBy(result, function(value) {
+      return value.key;
+    });
+  }
+
   aggregate(endpoint, cube, params) {
     var that = this;
     params = params || {};
@@ -112,11 +179,9 @@ export class Api {
         }
 
         var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
-
         return that.getJson(aggregateUrl);
       })
       .then((data) => {
-
         var result = {};
         var valueField = _.first(data.aggregates);
         var nameField = displayField;
