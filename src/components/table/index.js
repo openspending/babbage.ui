@@ -1,4 +1,4 @@
-import {Api} from '../../api/index.js'
+import { Api } from '../../api/index'
 import _ from 'lodash'
 import events from 'events'
 var api = new Api();
