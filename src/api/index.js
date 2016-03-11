@@ -156,13 +156,13 @@ export class Api {
     });
   }
 
-  aggregate(endpoint, cube, params) {
+  aggregate_old(endpoint, cube, params) {
     var that = this;
     params = params || {};
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 30;
     if (params.aggregates) {
-      params.order = params.order || `${params.aggregates}:desc`;
+      params.order = params.order || [`${params.aggregates}:desc`];
     }
     var keyField = '';
     var displayField = '';
@@ -205,6 +205,86 @@ export class Api {
         return result;
       });
 
+  }
+
+  aggregate(endpoint, cube, originalParams) {
+    var that = this;
+    var params = originalParams || {};
+
+    params.page = params.page || 0;
+    params.pagesize = params.pagesize || 30;
+    var keyField = '';
+    var displayField = '';
+    var dimensions = [];
+    var measures = [];
+
+    return this.getPackageModel(endpoint, cube).then((model) => {
+        measures = that.getMeasuresFromModel(model);
+
+        if (!params.aggregates) {
+          params.aggregates = _.first(measures).key;
+        }
+        params.order = params.order || [`${params.aggregates}:desc`];
+        params.aggregates = undefined; //remove it
+
+        var newExtendedGroup = [];
+        _.each(params.group, (dimensionKey) => {
+          newExtendedGroup.push(dimensionKey);
+          var dimensionDisplay = that.getDisplayField(model, dimensionKey);
+
+          dimensions.push({
+            key: dimensionKey,
+            name: dimensionDisplay
+          });
+
+          if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
+            newExtendedGroup.push(dimensionDisplay);
+          }
+        });
+        params.group = newExtendedGroup;
+
+        var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
+        return that.getJson(aggregateUrl);
+      })
+      .then((data) => {
+
+        var result = {
+          summary: {},
+          count: data.total_cell_count,
+          cells: []
+        };
+
+        _.each(measures, (measure) => {
+          result.summary[measure.key] = data.summary[measure.key];
+        });
+
+        _.each(data.cells, (cell) => {
+          var dimensionsResult = [];
+          var measuresResult = [];
+
+          _.each(dimensions, (dimension) => {
+            dimensionsResult.push({
+              keyField: dimension.key,
+              nameField: dimension.name,
+              keyValue: cell[dimension.key],
+              nameValue: cell[dimension.name]
+            });
+          });
+
+          _.each(measures, (measure) => {
+            measuresResult.push({
+              key: measure.key,
+              value: cell[measure.key]
+            });
+          });
+
+          result.cells.push({
+            dimensions: dimensionsResult,
+            measures: measuresResult
+          });
+        });
+        return result;
+      });
   }
 }
 

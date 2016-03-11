@@ -6,6 +6,9 @@ describe('Babbage.ui API', function() {
   var api = new (require('../lib/api/').Api)();
   var aggregate1 = require('./data/api/aggregate1.json');
   var aggregate2 = require('./data/api/aggregate2.json');
+  var expectedAggregate1 = require('./data/api/expected/aggregate1.json');
+  var expectedAggregate2 = require('./data/api/expected/aggregate2.json');
+  var expectedMultiAggregate2 = require('./data/api/expected/multyaggregate2.json');
   var testPackageModel = require('./data/api/package1Model.json');
   var test2PackageModel = require('./data/api/package2Model.json');
 
@@ -40,12 +43,36 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
+      .get('/cubes/test/aggregate?' +
+        'drilldown=administrative_classification.admin1&' +
+        'pagesize=30&order=amount.sum%3Adesc')
+      .reply(200, aggregate1, {'access-control-allow-origin': '*'});
+
+    nock('http://site.com/')
+      .persist()
       .get('/cubes/test2/aggregate?' +
         'drilldown=administrative_classification_admin3_code.admin3_code%7C' +
         'administrative_classification_admin3_code.admin3_label&' +
         'pagesize=30')
       .reply(200, aggregate2, {'access-control-allow-origin': '*'});
 
+    nock('http://site.com/')
+      .persist()
+      .get('/cubes/test2/aggregate?' +
+        'drilldown=administrative_classification_admin2_code.admin2_code%7C' +
+        'administrative_classification_admin2_code.admin2_label%7C' +
+        'administrative_classification_admin3_code.admin3_code%7C' +
+        'administrative_classification_admin3_code.admin3_label&' +
+        'pagesize=30&order=executed.sum%3Adesc')
+      .reply(200, aggregate2, {'access-control-allow-origin': '*'});
+
+    nock('http://site.com/')
+      .persist()
+      .get('/cubes/test2/aggregate?' +
+        'drilldown=administrative_classification_admin3_code.admin3_code%7C' +
+        'administrative_classification_admin3_code.admin3_label&' +
+        'pagesize=30&order=executed.sum%3Adesc')
+      .reply(200, aggregate2, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
       .persist()
@@ -136,66 +163,6 @@ describe('Babbage.ui API', function() {
 
     done();
   });
-
-  it('Should return aggregate data', function(done) {
-    api.aggregate('http://site.com/', 'test', {
-      group: ['administrative_classification.admin1']
-    }).then(function(data) {
-      assert.deepEqual(data,
-        {
-          summary: 350,
-          count: 3,
-          cells: [
-            {
-              key: 'Central',
-              name: 'Central',
-              value: 100
-            },
-            {
-              key: 'Other',
-              name: 'Other',
-              value: 200
-            },
-            {
-              key: 'Local',
-              name: 'Local',
-              value: 50
-            }
-          ]
-        });
-      done();
-    });
-  });
-
-  it('Should return aggregate data grouped by field with `label-for`', function(done) {
-    api.aggregate('http://site.com/', 'test2', {
-      group: ['administrative_classification_admin3_code.admin3_code']
-    }).then(function(data) {
-      assert.deepEqual(data, {
-        summary: 350,
-        count: 88,
-        cells: [
-          {
-            key: '289',
-            name: 'National Social Insurance Company',
-            value: 100
-          },
-          {
-            key: '322',
-            name: 'National Health Insurance Company',
-            value: 200
-          },
-          {
-            key: '200',
-            name: 'General actions',
-            value: 50
-          }
-        ]
-      });
-      done();
-    });
-  });
-
 
   it('Should return Package Model', function(done) {
     api.getPackageModel('http://site.com/', 'test').then(function(model) {
@@ -403,5 +370,38 @@ describe('Babbage.ui API', function() {
       done();
     });
   });
+
+
+  it('Should return aggregate data', function(done) {
+    api.aggregate('http://site.com/', 'test', {
+      group: ['administrative_classification.admin1']
+    }).then(function(data) {
+      assert.deepEqual(data, expectedAggregate1);
+      done();
+    });
+  });
+
+  it('Should return aggregate data grouped by field with `label-for`', function(done) {
+    api.aggregate('http://site.com/', 'test2', {
+      group: ['administrative_classification_admin3_code.admin3_code']
+    }).then(function(data) {
+      assert.deepEqual(data, expectedAggregate2);
+      done();
+    });
+  });
+
+  it('Should return aggregate data grouped by many fields', function(done) {
+    api.aggregate('http://site.com/', 'test2', {
+      group: [
+        'administrative_classification_admin2_code.admin2_code',
+        'administrative_classification_admin3_code.admin3_code',
+      ]
+    }).then(function(data) {
+
+      assert.deepEqual(data, expectedMultiAggregate2);
+      done();
+    });
+  });
+
 
 });

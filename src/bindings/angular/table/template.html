@@ -9,8 +9,11 @@
     </thead>
     <tbody>
     <tr ng-repeat="rows in tableData.columns">
-      <td ng-repeat="row in rows">
-        {{row}}
+      <td ng-repeat="dimension in rows.dimensions">
+        {{dimension.name}}
+      </td>
+      <td ng-repeat="measure in rows.measures" class="numeric">
+        {{measure.value | numeric}}
       </td>
     </tr>
     </tbody>

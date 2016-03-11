@@ -12,7 +12,7 @@ export class PieChartDirective {
             cube: '@',
             state: '='
           },
-          template: 'template.html',
+          template: require('template.html'),
           replace: false,
           link: function($scope, element) {
             var pieChart = new PieChartComponent();

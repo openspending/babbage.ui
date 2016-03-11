@@ -1,0 +1,56 @@
+{
+  "summary": {
+    "amount.sum": 350
+  },
+  "count": 3,
+  "cells": [
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification.admin1",
+          "nameField": "administrative_classification.admin1",
+          "keyValue": "Central",
+          "nameValue": "Central"
+        }
+      ],
+      "measures": [
+        {
+          "key": "amount.sum",
+          "value": 100
+        }
+      ]
+    },
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification.admin1",
+          "nameField": "administrative_classification.admin1",
+          "keyValue": "Other",
+          "nameValue": "Other"
+        }
+      ],
+      "measures": [
+        {
+          "key": "amount.sum",
+          "value": 200
+        }
+      ]
+    },
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification.admin1",
+          "nameField": "administrative_classification.admin1",
+          "keyValue": "Local",
+          "nameValue": "Local"
+        }
+      ],
+      "measures": [
+        {
+          "key": "amount.sum",
+          "value": 50
+        }
+      ]
+    }
+  ]
+}
