@@ -9,15 +9,14 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
   templateUrl: 'babbage-templates/treemap.html',
   link: function(scope, element, attrs, babbageCtrl) {
     var treemap = null,
-        div = null;
+        div = null,
+        currentState = null,
+        currentModel = null;
 
     scope.queryLoaded = false;
     scope.cutoffWarning = false;
 
-    var query = function(model, state) {
-      var tile = asArray(state.tile)[0],
-          area = asArray(state.area)[0],
-          area = area ? [area] : defaultArea(model);
+    var buildQuery = function(tile, area, cuts) {
 
       var q = babbageCtrl.getQuery();
       q.aggregates = area;
@@ -36,34 +35,49 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
       if (!order.length) {
         order = [{ref: area, direction: 'desc'}];
       }
+      q.cut = cuts;
 
       q.order = order;
       q.page = 0;
       q.pagesize = 50;
+      return q;
+    }
+    var query = function(model, state) {
+      var tile = asArray(state.tile)[0],
+        cuts = asArray(state.cut),
+        area = asArray(state.area)[0],
+        area = area ? [area] : defaultArea(model);
+      var q = buildQuery(tile, area, cuts);
+      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
+                          babbageCtrl.queryParams(q));
+      if(!treemap) {
+        buildTreemap(area);
+      }
+      currentState= state;
+      currentModel = model;
 
       scope.cutoffWarning = false;
       scope.queryLoaded = true;
-      var dfd = $http.get(babbageCtrl.getApiUrl('aggregate'),
-                          babbageCtrl.queryParams(q));
+      dfd.then(function(res) {
+        queryResult(res.data, q, model, state);
+      });
+    }
 
+    var buildTreemap = function(area) {
       var wrapper = element.querySelectorAll('.treemap-babbage')[0],
           size = babbageCtrl.size(wrapper, function(w) { return w * 0.6; });
 
       treemap = d3.layout.treemap()
         .size([size.width, size.height])
-        .sticky(true)
+        .sticky(false)
         .sort(function(a, b) { return a[area] - b[area]; })
         .value(function(d) { return d[area]; });
 
-      d3.select(wrapper).select("div").remove();
       div = d3.select(wrapper).append("div")
         .style("position", "relative")
         .style("width", size.width + "px")
         .style("height", size.height + "px");
 
-      dfd.then(function(res) {
-        queryResult(res.data, q, model, state);
-      });
     };
 
     var queryResult = function(data, q, model, state) {
@@ -84,9 +98,11 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
         root.children.push(cell);
       };
 
-      var node = div.datum(root).selectAll(".node")
+      var nodes = div.datum(root).selectAll(".node")
           .data(treemap.nodes)
-        .enter().append("a")
+        nodes.exit().remove();
+        nodes.enter().append("a");
+        var node = nodes
           .attr("href", function(d){ return d.href; })
           .attr("class", "node")
           .call(positionNode)
@@ -105,6 +121,7 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
             d3.select(this).transition().duration(500)
               .style({'background': d._color});
           })
+          .on("click", setTile)
           .transition()
           .duration(500)
           .delay(function(d, i) { return Math.min(i * 30, 1500); })
@@ -112,6 +129,18 @@ ngBabbage.directive('babbageTreemap', ['$rootScope', '$http', '$document', funct
 
       scope.cutoffWarning = data.total_cell_count > q.pagesize;
       scope.cutoff = q.pagesize;
+    };
+
+    function setTile(d) {
+      if(currentState.hierarchy) {
+        var cut = currentState.tile[0] + ':' + d[currentState.tile[0]],
+          hierarchy = currentState.hierarchy[currentState.tile[0]];
+        if(hierarchy) {
+          currentState.tile = [ hierarchy ];
+        }
+        currentState.cut = currentState.cut.concat([cut])
+        query(currentModel, currentState);
+      }
     };
 
     function positionNode() {
