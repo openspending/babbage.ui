@@ -1,6 +1,6 @@
 import TreeMapComponent from '../../../components/treemap'
 
-class PieChartDirective {
+class TreemapDirective {
   init(angularModule) {
     angularModule.directive('treeMap', [
       '$window',
@@ -12,7 +12,7 @@ class PieChartDirective {
             cube: '@',
             state: '='
           },
-          template: require('template.html'),
+          template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
             var treeMap = new TreeMapComponent();
@@ -24,6 +24,9 @@ class PieChartDirective {
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
             });
+
+            $scope.cutoffWarning = false;
+            $scope.queryLoaded = true;
           }
         }
       }
@@ -31,4 +34,4 @@ class PieChartDirective {
   }
 }
 
-export default PieChartDirective
+export default TreemapDirective

@@ -13,7 +13,7 @@ export class BubbleTreeDirective {
             type: '@',
             state: '='
           },
-          template: require('template.html'),
+          template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
             var bubbleTree = new BubbleTreeComponent();

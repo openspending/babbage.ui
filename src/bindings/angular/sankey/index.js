@@ -12,7 +12,7 @@ export class SanKeyChartDirective {
             cube: '@',
             state: '='
           },
-          template: require('template.html'),
+          template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
             var sanKeyChart = new SanKeyChartComponent();

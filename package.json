@@ -18,6 +18,7 @@
   "dependencies": {
     "bluebird": "^3.3.3",
     "d3": "^3.5.16",
+    "c3": "git+https://github.com/masayuki0812/c3.git",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.5.1"
   },
@@ -31,8 +32,13 @@
     "bootstrap": "3.3.4",
     "chai": "^3.4.1",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
     "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
     "gulp-include-file": "git+https://github.com/tweedegolf/gulp-include-file.git",
+    "gulp-less": "^3.0.5",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-sourcemaps": "^1.6.0",
     "html-minifier": "^0.7.2",
     "jscs": "^2.8.0",
     "jsdom": "^7.2.2",

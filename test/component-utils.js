@@ -8,20 +8,54 @@ describe('Babbage.ui component utils', function() {
     count: 3,
     cells: [
       {
-        key: 10,
-        name: 'Some name1',
-        value: 100,
+        "dimensions": [
+          {
+            keyField: 'id',
+            nameField: 'name',
+            keyValue: 10,
+            nameValue: 'Some name1'
+          }
+        ],
+        "measures":[
+          {
+            key: 'measure1',
+            value: 100
+          }
+        ]
       },
+
       {
-        key: 20,
-        name: 'Some name2',
-        value: 300,
-      }
-      ,
+        "dimensions": [
+          {
+            keyField: 'id',
+            nameField: 'name',
+            keyValue: 20,
+            nameValue: 'Some name2'
+          }
+        ],
+        "measures":[
+          {
+            key: 'measure1',
+            value: 300
+          }
+        ]
+      },
+
       {
-        key: 30,
-        name: 'Some name3',
-        value: 5,
+        "dimensions": [
+          {
+            keyField: 'id',
+            nameField: 'name',
+            keyValue: 30,
+            nameValue: 'Some name3'
+          }
+        ],
+        "measures":[
+          {
+            key: 'measure1',
+            value: 5
+          }
+        ]
       }
     ]
   };
@@ -42,7 +76,7 @@ describe('Babbage.ui component utils', function() {
   });
 
   it('Should build `columns`', function(done) {
-    var result = Utils.buildC3Columns(data);
+    var result = Utils.buildC3Columns(data, 'measure1');
     assert.deepEqual(result, [
       [10, 100],
       [20, 300],

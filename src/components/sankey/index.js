@@ -5,7 +5,7 @@ import _ from 'lodash'
 import events from 'events'
 var api = new Api();
 
-export class SankKeyChartComponent extends events.EventEmitter {
+export class SanKeyChartComponent extends events.EventEmitter {
 
   constructor() {
     super();
@@ -199,4 +199,4 @@ export class SankKeyChartComponent extends events.EventEmitter {
   }
 }
 
-export default SankKeyChartComponent
+export default SanKeyChartComponent

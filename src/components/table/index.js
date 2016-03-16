@@ -36,6 +36,7 @@ export class TableComponent extends events.EventEmitter {
   }
 
   getTableData(endpoint, cube, params) {
+    params = _.cloneDeep(params);
     var result = {
       headers: [],
       columns: []

@@ -22,17 +22,29 @@ export class PieChartComponent extends events.EventEmitter {
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
+    params = _.cloneDeep(params);
+
     var that = this;
     this.wrapper = wrapper;
 
     this.emit('beginAggregate', this);
 
+    var size = {
+      width: this.wrapper.clientWidth,
+      height: this.wrapper.clientWidth * 0.6
+    };
+
+    d3.select(this.wrapper)
+      .style('width', size.width + 'px')
+      .style('height', size.height + 'px');
+
     api.aggregate(endpoint, cube, params).then((data) => {
+
       that.chart = c3.generate({
         bindto: that.wrapper,
         data: {
           names: Utils.buildC3Names(data),
-          columns: Utils.buildC3Columns(data),
+          columns: Utils.buildC3Columns(data, params.aggregates),
           colors: Utils.buildC3Colors(data, colorSchema),
           type: 'pie',
           onclick: (d, element) => {

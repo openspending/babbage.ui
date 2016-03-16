@@ -42,8 +42,8 @@ export class Api {
     return _.pickBy(result);
   }
 
-  buildUrl(endpoint, cube, path, params) {
-    params = params || {};
+  buildUrl(endpoint, cube, path, originParams) {
+    var params = _.cloneDeep(originParams) || {};
     var api = endpoint;
     api = endpoint[api.length - 1] == '/' ? api.slice(0, api.length - 1) : api;
     api = `${api}/cubes/${cube}/${path}`;
@@ -82,7 +82,6 @@ export class Api {
     var dimension = _.find(model.dimensions, {key_ref: field});
 
     if (dimension) {
-//      result = `${dimension.hierarchy}.${dimension.label_attribute}`;
       result = dimension.label_ref;
     }
 
@@ -156,65 +155,12 @@ export class Api {
     });
   }
 
-  aggregate_old(endpoint, cube, params) {
+  aggregate(endpoint, cube, originParams) {
     var that = this;
-    params = params || {};
-    params.page = params.page || 0;
-    params.pagesize = params.pagesize || 30;
-    if (params.aggregates) {
-      params.order = params.order || [`${params.aggregates}:desc`];
-    }
-    var keyField = '';
-    var displayField = '';
-
-    return this.getPackageModel(endpoint, cube)
-      .then((model) => {
-        if (params.group) {
-          displayField = that.getDisplayField(model, _.first(params.group));
-
-          keyField = _.first(params.group);
-          if (params.group.indexOf(displayField) == -1) {
-            params.group.push(displayField);
-          }
-        }
-
-        var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
-        return that.getJson(aggregateUrl);
-      })
-      .then((data) => {
-        var result = {};
-        var valueField = _.first(data.aggregates);
-        var nameField = displayField;
-
-        if (!params.group) {
-          keyField = valueField;
-          nameField = valueField;
-        }
-        result.summary = data.summary[valueField];
-        result.count = data.total_cell_count;
-        result.cells = [];
-
-        _.each(data.cells, (cell => {
-          result.cells.push({
-              key: cell[keyField],
-              name: cell[nameField],
-              value: cell[valueField]
-            }
-          );
-        }));
-        return result;
-      });
-
-  }
-
-  aggregate(endpoint, cube, originalParams) {
-    var that = this;
-    var params = originalParams || {};
+    var params = _.cloneDeep(originParams) || {};
 
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 30;
-    var keyField = '';
-    var displayField = '';
     var dimensions = [];
     var measures = [];
 

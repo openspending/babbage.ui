@@ -12,7 +12,7 @@ export class PieChartDirective {
             cube: '@',
             state: '='
           },
-          template: require('template.html'),
+          template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
             var pieChart = new PieChartComponent();
@@ -24,6 +24,9 @@ export class PieChartDirective {
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
             });
+
+            $scope.cutoffWarning = false;
+            $scope.queryLoaded = true;
           }
         }
       }
