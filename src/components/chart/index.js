@@ -39,23 +39,66 @@ export class ChartComponent extends events.EventEmitter {
       .style('width', size.width + 'px')
       .style('height', size.height + 'px');
 
+    if (chartType == 'line') {
+      params.order = [_.first(params.group)+':asc'];
+    }
     api.aggregate(endpoint, cube, params).then((data) => {
 
-      that.chart = c3.generate({
-        bindto: that.wrapper,
-        data: {
-          names: Utils.buildC3Names(data),
-          columns: Utils.buildC3Columns(data, params.aggregates),
-          colors: Utils.buildC3Colors(data, colorSchema),
-          type: chartType || 'bar',
-          onclick: (d, element) => {
-            that.emit('click', that, d);
-          }
-        }
-      });
+        var columns = Utils.buildC3BarColumns(data, params.aggregates);
+        var types = {};
+        types[columns[1][0]] = chartType;
 
-      this.emit('endAggregate', that, data);
-    });
+        that.chart = c3.generate({
+          bindto: that.wrapper,
+          data: {
+            names: Utils.buildC3BarNames(data, params.aggregates),
+            columns: columns,
+            color: function(color, d) {
+              var c = d.id || d;
+              if (chartType == 'bar') {
+                c = d.index;
+              };
+              return Utils.colorScale(c);
+            },
+            type: chartType || 'bar',
+            x: _.first(_.first(columns)),
+            groups: [[columns[1][0]]],
+            types: types,
+            //onclick: (d, element) => {
+            //  that.emit('click', that, d);
+            //}
+          },
+          point: {
+            show: false
+          },
+          grid: {
+            focus: {
+              show: false
+            }
+          },
+          axis: {
+            x: {
+              type: 'category',
+              tick: {
+                culling: true,
+                fit: true
+              }
+            },
+            y: {
+              tick: {
+                format: d3.format("0,000"),
+                culling: true,
+                fit: true
+              },
+              lines: [{value: 0}]
+            }
+          }
+        });
+
+        this.emit('endAggregate', that, data);
+      }
+    )
+    ;
   }
 }
 

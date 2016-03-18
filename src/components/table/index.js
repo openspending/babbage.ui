@@ -16,13 +16,14 @@ export class TableComponent extends events.EventEmitter {
     return result;
   }
 
-  getHeaders(measures, cells) {
+  getHeaders(dimensions, measures, cells) {
     var result = [];
     var rows = [];
     var cell = _.first(cells);
 
     _.each(cell.dimensions, (dimension) => {
-      rows.push('');
+      var dimensionData = _.find(dimensions, {key: dimension.keyField});
+      rows.push(dimensionData.name);
     });
 
     _.each(cell.measures, (measure) => {
@@ -46,14 +47,20 @@ export class TableComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
     var measures = {};
+    var dimensions = [];
 
-    return api.getMeasures(endpoint, cube)
+    return api.getDimensions(endpoint, cube)
+      .then((result) => {
+        dimensions = result;
+
+        return api.getMeasures(endpoint, cube);
+      })
       .then((result) => {
         measures = result;
         return api.aggregate(endpoint, cube, params)
       })
       .then((data) => {
-        result.headers = that.getHeaders(measures, data.cells);
+        result.headers = that.getHeaders(dimensions, measures, data.cells);
         result.columns = data.cells;
         this.emit('endAggregate', that, data);
 

@@ -109,6 +109,15 @@ export class Api {
       });
   }
 
+  getDimensions(endpoint, cube) {
+    var that = this;
+    return this.getPackageModel(endpoint, cube)
+      .then((model) => {
+        return that.getDimensionsFromModel(model);
+      });
+  }
+
+
   getDimensionKeyById(model, id) {
     return model.dimensions[id].key_ref;
   }

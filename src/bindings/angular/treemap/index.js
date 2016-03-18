@@ -20,6 +20,10 @@ class TreemapDirective {
             var wrapper = element.find('.treemap-chart')[0];
 
             treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            treeMap.on('click', (treeMapComponent, item) => {
+              //TODO
+            });
+
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);

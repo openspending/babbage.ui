@@ -371,6 +371,59 @@ describe('Babbage.ui API', function() {
     });
   });
 
+  it('Should return dimenions by URL', function(done) {
+    api.getDimensions('http://site.com/', 'test').then(function(dimensions) {
+      var expected = [
+        {
+          id: 'from',
+          key: 'from.name',
+          code: 'from',
+          hierarchy: 'from',
+          name: 'from_name',
+          label: 'from.name',
+          drillDown: undefined
+        },
+        {
+          id: 'time_day',
+          key: 'time_day.day',
+          code: 'time.day',
+          hierarchy: 'time',
+          name: 'time_day',
+          label: 'time.day',
+          drillDown: undefined
+        },
+        {
+          id: 'time_month',
+          key: 'time_month.month',
+          code: 'time.month',
+          hierarchy: 'time',
+          name: 'time_month',
+          label: 'time.month',
+          drillDown: 'time_day.day'
+        },
+        {
+          id: 'time_year',
+          key: 'time_year.year',
+          code: 'time.year',
+          hierarchy: 'time',
+          name: 'time_year',
+          label: 'time.year',
+          drillDown: 'time_month.month'
+        },
+        {
+          id: 'to',
+          key: 'to.name',
+          code: 'to',
+          hierarchy: 'to',
+          name: 'to_name',
+          label: 'to.name',
+          drillDown: undefined
+        }
+      ];
+      assert.deepEqual(dimensions, expected);
+      done();
+    });
+  });
 
   it('Should return aggregate data', function(done) {
     api.aggregate('http://site.com/', 'test', {

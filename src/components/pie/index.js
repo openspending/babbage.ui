@@ -40,12 +40,18 @@ export class PieChartComponent extends events.EventEmitter {
 
     api.aggregate(endpoint, cube, params).then((data) => {
 
+      var columns = Utils.buildC3Columns(data, params.aggregates);
+      var colors = {};
+      _.each(columns, (value, index) => {
+        colors[value[0]]= Utils.colorScale(index) ;
+      });
+
       that.chart = c3.generate({
         bindto: that.wrapper,
         data: {
           names: Utils.buildC3Names(data),
-          columns: Utils.buildC3Columns(data, params.aggregates),
-          colors: Utils.buildC3Colors(data, colorSchema),
+          columns: columns,
+          colors: colors,
           type: 'pie',
           onclick: (d, element) => {
             that.emit('click', that, d);

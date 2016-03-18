@@ -13,9 +13,12 @@ var prefixer = require('gulp-autoprefixer');
 var cssDir = path.join(__dirname, '/less');
 var libDir = path.join(__dirname, '/lib');
 var distDir = path.join(__dirname, '/dist');
+var nodeModulesDir = path.join(__dirname, '/node_modules');
 
 function processStyles(dir) {
   var files = [
+    path.join(nodeModulesDir, '/bubbletree/dist/bubbletree.css'),
+    path.join(nodeModulesDir, '/c3/c3.min.css'),
     path.join(cssDir, '/build.less'),
   ];
   return gulp.src(files)
@@ -35,7 +38,11 @@ gulp.task('default', [
 ]);
 
 gulp.task('lib.scripts', function() {
-  return gulp.src(path.join(__dirname, '/src/**/*.js'))
+  return gulp.src([
+      path.join(nodeModulesDir, '/bubbletree/node_modules/tween.js/src/Tween.js'),
+      path.join(nodeModulesDir, '/bubbletree/dist/bubbletree.min.js'),
+      path.join(__dirname, '/src/**/*.js')
+    ])
     .pipe(includeFile({
       regex: /require\s*\(\s*['"]([^'"]*\.html)['"]\s*\)/m
     }))

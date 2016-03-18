@@ -10,7 +10,7 @@
     <tbody>
     <tr ng-repeat="rows in tableData.columns">
       <td ng-repeat="dimension in rows.dimensions">
-        {{dimension.name}}
+        {{dimension.nameValue}}
       </td>
       <td ng-repeat="measure in rows.measures" class="numeric">
         {{ measure.value | number }}

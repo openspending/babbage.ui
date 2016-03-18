@@ -38,11 +38,24 @@
       endpoint="{{apiUrl}}"
     ></chart>
 
+    <chart
+      cube="{{cube}}"
+      type="line"
+      state="Char"
+      endpoint="{{apiUrl}}"
+    ></chart>
+
     <tree-map
       cube="{{cube}}"
       state="Char"
       endpoint="{{apiUrl}}"
     ></tree-map>
+
+    <bubbletree
+      cube="{{cube}}"
+      state="Char"
+      endpoint="{{apiUrl}}"
+    ></bubbletree>
 
     <babbage-table
       cube="{{cube}}"
@@ -61,6 +74,7 @@
   var pieDirective = new window.Babbage.BabbageClasses.PieChartDirective();
   var chartDirective = new window.Babbage.BabbageClasses.ChartDirective();
   var treemapDirective = new window.Babbage.BabbageClasses.TreemapDirective();
+  var bubbleTreeDirective = new window.Babbage.BabbageClasses.BubbleTreeDirective();
   var tableDirective = new window.Babbage.BabbageClasses.BabbageTableDirective();
 
   var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
@@ -69,6 +83,7 @@
   chartDirective.init(demo);
   treemapDirective.init(demo);
   tableDirective.init(demo);
+  bubbleTreeDirective.init(demo)
 
   demo.config(['$routeProvider',
     function($routeProvider) {
@@ -81,11 +96,14 @@
     }]);
 
   demo.controller('DemoCtrl', function ($scope) {
-    $scope.cube = '00_01_uganda';
+//    $scope.cube = '00_01_uganda';
+    $scope.cube = 'boost-moldova';
     $scope.apiUrl = 'http://s145.okserver.org/api/3';
     $scope.Char = {
-      group: ['to.name'],
-      aggregates: 'amount.sum'
+//      group: ['to.name'],
+//      aggregates: 'amount.sum'
+      group: ['functional_classification_func1_code.func1_code'],
+      aggregates: 'adjusted.sum'
     };
 
     // $scope.cube = 'bundeshaushalt';
