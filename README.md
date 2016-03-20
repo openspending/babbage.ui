@@ -1,5 +1,16 @@
 # babbage.ui
 
+[![Gitter](https://img.shields.io/gitter/room/openspending/chat.svg)](https://gitter.im/openspending/chat)
+[![Issues](https://img.shields.io/badge/issue-tracker-orange.svg)](https://github.com/openspending/openspending/issues)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://docs.openspending.org/en/latest/developers/views/)
+
+A set of view components to visualise data returned by a Babbage API.
+
+## Quick start
+
+Install from npm, and use in your app. See the [docs](http://docs.openspending.org/en/latest/developers/views/), and below, for more information.
+
+
 The library provides a DSL, query frontend and visualisation functions running against the [Babbage Analytical Engine](https://github.com/spendb/babbage) API. The intent is to make a re-usable set of angular-based front-end
 components for business intelligence.
 
