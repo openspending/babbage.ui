@@ -57,6 +57,13 @@
       endpoint="{{apiUrl}}"
     ></bubbletree>
 
+    <geo-view style="height: 400px; display: block;"
+      cube="{{cube}}"
+      state="geo"
+      endpoint="{{apiUrl}}"
+      country-code="MD"
+    ></geo-view>
+
     <babbage-table
       cube="{{cube}}"
       state="Char"
@@ -69,12 +76,11 @@
 
 <script src='dist/babbage.js'></script>
 <script>
-  console.log(window.Babbage);
-
   var pieDirective = new window.Babbage.BabbageClasses.PieChartDirective();
   var chartDirective = new window.Babbage.BabbageClasses.ChartDirective();
   var treemapDirective = new window.Babbage.BabbageClasses.TreemapDirective();
   var bubbleTreeDirective = new window.Babbage.BabbageClasses.BubbleTreeDirective();
+  var geoViewDirective = new window.Babbage.BabbageClasses.GeoViewDirective();
   var tableDirective = new window.Babbage.BabbageClasses.BabbageTableDirective();
 
   var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
@@ -83,7 +89,8 @@
   chartDirective.init(demo);
   treemapDirective.init(demo);
   tableDirective.init(demo);
-  bubbleTreeDirective.init(demo)
+  bubbleTreeDirective.init(demo);
+  geoViewDirective.init(demo);
 
   demo.config(['$routeProvider',
     function($routeProvider) {
@@ -100,9 +107,12 @@
     $scope.cube = 'boost-moldova';
     $scope.apiUrl = 'http://s145.okserver.org/api/3';
     $scope.Char = {
-//      group: ['to.name'],
-//      aggregates: 'amount.sum'
       group: ['functional_classification_func1_code.func1_code'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.geo = {
+      group: ['location.title'],
       aggregates: 'adjusted.sum'
     };
 

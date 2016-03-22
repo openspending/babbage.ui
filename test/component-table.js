@@ -39,9 +39,15 @@ describe('Babbage.ui table component', function() {
       {key: 'approved.sum', value: 'approved'}
     ];
 
-    var headers = tableComponent.getHeaders(measures, expectedAggregate2.cells);
+    var dimensions = [
+      {
+        key: "administrative_classification_admin3_code.admin3_code",
+        name: "admin3_code"
+      }
+    ];
+    var headers = tableComponent.getHeaders(dimensions, measures, expectedAggregate2.cells);
 
-    assert.deepEqual(headers, [ [ '', 'executed', 'adjusted', 'approved' ] ]);
+    assert.deepEqual(headers, [ [ 'admin3_code', 'executed', 'adjusted', 'approved' ] ]);
     done();
   });
 

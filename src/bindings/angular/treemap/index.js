@@ -21,7 +21,7 @@ class TreemapDirective {
 
             treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             treeMap.on('click', (treeMapComponent, item) => {
-              //TODO
+              $scope.$emit('treemap-click', treeMapComponent, item);
             });
 
             $window.addEventListener('resize', resizeEvent);
