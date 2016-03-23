@@ -6,29 +6,34 @@ export class GeoViewDirective {
     directive(angularModule);
 
     angularModule.directive('geoView', [
-      '$window',
-      function($window) {
+      '$q',
+      function($q) {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
+            cosmoEndpoint: '@',
             cube: '@',
             type: '@',
             state: '=',
             countryCode: '@',
             currencySign: '@?',
           },
-          template: '<geoview country-code="{{ countryCode }}" ' +
-          'currency-sign="{{ currencySign }}" values="values"></geoview>',
+          template: '<geoview class="geoview-container" country-code="{{ countryCode }}" ' +
+          'currency-sign="{{ currencySign }}" cosmo-endpoint="{{ cosmoEndpoint }}" ' +
+          'values="values"></geoview>',
           replace: false,
           link: function($scope, element) {
             var geoView = new GeoViewComponent();
 
-            geoView.getGeoMapData(
-              $scope.endpoint,
-              $scope.cube,
-              $scope.state
-            ).then((result) => {
+            $q((resolve, reject) => {
+              geoView.getGeoMapData(
+                $scope.endpoint,
+                $scope.cube,
+                $scope.state
+              ).then(resolve).catch(reject)
+            })
+            .then((result) => {
               $scope.values = result;
             });
 

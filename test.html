@@ -19,11 +19,6 @@
 </div>
 
 <script type="text/ng-template" id="demo.html">
-  <div class="container-fluid">
-    <!--<babbage-workspace endpoint="https://spendb-dev.herokuapp.com/api/babbage/" cube="{{cube}}">-->
-    <!--</babbage-workspace>-->
-  </div>
-
   <div id="pieChart">
     <pie-chart
       cube="{{cube}}"
@@ -57,10 +52,11 @@
       endpoint="{{apiUrl}}"
     ></bubbletree>
 
-    <geo-view style="height: 400px; display: block;"
+    <geo-view
       cube="{{cube}}"
       state="geo"
       endpoint="{{apiUrl}}"
+      cosmo-endpoint="{{cosmoEndpoint}}"
       country-code="MD"
     ></geo-view>
 
@@ -110,6 +106,8 @@
       group: ['functional_classification_func1_code.func1_code'],
       aggregates: 'adjusted.sum'
     };
+
+    $scope.cosmoEndpoint = 'http://cosmopolitan.openspending.org/v1/';
 
     $scope.geo = {
       group: ['location.title'],

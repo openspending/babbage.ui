@@ -12,7 +12,8 @@ module.exports = function(ngModule) {
         scope: {
           countryCode: '@',
           currencySign: '@?',
-          values: '=?'
+          values: '=?',
+          cosmoEndpoint: '@'
         },
         template: '<div class="babbage-geoview"></div>',
         replace: false,
@@ -20,6 +21,7 @@ module.exports = function(ngModule) {
           var handle = null;
 
           var resizeHandlers = [];
+
           function removeResizeListeners() {
             resizeHandlers.forEach(function(callback) {
               $window.removeEventListener('resize', callback);
@@ -28,8 +30,10 @@ module.exports = function(ngModule) {
           }
 
           function createHandle(countryCode, data, currencySign) {
-            api.loadGeoJson(countryCode)
+            api.loadGeoJson($scope.cosmoEndpoint, countryCode)
               .then(function(geoJson) {
+                console.log('===============');
+                console.log(geoJson);
                 // Check if countryCode did not change while loading data
                 if ($scope.countryCode != countryCode) {
                   return;
@@ -90,7 +94,9 @@ module.exports = function(ngModule) {
 
           $scope.$on('$destroy', function() {
             removeResizeListeners();
-            handle.destroy();
+            if (handle) {
+              handle.destroy();
+            }
           });
         }
       };

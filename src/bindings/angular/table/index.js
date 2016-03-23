@@ -3,8 +3,8 @@ import TableComponent from '../../../components/table'
 export class BabbageTableDirective {
   init(angularModule) {
     angularModule.directive('babbageTable', [
-      '$timeout', '$window',
-      function($timeout, $window) {
+      '$timeout', '$q',
+      function($timeout, $q) {
         return {
           restrict: 'EA',
           scope: {
@@ -17,12 +17,14 @@ export class BabbageTableDirective {
           link: function($scope, element) {
             var babbageTable = new TableComponent();
 
-            babbageTable.getTableData($scope.endpoint, $scope.cube, $scope.state).then( (tableData) => {
-              $timeout(()=>{
+            $q((resolve, reject) => {
+              babbageTable.getTableData($scope.endpoint, $scope.cube, $scope.state)
+                .then(resolve)
+                .catch(reject)
+            })
+              .then((tableData) => {
                 $scope.tableData = tableData;
               });
-            });
-
           }
         }
       }
