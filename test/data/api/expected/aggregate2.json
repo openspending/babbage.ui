@@ -1,0 +1,82 @@
+{
+  "summary": {
+    "executed.sum": 150,
+    "adjusted.sum": 250,
+    "approved.sum": 350
+  },
+  "count": 88,
+  "cells": [
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification_admin3_code.admin3_code",
+          "nameField": "administrative_classification_admin3_code.admin3_label",
+          "keyValue": "289",
+          "nameValue": "National Social Insurance Company"
+        }
+      ],
+      "measures": [
+        {
+          "key": "executed.sum",
+          "value": 50
+        },
+        {
+          "key": "adjusted.sum",
+          "value": 100
+        },
+        {
+          "key": "approved.sum",
+          "value": 100
+        }
+      ]
+    },
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification_admin3_code.admin3_code",
+          "nameField": "administrative_classification_admin3_code.admin3_label",
+          "keyValue": "322",
+          "nameValue": "National Health Insurance Company"
+        }
+      ],
+      "measures": [
+        {
+          "key": "executed.sum",
+          "value": 100
+        },
+        {
+          "key": "adjusted.sum",
+          "value": 100
+        },
+        {
+          "key": "approved.sum",
+          "value": 200
+        }
+      ]
+    },
+    {
+      "dimensions": [
+        {
+          "keyField": "administrative_classification_admin3_code.admin3_code",
+          "nameField": "administrative_classification_admin3_code.admin3_label",
+          "keyValue": "200",
+          "nameValue": "General actions"
+        }
+      ],
+      "measures": [
+        {
+          "key": "executed.sum",
+          "value": 0
+        },
+        {
+          "key": "adjusted.sum",
+          "value": 50
+        },
+        {
+          "key": "approved.sum",
+          "value": 50
+        }
+      ]
+    }
+  ]
+}

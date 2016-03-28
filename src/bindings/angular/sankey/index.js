@@ -1,8 +1,8 @@
-import PieChartComponent from '../../../components/pie'
+import SanKeyChartComponent from '../../../components/sankey'
 
-export class PieChartDirective {
+export class SanKeyChartDirective {
   init(angularModule) {
-    angularModule.directive('pieChart', [
+    angularModule.directive('sanKeyChart', [
       '$window',
       function($window) {
         return {
@@ -15,18 +15,15 @@ export class PieChartDirective {
           template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
-            var pieChart = new PieChartComponent();
-            var resizeEvent = pieChart.refresh.bind(pieChart);
-            var wrapper = element.find('.pie-chart')[0];
+            var sanKeyChart = new SanKeyChartComponent();
+            var resizeEvent = sanKeyChart.refresh.bind(sanKeyChart);
+            var wrapper = element.find('.sankey-chart')[0];
 
-            pieChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            sanKeyChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
             });
-
-            $scope.cutoffWarning = false;
-            $scope.queryLoaded = true;
           }
         }
       }
@@ -34,4 +31,4 @@ export class PieChartDirective {
   }
 }
 
-export default PieChartDirective
+export default SanKeyChartDirective

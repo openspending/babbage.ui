@@ -1,5 +1,7 @@
 {
   "summary": {
+    "executed.sum": 150,
+    "adjusted.sum": 250,
     "approved.sum": 350
   },
   "page": 1,
@@ -20,18 +22,24 @@
   "cells": [
     {
       "administrative_classification_admin3_code.admin3_label": "National Social Insurance Company",
-      "approved.sum": 100,
-      "administrative_classification_admin3_code.admin3_code": "289"
+      "administrative_classification_admin3_code.admin3_code": "289",
+      "executed.sum": 50,
+      "adjusted.sum": 100,
+      "approved.sum": 100
     },
     {
       "administrative_classification_admin3_code.admin3_label": "National Health Insurance Company",
-      "approved.sum": 200,
-      "administrative_classification_admin3_code.admin3_code": "322"
+      "administrative_classification_admin3_code.admin3_code": "322",
+      "executed.sum": 100,
+      "adjusted.sum": 100,
+      "approved.sum": 200
     },
     {
       "administrative_classification_admin3_code.admin3_label": "General actions",
-      "approved.sum": 50,
-      "administrative_classification_admin3_code.admin3_code": "200"
+      "administrative_classification_admin3_code.admin3_code": "200",
+      "executed.sum": 0,
+      "adjusted.sum": 50,
+      "approved.sum": 50
     }
   ],
   "aggregates": [

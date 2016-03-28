@@ -23,21 +23,74 @@ export function colorScale(index, colorSchema) {
 export function buildC3Names(data) {
   var result = {};
   _.each(data.cells, (item) => {
-    result[item.key] = item.name
+    var dimension = _.first(item.dimensions);
+    result[dimension.keyValue] = dimension.nameValue;
   });
   return result;
 };
 
-export function buildC3Columns(data) {
-  var result = _.map(data.cells, (item) => {
-    return [item.key, item.value];
+export function buildC3BarNames(data, aggregates) {
+  var result = {};
+  _.each(data.cells, (item) => {
+    var dimension = _.first(item.dimensions);
+    if (_.values(result).length == 0) {
+      var measure = _.find(item.measures, {key: aggregates})
+      result[measure.key] = _.first(measure.key.split('.'));
+    }
+    result[dimension.keyValue] = dimension.nameValue;
   });
   return result;
 };
+
+
+export function buildC3Columns(data, aggregates) {
+  var result = _.map(data.cells, (item) => {
+    var dimension = _.first(item.dimensions);
+    var measure = _.find(item.measures, {key: aggregates});
+    return [dimension.keyValue, measure.value];
+  });
+  return result;
+};
+
+export function buildC3BarColumns(data, aggregates) {
+  var result = [];
+  var list  = [];
+  _.each(data.cells, (item) => {
+    var dimension = _.first(item.dimensions);
+    if (list.length == 0) {
+      list.push(dimension.keyField);
+    }
+    list.push(dimension.nameValue);
+  });
+  result.push(list);
+  list = [];
+
+  _.each(data.cells, (item) => {
+    var measures = _.find(item.measures, {key: aggregates});
+
+    if (list.length == 0) {
+      list.push(measures.key);
+    }
+    list.push(measures.value);
+  });
+  result.push(list);
+
+  return result;
+};
+
 
 export function buildC3Colors(data, colorSchema) {
   var result = _.map(data.cells, (item, index) => {
-    return [item.key, colorScale(index, colorSchema)];
+    var dimension = _.first(item.dimensions);
+    return [dimension.keyValue, colorScale(index, colorSchema)];
+  });
+  return result
+};
+
+export function buildC3BarColors(data, colorSchema) {
+  var result = _.map(data.cells, (item, index) => {
+    var dimension = _.first(item.dimensions);
+    return [dimension.keyValue, colorScale(index, colorSchema)];
   });
   return result
 };

@@ -1,6 +1,6 @@
 {
   "summary": {
-    "approved.sum": 350
+    "amount.sum": 350
   },
   "page": 1,
   "cell": [],
@@ -18,19 +18,19 @@
   ],
   "cells": [
     {
-      "approved.sum": 100,
+      "amount.sum": 100,
       "administrative_classification.admin1": "Central"
     },
     {
-      "approved.sum": 200,
+      "amount.sum": 200,
       "administrative_classification.admin1": "Other"
     },
     {
-      "approved.sum": 50,
+      "amount.sum": 50,
       "administrative_classification.admin1": "Local"
     }
   ],
   "aggregates": [
-    "approved.sum"
+    "amount.sum"
   ]
 }

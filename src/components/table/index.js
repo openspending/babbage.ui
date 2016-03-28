@@ -16,23 +16,28 @@ export class TableComponent extends events.EventEmitter {
     return result;
   }
 
-  getHeaders(measures, params) {
+  getHeaders(dimensions, measures, cells) {
     var result = [];
     var rows = [];
+    var cell = _.first(cells);
 
-    rows.push('');
-    var measure = _.find(measures, {key: params.aggregates});
-    if (measure) {
-      rows.push(measure.value);
-    } else {
-      rows.push(_.first(measures).value);
-    }
+    _.each(cell.dimensions, (dimension) => {
+      var dimensionData = _.find(dimensions, {key: dimension.keyField});
+      rows.push(dimensionData.name);
+    });
+
+    _.each(cell.measures, (measure) => {
+      var measureInfo = _.find(measures, {key: measure.key});
+      rows.push(measureInfo.value);
+    });
 
     result.push(rows);
+
     return result;
   }
 
   getTableData(endpoint, cube, params) {
+    params = _.cloneDeep(params);
     var result = {
       headers: [],
       columns: []
@@ -42,25 +47,21 @@ export class TableComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
     var measures = {};
-    var rows = [];
+    var dimensions = [];
 
-    return api.getMeasures(endpoint, cube)
+    return api.getDimensions(endpoint, cube)
+      .then((result) => {
+        dimensions = result;
+
+        return api.getMeasures(endpoint, cube);
+      })
       .then((result) => {
         measures = result;
         return api.aggregate(endpoint, cube, params)
       })
       .then((data) => {
-        var showKeyFields = that.showKeys(data.cells);
-
-        result.headers = that.getHeaders(measures, params);
-
-        _.each(data.cells, (item) => {
-          rows = [];
-          var name = (showKeyFields) ? `${item.key}:${item.name}`:  item.key;
-          rows.push(name);
-          rows.push(item.value);
-          result.columns.push(rows);
-        });
+        result.headers = that.getHeaders(dimensions, measures, data.cells);
+        result.columns = data.cells;
         this.emit('endAggregate', that, data);
 
         return result;

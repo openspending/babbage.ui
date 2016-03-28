@@ -42,8 +42,8 @@ export class Api {
     return _.pickBy(result);
   }
 
-  buildUrl(endpoint, cube, path, params) {
-    params = params || {};
+  buildUrl(endpoint, cube, path, originParams) {
+    var params = _.cloneDeep(originParams) || {};
     var api = endpoint;
     api = endpoint[api.length - 1] == '/' ? api.slice(0, api.length - 1) : api;
     api = `${api}/cubes/${cube}/${path}`;
@@ -82,7 +82,6 @@ export class Api {
     var dimension = _.find(model.dimensions, {key_ref: field});
 
     if (dimension) {
-//      result = `${dimension.hierarchy}.${dimension.label_attribute}`;
       result = dimension.label_ref;
     }
 
@@ -109,6 +108,15 @@ export class Api {
         return that.getMeasuresFromModel(model);
       });
   }
+
+  getDimensions(endpoint, cube) {
+    var that = this;
+    return this.getPackageModel(endpoint, cube)
+      .then((model) => {
+        return that.getDimensionsFromModel(model);
+      });
+  }
+
 
   getDimensionKeyById(model, id) {
     return model.dimensions[id].key_ref;
@@ -156,55 +164,82 @@ export class Api {
     });
   }
 
-  aggregate(endpoint, cube, params) {
+  aggregate(endpoint, cube, originParams) {
     var that = this;
-    params = params || {};
+    var params = _.cloneDeep(originParams) || {};
+
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 30;
-    if (params.aggregates) {
-      params.order = params.order || `${params.aggregates}:desc`;
-    }
-    var keyField = '';
-    var displayField = '';
+    var dimensions = [];
+    var measures = [];
 
-    return this.getPackageModel(endpoint, cube)
-      .then((model) => {
-        if (params.group) {
-          displayField = that.getDisplayField(model, _.first(params.group));
+    return this.getPackageModel(endpoint, cube).then((model) => {
+        measures = that.getMeasuresFromModel(model);
 
-          keyField = _.first(params.group);
-          if (params.group.indexOf(displayField) == -1) {
-            params.group.push(displayField);
-          }
+        if (!params.aggregates) {
+          params.aggregates = _.first(measures).key;
         }
+        params.order = params.order || [`${params.aggregates}:desc`];
+        params.aggregates = undefined; //remove it
+
+        var newExtendedGroup = [];
+        _.each(params.group, (dimensionKey) => {
+          newExtendedGroup.push(dimensionKey);
+          var dimensionDisplay = that.getDisplayField(model, dimensionKey);
+
+          dimensions.push({
+            key: dimensionKey,
+            name: dimensionDisplay
+          });
+
+          if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
+            newExtendedGroup.push(dimensionDisplay);
+          }
+        });
+        params.group = newExtendedGroup;
 
         var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
         return that.getJson(aggregateUrl);
       })
       .then((data) => {
-        var result = {};
-        var valueField = _.first(data.aggregates);
-        var nameField = displayField;
 
-        if (!params.group) {
-          keyField = valueField;
-          nameField = valueField;
-        }
-        result.summary = data.summary[valueField];
-        result.count = data.total_cell_count;
-        result.cells = [];
+        var result = {
+          summary: {},
+          count: data.total_cell_count,
+          cells: []
+        };
 
-        _.each(data.cells, (cell => {
+        _.each(measures, (measure) => {
+          result.summary[measure.key] = data.summary[measure.key];
+        });
+
+        _.each(data.cells, (cell) => {
+          var dimensionsResult = [];
+          var measuresResult = [];
+
+          _.each(dimensions, (dimension) => {
+            dimensionsResult.push({
+              keyField: dimension.key,
+              nameField: dimension.name,
+              keyValue: cell[dimension.key],
+              nameValue: cell[dimension.name]
+            });
+          });
+
+          _.each(measures, (measure) => {
+            measuresResult.push({
+              key: measure.key,
+              value: cell[measure.key]
+            });
+          });
+
           result.cells.push({
-              key: cell[keyField],
-              name: cell[nameField],
-              value: cell[valueField]
-            }
-          );
-        }));
+            dimensions: dimensionsResult,
+            measures: measuresResult
+          });
+        });
         return result;
       });
-
   }
 }
 
