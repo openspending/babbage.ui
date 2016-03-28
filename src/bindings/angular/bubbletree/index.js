@@ -17,11 +17,9 @@ export class BubbleTreeDirective {
           replace: false,
           link: function($scope, element) {
             var bubbleTree = new BubbleTreeComponent();
-            var resizeEvent = bubbleTree.refresh.bind(bubbleTree);
             var wrapper = element.find('.bubbletree')[0];
 
             bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
-            $window.addEventListener('resize', resizeEvent);
             $scope.$on('$destroy', function() {
               $window.removeEventListener('resize', resizeEvent);
             });
