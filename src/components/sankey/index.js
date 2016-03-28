@@ -13,14 +13,6 @@ export class SanKeyChartComponent extends events.EventEmitter {
     this.sankey = null;
   }
 
-  refresh() {
-    var bounds = this.wrapper.getBoundingClientRect();
-    //this.chart.resize({
-    //  height: bounds.height,
-    //  width: bounds.width
-    //});
-  }
-
   build(endpoint, cube, params, wrapper, colorSchema) {
     var that = this;
     this.wrapper = wrapper;
@@ -73,7 +65,6 @@ export class SanKeyChartComponent extends events.EventEmitter {
       };
       var objs = {};
 
-      //var sourceScale = ngBabbageGlobals.colorScale.copy();
       var targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);
 
       _.each(data.cells, (cell) => {
@@ -167,7 +158,6 @@ export class SanKeyChartComponent extends events.EventEmitter {
         .style("fill", function(d) {
           return d.color;
         })
-        //.style("stroke", function(d) { return d3.rgb(d.color).darker(1); })
         .style("stroke", function(d) {
           return d.color;
         })

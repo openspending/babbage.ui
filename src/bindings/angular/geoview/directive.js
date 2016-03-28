@@ -32,8 +32,6 @@ module.exports = function(ngModule) {
           function createHandle(countryCode, data, currencySign) {
             api.loadGeoJson($scope.cosmoEndpoint, countryCode)
               .then(function(geoJson) {
-                console.log('===============');
-                console.log(geoJson);
                 // Check if countryCode did not change while loading data
                 if ($scope.countryCode != countryCode) {
                   return;

@@ -13,15 +13,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
   constructor() {
     super();
     this.wrapper = null;
-    this.bubbleTreet = null;
-  }
-
-  refresh() {
-    //var bounds = this.wrapper.getBoundingClientRect();
-    //this.bubbleTree.resize({
-    //  height: bounds.height,
-    //  width: bounds.width
-    //});
+    this.bubbleTree = null;
   }
 
   generateBubbuleTreeData (cells, params) {
