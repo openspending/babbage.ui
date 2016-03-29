@@ -3,18 +3,22 @@
   "description": "Angular components to use the Cubes Slicer API provided by Babbage.",
   "homepage": "https://github.com/openspending/babbage.ui",
   "license": "MIT",
-  "version": "0.1.0-alpha",
+  "version": "0.1.2-alpha",
   "main": "lib/index.js",
   "scripts": {
     "build:lib": "gulp",
     "build:dist": "webpack --config webpack.config.development.js",
     "build:dist:min": "webpack --config webpack.config.production.js",
     "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
-    "postinstall": "npm run build",
+    "prepublish": "npm run build",
     "review": "jscs lib test",
     "fix": "jscs lib test --fix",
     "test": "mocha"
   },
+  "files": [
+    "lib",
+    "dist"
+  ],
   "dependencies": {
     "bluebird": "^3.3.3",
     "bubbletree": "git+https://github.com/okfn/bubbletree.git",
