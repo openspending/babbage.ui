@@ -57,6 +57,10 @@ export class TableComponent extends events.EventEmitter {
       })
       .then((result) => {
         measures = result;
+
+        params.page = 0;
+        params.pagesize = 2000;
+
         return api.aggregate(endpoint, cube, params)
       })
       .then((data) => {

@@ -5,6 +5,7 @@ import SanKeyChartDirective from './sankey/index'
 import BabbageTableDirective from './table/index'
 import GeoViewDirective from './geoview/index'
 import TreemapDirective from './treemap/index'
+import PivotTableDirective from './pivottable/index'
 
 export {
   BubbleTreeDirective,
@@ -13,5 +14,6 @@ export {
   SanKeyChartDirective,
   BabbageTableDirective,
   GeoViewDirective,
-  TreemapDirective
+  TreemapDirective,
+  PivotTableDirective
 }

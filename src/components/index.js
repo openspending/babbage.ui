@@ -1,9 +1,10 @@
-import BubbleTreeComponent from './bubbletree/index'
-import ChartComponent from './chart/index'
-import PieChartComponent from './pie/index'
-import SanKeyChartComponent from './sankey/index'
-import TableComponent from './table/index'
-import TreeMapComponent from './treemap/index'
+import BubbleTreeComponent from './bubbletree'
+import ChartComponent from './chart'
+import PieChartComponent from './pie'
+import SanKeyChartComponent from './sankey'
+import TableComponent from './table'
+import TreeMapComponent from './treemap'
+import PivotTableComponent from './pivottable'
 import * as Utils from './utils.js'
 
 export {
@@ -13,5 +14,6 @@ export {
   SanKeyChartComponent,
   TableComponent,
   TreeMapComponent,
+  PivotTableComponent,
   Utils
 }

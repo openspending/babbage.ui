@@ -10,7 +10,7 @@
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
   <script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
 
 </head>
@@ -66,6 +66,12 @@
       endpoint="{{apiUrl}}"
     ></babbage-table>
 
+    <pivot-table
+      cube="{{cube}}"
+      state="Pivot"
+      endpoint="{{apiUrl}}"
+    ></pivot-table>
+
   </div>
 
 </script>
@@ -78,6 +84,9 @@
   var bubbleTreeDirective = new window.Babbage.BabbageClasses.BubbleTreeDirective();
   var geoViewDirective = new window.Babbage.BabbageClasses.GeoViewDirective();
   var tableDirective = new window.Babbage.BabbageClasses.BabbageTableDirective();
+  var pivotTableDirective = new window.Babbage.BabbageClasses.PivotTableDirective();
+
+  console.log(window.Babbage.BabbageClasses);
 
   var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
 
@@ -87,6 +96,7 @@
   tableDirective.init(demo);
   bubbleTreeDirective.init(demo);
   geoViewDirective.init(demo);
+  pivotTableDirective.init(demo);
 
   demo.config(['$routeProvider',
     function($routeProvider) {
@@ -104,6 +114,12 @@
     $scope.apiUrl = 'http://s145.okserver.org/api/3';
     $scope.Char = {
       group: ['functional_classification_func1_code.func1_code'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.Pivot = {
+      cols: ['administrative_classification_admin1.admin1', 'other_exp_type.exp_type'],
+      rows: ['functional_classification_func1_code.func1_code', 'other_fin_source.fin_source'],
       aggregates: 'adjusted.sum'
     };
 

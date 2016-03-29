@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "admin1": "National Social Insurance Company",
+      "exp_type": "289",
+      "value": 100
+    },
+    {
+      "admin1": "National Health Insurance Company",
+      "exp_type": "322",
+      "value": 150
+    },
+    {
+      "admin1": "General actions",
+      "exp_type": "200",
+      "value": 50
+    }
+  ],
+  "rows": [
+    "exp_type"
+  ],
+  "cols": [
+    "admin1"
+  ]
+}
