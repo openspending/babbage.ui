@@ -18,6 +18,7 @@ var nodeModulesDir = path.join(__dirname, '/node_modules');
 function processStyles(dir) {
   var files = [
     path.join(nodeModulesDir, '/bubbletree/dist/bubbletree.css'),
+    path.join(nodeModulesDir, '/pivottable/dist/pivot.min.css'),
     path.join(nodeModulesDir, '/c3/c3.min.css'),
     path.join(cssDir, '/build.less'),
   ];

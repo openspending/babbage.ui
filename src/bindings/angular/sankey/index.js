@@ -16,14 +16,9 @@ export class SanKeyChartDirective {
           replace: false,
           link: function($scope, element) {
             var sanKeyChart = new SanKeyChartComponent();
-            var resizeEvent = sanKeyChart.refresh.bind(sanKeyChart);
             var wrapper = element.find('.sankey-chart')[0];
 
             sanKeyChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
-            $window.addEventListener('resize', resizeEvent);
-            $scope.$on('$destroy', function() {
-              $window.removeEventListener('resize', resizeEvent);
-            });
           }
         }
       }

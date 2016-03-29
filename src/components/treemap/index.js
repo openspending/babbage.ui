@@ -28,14 +28,6 @@ export class TreeMapComponent extends events.EventEmitter {
     this.treemap = null;
   }
 
-  refresh() {
-    //var bounds = this.wrapper.getBoundingClientRect();
-    //this.chart.resize({
-    //  height: bounds.height,
-    //  width: bounds.width
-    //});
-  }
-
   build(endpoint, cube, params, wrapper, colorSchema) {
     params = _.cloneDeep(params);
     var that = this;

@@ -16,17 +16,11 @@ class TreemapDirective {
           replace: false,
           link: function($scope, element) {
             var treeMap = new TreeMapComponent();
-            var resizeEvent = treeMap.refresh.bind(treeMap);
             var wrapper = element.find('.treemap-chart')[0];
 
             treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             treeMap.on('click', (treeMapComponent, item) => {
               $scope.$emit('treemap-click', treeMapComponent, item);
-            });
-
-            $window.addEventListener('resize', resizeEvent);
-            $scope.$on('$destroy', function() {
-              $window.removeEventListener('resize', resizeEvent);
             });
 
             $scope.cutoffWarning = false;

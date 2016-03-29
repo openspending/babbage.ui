@@ -1,0 +1,48 @@
+{
+  "summary": {
+    "executed.sum": 150,
+    "adjusted.sum": 300,
+    "approved.sum": 350
+  },
+  "page": 1,
+  "cell": [],
+  "page_size": 500,
+  "total_cell_count": 88,
+  "order": [
+    [
+      "approved.sum",
+      "desc"
+    ]
+  ],
+  "status": "ok",
+  "attributes": [
+    "administrative_classification_admin1.admin1",
+    "other_exp_type.exp_type"
+  ],
+  "cells": [
+    {
+      "administrative_classification_admin1.admin1": "National Social Insurance Company",
+      "other_exp_type.exp_type": "289",
+      "executed.sum": 50,
+      "adjusted.sum": 100,
+      "approved.sum": 100
+    },
+    {
+      "administrative_classification_admin1.admin1": "National Health Insurance Company",
+      "other_exp_type.exp_type": "322",
+      "executed.sum": 100,
+      "adjusted.sum": 150,
+      "approved.sum": 200
+    },
+    {
+      "administrative_classification_admin1.admin1": "General actions",
+      "other_exp_type.exp_type": "200",
+      "executed.sum": 0,
+      "adjusted.sum": 50,
+      "approved.sum": 50
+    }
+  ],
+  "aggregates": [
+    "approved.sum"
+  ]
+}

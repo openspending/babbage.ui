@@ -20,9 +20,6 @@ export class BubbleTreeDirective {
             var wrapper = element.find('.bubbletree')[0];
 
             bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
-            $scope.$on('$destroy', function() {
-              $window.removeEventListener('resize', resizeEvent);
-            });
 
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;

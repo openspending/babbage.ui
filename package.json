@@ -22,6 +22,7 @@
     "d3": "^3.5.16",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.5.1",
+    "pivottable": "git+https://github.com/nicolaskruchten/pivottable.git",
     "raphael": "^2.1.4"
   },
   "devDependencies": {
