@@ -1,4 +1,4 @@
-import { Api } from '../../api/index'
+import { Api } from '../../api'
 import _ from 'lodash'
 import events from 'events'
 var api = new Api();
@@ -18,7 +18,6 @@ export class PivotTableComponent extends events.EventEmitter {
     params.cols = undefined;
     params.rows = undefined;
 
-    var result = [];
     var that = this;
 
     this.emit('beginAggregate', this);

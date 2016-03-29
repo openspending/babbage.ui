@@ -16,14 +16,9 @@ export class PieChartDirective {
           replace: false,
           link: function($scope, element) {
             var pieChart = new PieChartComponent();
-            var resizeEvent = pieChart.refresh.bind(pieChart);
             var wrapper = element.find('.pie-chart')[0];
 
             pieChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
-            $window.addEventListener('resize', resizeEvent);
-            $scope.$on('$destroy', function() {
-              $window.removeEventListener('resize', resizeEvent);
-            });
 
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;

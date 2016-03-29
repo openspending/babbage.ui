@@ -13,14 +13,6 @@ export class PieChartComponent extends events.EventEmitter {
     this.chart = null;
   }
 
-  refresh() {
-    var bounds = this.wrapper.getBoundingClientRect();
-    //this.chart.resize({
-    //  height: bounds.height,
-    //  width: bounds.width
-    //});
-  }
-
   build(endpoint, cube, params, wrapper, colorSchema) {
     params = _.cloneDeep(params);
 

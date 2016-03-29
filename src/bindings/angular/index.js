@@ -1,11 +1,11 @@
-import BubbleTreeDirective from './bubbletree/index'
-import ChartDirective from './chart/index'
-import PieChartDirective from './pie/index'
-import SanKeyChartDirective from './sankey/index'
-import BabbageTableDirective from './table/index'
-import GeoViewDirective from './geoview/index'
-import TreemapDirective from './treemap/index'
-import PivotTableDirective from './pivottable/index'
+import BubbleTreeDirective from './bubbletree'
+import ChartDirective from './chart'
+import PieChartDirective from './pie'
+import SanKeyChartDirective from './sankey'
+import BabbageTableDirective from './table'
+import GeoViewDirective from './geoview'
+import TreemapDirective from './treemap'
+import PivotTableDirective from './pivottable'
 
 export {
   BubbleTreeDirective,
