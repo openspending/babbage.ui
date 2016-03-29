@@ -10,7 +10,7 @@
     "build:dist": "webpack --config webpack.config.development.js",
     "build:dist:min": "webpack --config webpack.config.production.js",
     "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
-    "prepublish": "npm run build",
+    "postinstall": "npm run build",
     "review": "jscs lib test",
     "fix": "jscs lib test --fix",
     "test": "mocha"
