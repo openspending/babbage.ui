@@ -1,3 +1,0 @@
-# A browser distribution is built in `dist` when pushing to npm.
-*
-!.gitignore
