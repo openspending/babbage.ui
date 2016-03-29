@@ -1,0 +1,16 @@
+<div class="table-babbage" ng-hide="queryLoaded">
+  <div class="alert alert-info">
+    <strong>You have not selected any data.</strong> Please choose the
+    configuration for your chart.
+  </div>
+</div>
+
+<div class="alert alert-warning" ng-show="cutoffWarning">
+  <strong>Too many categories.</strong> There are more than {{cutoff}} items
+  in the selected drilldown.
+</div>
+
+<div style="width: 100%; padding-top: 60%; position: relative">
+  <div class="bubbletree" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%"/>
+</div>
+

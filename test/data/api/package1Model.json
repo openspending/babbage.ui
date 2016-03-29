@@ -1,0 +1,143 @@
+{
+  "status": "ok",
+  "model": {
+    "dimensions": {
+      "to": {
+        "ref": "to",
+        "key_attribute": "name",
+        "cardinality_class": null,
+        "label_ref": "to.name",
+        "label": "to",
+        "hierarchy": "to",
+        "attributes": {
+          "name": {
+            "ref": "to.name",
+            "column": "to_name",
+            "datatype": "string",
+            "label": "name"
+          },
+          "label": {
+            "ref": "to.label",
+            "column": "to_label",
+            "datatype": "string",
+            "label": "label"
+          }
+        },
+        "label_attribute": "name",
+        "key_ref": "to.name"
+      },
+      "from": {
+        "ref": "from",
+        "key_attribute": "name",
+        "cardinality_class": null,
+        "label_ref": "from.name",
+        "label": "from",
+        "hierarchy": "from",
+        "attributes": {
+          "name": {
+            "ref": "from.name",
+            "column": "from_name",
+            "datatype": "string",
+            "label": "name"
+          },
+          "label": {
+            "ref": "from.label",
+            "column": "from_label",
+            "datatype": "string",
+            "label": "label"
+          }
+        },
+        "label_attribute": "name",
+        "key_ref": "from.name"
+      },
+      "time_month": {
+        "ref": "time_month",
+        "key_attribute": "month",
+        "cardinality_class": null,
+        "label_ref": "time_month.month",
+        "label": "time.month",
+        "hierarchy": "time",
+        "attributes": {
+          "month": {
+            "ref": "time_month.month",
+            "column": "time_month",
+            "datatype": "integer",
+            "label": "month"
+          }
+        },
+        "label_attribute": "month",
+        "key_ref": "time_month.month"
+      },
+      "time_year": {
+        "ref": "time_year",
+        "key_attribute": "year",
+        "cardinality_class": null,
+        "label_ref": "time_year.year",
+        "label": "time.year",
+        "hierarchy": "time",
+        "attributes": {
+          "year": {
+            "ref": "time_year.year",
+            "column": "time_year",
+            "datatype": "integer",
+            "label": "year"
+          }
+        },
+        "label_attribute": "year",
+        "key_ref": "time_year.year"
+      },
+      "time_day": {
+        "ref": "time_day",
+        "key_attribute": "day",
+        "cardinality_class": null,
+        "label_ref": "time_day.day",
+        "label": "time.day",
+        "hierarchy": "time",
+        "attributes": {
+          "day": {
+            "ref": "time_day.day",
+            "column": "time_day",
+            "datatype": "integer",
+            "label": "day"
+          }
+        },
+        "label_attribute": "day",
+        "key_ref": "time_day.day"
+      }
+    },
+    "measures": {
+      "amount": {
+        "ref": "amount",
+        "column": "amount",
+        "currency": "UGX",
+        "label": "amount"
+      }
+    },
+    "hierarchies": {
+      "time": {
+        "ref": "time",
+        "levels": [
+          "time_year",
+          "time_month",
+          "time_day"
+        ],
+        "label": "time"
+      }
+    },
+    "aggregates": {
+      "amount.sum": {
+        "ref": "amount.sum",
+        "measure": "amount",
+        "function": "sum",
+        "label": "amount"
+      },
+      "_count": {
+        "ref": "_count",
+        "function": "count",
+        "label": "Facts"
+      }
+    },
+    "fact_table": "fdp_00_01_uganda"
+  },
+  "name": "Package1"
+}

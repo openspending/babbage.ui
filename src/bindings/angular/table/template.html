@@ -1,0 +1,28 @@
+<div class="table-babbage" ng-show="tableData.columns.length">
+  <table class="table table-bordered table-condensed">
+    <thead>
+    <tr ng-repeat="header in tableData.headers">
+      <th ng-repeat="col in header">
+        {{col}}
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="rows in tableData.columns">
+      <td ng-repeat="dimension in rows.dimensions">
+        {{dimension.nameValue}}
+      </td>
+      <td ng-repeat="measure in rows.measures" class="numeric">
+        {{ measure.value | number }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-babbage" ng-hide="tableData.columns.length || !queryLoaded">
+  <div class="alert alert-info">
+    <strong>You have not selected any data.</strong> Please choose a set of rows
+    and columns to generate a cross-table.
+  </div>
+</div>
