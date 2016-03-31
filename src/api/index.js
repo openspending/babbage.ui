@@ -241,6 +241,15 @@ export class Api {
         return result;
       });
   }
+
+  loadGeoJson(cosmopolitanApiUrl, countryCode) {
+    var url = cosmopolitanApiUrl + 'polygons/country:' +
+      encodeURIComponent(countryCode) + '?format=json';
+
+    return this.getJson(url).then((jsonData) => {
+      return jsonData.polygon;
+    });
+  }
 }
 
 export default Api

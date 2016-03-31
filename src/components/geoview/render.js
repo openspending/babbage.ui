@@ -1,9 +1,9 @@
 'use strict';
-
+import { Api } from '../../api/index'
+import _ from 'lodash'
+import d3 from 'd3'
 var utils = require('./utils');
-
-var d3 = require('d3');
-var _ = require('lodash');
+var api = new Api();
 
 function renderMap(layer, options) {
   var geoObject = options.geoObject;
@@ -193,66 +193,68 @@ function renderLegend(options) {
 }
 
 function render(options) {
-  var container = d3.select(options.container);
-  var bounds = container.node().getBoundingClientRect();
-  var svg = container.append('svg')
-    .attr('width', '100%')
-    .attr('height', '100%');
+  return api.loadGeoJson(options.cosmoApiUrl, options.code).then((geoObject) => {
+    var container = d3.select(options.container);
+    var bounds = container.node().getBoundingClientRect();
+    var svg = container.append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%');
 
-  var colorScale = utils.getLinearColorScale(
-    utils.getOrdinalColorScale()(options.code));
+    var colorScale = utils.getLinearColorScale(
+      utils.getOrdinalColorScale()(options.code));
 
-  var path = utils.createPath({
-    geoObject: options.geoObject,
-    width: bounds.width,
-    height: bounds.height
-  });
+    var path = utils.createPath({
+      geoObject: geoObject,
+      width: bounds.width,
+      height: bounds.height
+    });
 
-  utils.prepareGeoJson(options.geoObject, {
-    path: path,
-    color: colorScale,
-    width: bounds.width,
-    height: bounds.height,
-    data: options.data
-  });
+    utils.prepareGeoJson(geoObject, {
+      path: path,
+      color: colorScale,
+      width: bounds.width,
+      height: bounds.height,
+      data: options.data
+    });
 
-  var infoCard = renderInfoCard({
-    container: container,
-    width: bounds.width,
-    height: bounds.height
-  });
+    var infoCard = renderInfoCard({
+      container: container,
+      width: bounds.width,
+      height: bounds.height
+    });
 
-  var legend = renderLegend({
-    container: container,
-    width: bounds.width,
-    height: bounds.height,
-    color: colorScale,
-    currencySign: options.currencySign,
-    range: options.geoObject.valueRange
-  });
+    var legend = renderLegend({
+      container: container,
+      width: bounds.width,
+      height: bounds.height,
+      color: colorScale,
+      currencySign: options.currencySign,
+      range: geoObject.valueRange
+    });
 
-  var map = renderMap(svg.append('g'), {
-    container: container,
-    svg: svg,
-    geoObject: options.geoObject,
-    path: path,
-    color: colorScale,
-    width: bounds.width,
-    height: bounds.height,
-    currencySign: options.currencySign,
-    updateInfoCard: infoCard,
-    bindResize: options.bindResize
-  });
+    var map = renderMap(svg.append('g'), {
+      container: container,
+      svg: svg,
+      geoObject: geoObject,
+      path: path,
+      color: colorScale,
+      width: bounds.width,
+      height: bounds.height,
+      currencySign: options.currencySign,
+      updateInfoCard: infoCard,
+      bindResize: options.bindResize
+    });
 
-  return {
-    updateData: function(data, currencySign) {
-      map.updateData(data, currencySign);
-      legend.update(options.geoObject.valueRange, currencySign);
-    },
-    destroy: function() {
-      map.destroy();
+    return {
+      updateData: function(data, currencySign) {
+        map.updateData(data, currencySign);
+        legend.update(geoObject.valueRange, currencySign);
+      },
+      destroy: function() {
+        map.destroy();
+      }
     }
-  };
+  });
 }
 
 module.exports = render;
