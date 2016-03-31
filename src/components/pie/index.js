@@ -21,15 +21,6 @@ export class PieChartComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
 
-    var size = {
-      width: this.wrapper.clientWidth,
-      height: this.wrapper.clientWidth * 0.6
-    };
-
-    d3.select(this.wrapper)
-      .style('width', size.width + 'px')
-      .style('height', size.height + 'px');
-
     api.aggregate(endpoint, cube, params).then((data) => {
 
       var columns = Utils.buildC3Columns(data, params.aggregates);

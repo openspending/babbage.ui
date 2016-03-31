@@ -5,8 +5,8 @@ var api = require('../../../components/geoview/api');
 
 module.exports = function(ngModule) {
   ngModule.directive('geoview', [
-    '$window', '$timeout',
-    function($window, $timeout) {
+    '$window', '$timeout', '$q',
+    function($window, $timeout, $q) {
       return {
         restrict: 'EA',
         scope: {
@@ -30,31 +30,32 @@ module.exports = function(ngModule) {
           }
 
           function createHandle(countryCode, data, currencySign) {
-            api.loadGeoJson($scope.cosmoEndpoint, countryCode)
-              .then(function(geoJson) {
-                // Check if countryCode did not change while loading data
-                if ($scope.countryCode != countryCode) {
-                  return;
+            // Check if countryCode did not change while loading data
+            if ($scope.countryCode != countryCode) {
+              return;
+            }
+            handle = null;
+            removeResizeListeners();
+            $q((resolve, reject) => {
+              geoview({
+                container: element.find('.babbage-geoview').get(0),
+                code: countryCode,
+                data: {},
+                cosmoApiUrl: $scope.cosmoEndpoint,
+                bindResize: function(callback) {
+                  resizeHandlers.push(callback);
+                  $window.addEventListener('resize', callback);
                 }
-                $timeout(function() {
-                  removeResizeListeners();
-                  handle = geoview({
-                    container: element.find('.babbage-geoview').get(0),
-                    code: countryCode,
-                    geoObject: geoJson,
-                    data: data(),
-                    currencySign: currencySign(),
-                    bindResize: function(callback) {
-                      resizeHandlers.push(callback);
-                      $window.addEventListener('resize', callback);
-                    }
-                  });
-                });
+              }).then(resolve).catch(reject)
+            })
+              .then((result) => {
+                handle = result;
+                handle.updateData(data(), currencySign());
               });
           }
 
           if ($scope.countryCode) {
-            handle = createHandle($scope.countryCode, function() {
+            createHandle($scope.countryCode, function() {
               return $scope.values || {};
             }, function() {
               return $scope.currencySign;
