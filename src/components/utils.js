@@ -43,7 +43,7 @@ export function buildC3BarNames(data, aggregates) {
 };
 
 
-export function buildC3Columns(data, aggregates) {
+export function buildC3PieColumns(data, aggregates) {
   var result = _.map(data.cells, (item) => {
     var dimension = _.first(item.dimensions);
     var measure = _.find(item.measures, {key: aggregates});
@@ -52,9 +52,45 @@ export function buildC3Columns(data, aggregates) {
   return result;
 };
 
+export function buildC3Columns(data, xDimensionField, seriesDimensionField, aggregates) {
+
+  var columns = [[xDimensionField]], series = {xDimensionField: 0};
+
+  for (var i in data.cells) {
+    var seriesDimension;
+    var item = data.cells[i];
+    var xDimension = _.find(item.dimensions, {keyField: xDimensionField});
+    if (seriesDimensionField) {
+      seriesDimension = _.find(item.dimensions, {keyField: seriesDimensionField});
+    }
+
+    var measure = _.find(item.measures, {key: aggregates});
+    var field = seriesDimensionField ? seriesDimension.nameValue : measure.key;
+
+    if (!series[field]) {
+      series[field] = columns.push([field]) - 1;
+    }
+    if (columns[0].indexOf(xDimension.nameValue) < 1) {
+      columns[0].push(xDimension.nameValue);
+    }
+    var index = columns[0].indexOf(xDimension.nameValue);
+    columns[series[field]][index] = measure.value;
+  }
+  var maxLength = Math.max.apply(null, columns.map(function(r) {
+    return r.length;
+  }));
+  for (var i = 1; i < maxLength; i++) {
+    for (var j in columns) {
+      columns[j][i] = columns[j][i] || 0;
+    }
+  }
+  return columns;
+};
+
+
 export function buildC3BarColumns(data, aggregates) {
   var result = [];
-  var list  = [];
+  var list = [];
   _.each(data.cells, (item) => {
     var dimension = _.first(item.dimensions);
     if (list.length == 0) {

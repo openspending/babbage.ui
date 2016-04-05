@@ -54,7 +54,11 @@ export class Api {
     }
     _.each(params, (value, key) => {
       if (_.isArray(value)) {
-        params[key] = value.join('|');
+        if (key == 'order') {
+          params[key] = value.join(',');
+        } else {
+          params[key] = value.join('|');
+        }
       }
     });
 
