@@ -23,7 +23,7 @@ export class PieChartComponent extends events.EventEmitter {
 
     api.aggregate(endpoint, cube, params).then((data) => {
 
-      var columns = Utils.buildC3Columns(data, params.aggregates);
+      var columns = Utils.buildC3PieColumns(data, params.aggregates);
       var colors = {};
       _.each(columns, (value, index) => {
         colors[value[0]]= Utils.colorScale(index) ;

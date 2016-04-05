@@ -40,13 +40,36 @@ export class ChartComponent extends events.EventEmitter {
       .style('height', size.height + 'px');
 
     if (chartType == 'line') {
-      params.order = [_.first(params.group)+':asc'];
+      params.order = [_.first(params.group) + ':asc'];
     }
+
+    var series;
+    var groupFields = _.first(params.group);
+    if (params.series) {
+      params.group = _.union(params.group, params.series);
+      series = _.first(params.series);
+      params.series = undefined;
+      params.order = [
+        series + ':asc',
+        params.aggregates + ':desc',
+      ];
+    }
+
+    if (series && chartType == 'line') {
+      chartType = 'area';
+    }
+
+    params.page = 0;
+    params.pagesize = 2000;
+
     api.aggregate(endpoint, cube, params).then((data) => {
 
-        var columns = Utils.buildC3BarColumns(data, params.aggregates);
+        var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);
         var types = {};
-        types[columns[1][0]] = chartType;
+        var c3Groups = _.map(_.slice(columns, 1), (column) => {return column[0]});
+        _.each(_.slice(columns, 1), (column) => {
+          types[column[0]] = chartType;
+        });
 
         that.chart = c3.generate({
           bindto: that.wrapper,
@@ -55,14 +78,14 @@ export class ChartComponent extends events.EventEmitter {
             columns: columns,
             color: function(color, d) {
               var c = d.id || d;
-              if (chartType == 'bar') {
+              if ((chartType == 'bar') && !series) {
                 c = d.index;
               };
               return Utils.colorScale(c);
             },
             type: chartType || 'bar',
             x: _.first(_.first(columns)),
-            groups: [[columns[1][0]]],
+            groups: [c3Groups],
             types: types,
           },
           point: {
