@@ -1,0 +1,56 @@
+{
+  "summary": 405,
+  "count": 3,
+  "cells": [
+    {
+      "dimensions": [
+        {
+          "keyField": "id",
+          "nameField": "name",
+          "keyValue": 10,
+          "nameValue": "Some name1"
+        }
+      ],
+      "measures":[
+        {
+          "key": "measure1",
+          "value": 100
+        }
+      ]
+    },
+
+    {
+      "dimensions": [
+        {
+          "keyField": "id",
+          "nameField": "name",
+          "keyValue": 20,
+          "nameValue": "Some name2"
+        }
+      ],
+      "measures":[
+        {
+          "key": "measure1",
+          "value": 300
+        }
+      ]
+    },
+
+    {
+      "dimensions": [
+        {
+          "keyField": "id",
+          "nameField": "name",
+          "keyValue": 30,
+          "nameValue": "Some name3"
+        }
+      ],
+      "measures":[
+        {
+          "key": "measure1",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}

@@ -19,7 +19,7 @@
 </div>
 <style>
   .pie-chart {
-    height: 500px;
+
   }
 </style>
 
@@ -34,15 +34,30 @@
     <chart
       cube="{{cube}}"
       type="bar"
-      state="Char"
+      state="MultiChar"
       endpoint="{{apiUrl}}"
     ></chart>
+
 
     <chart
       cube="{{cube}}"
       type="line"
-      state="Char"
+      state="MultiChar"
       endpoint="{{apiUrl}}"
+    ></chart>
+
+    <chart
+    cube="{{cube}}"
+    type="bar"
+    state="Char"
+    endpoint="{{apiUrl}}"
+    ></chart>
+
+    <chart
+    cube="{{cube}}"
+    type="line"
+    state="Char"
+    endpoint="{{apiUrl}}"
     ></chart>
 
     <tree-map
@@ -113,16 +128,22 @@
 
   demo.controller('DemoCtrl', function ($scope) {
 //    $scope.cube = '00_01_uganda';
-    $scope.cube = 'boost-moldova';
+    $scope.cube = 'a0f62a17e1fc9e6bea3e94a2f41fbba2:boost-moldova-2014';
     $scope.apiUrl = 'http://s145.okserver.org/api/3';
     $scope.Char = {
-      group: ['functional_classification_func1_code.func1_code'],
+      group: ['classification_economic_econ1_label.econ1_label'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.MultiChar = {
+      group: ['classification_economic_econ1_label.econ1_label'],
+      series: ['classification_administrative_admin1.admin1'],
       aggregates: 'adjusted.sum'
     };
 
     $scope.Pivot = {
       cols: ['administrative_classification_admin1.admin1', 'other_exp_type.exp_type'],
-      rows: ['functional_classification_func1_code.func1_code', 'other_fin_source.fin_source'],
+      rows: ['classification_economic_econ1_label.econ1_label', 'other_fin_source.fin_source'],
       aggregates: 'adjusted.sum'
     };
 

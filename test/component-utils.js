@@ -3,62 +3,7 @@ var _ = require('lodash');
 
 describe('Babbage.ui component utils', function() {
   var Utils = require('../lib/components/utils.js');
-  var data = {
-    summary: 405,
-    count: 3,
-    cells: [
-      {
-        "dimensions": [
-          {
-            keyField: 'id',
-            nameField: 'name',
-            keyValue: 10,
-            nameValue: 'Some name1'
-          }
-        ],
-        "measures":[
-          {
-            key: 'measure1',
-            value: 100
-          }
-        ]
-      },
-
-      {
-        "dimensions": [
-          {
-            keyField: 'id',
-            nameField: 'name',
-            keyValue: 20,
-            nameValue: 'Some name2'
-          }
-        ],
-        "measures":[
-          {
-            key: 'measure1',
-            value: 300
-          }
-        ]
-      },
-
-      {
-        "dimensions": [
-          {
-            keyField: 'id',
-            nameField: 'name',
-            keyValue: 30,
-            nameValue: 'Some name3'
-          }
-        ],
-        "measures":[
-          {
-            key: 'measure1',
-            value: 5
-          }
-        ]
-      }
-    ]
-  };
+  var data = require('./data/component-utils/data1');
 
   it('Should exists', function(done) {
     assert(_.isObject(Utils));
@@ -76,12 +21,8 @@ describe('Babbage.ui component utils', function() {
   });
 
   it('Should build `columns`', function(done) {
-    var result = Utils.buildC3Columns(data, 'measure1');
-    assert.deepEqual(result, [
-      [10, 100],
-      [20, 300],
-      [30, 5]
-    ]);
+    var result = Utils.buildC3Columns(data, 'id', undefined, 'measure1');
+    assert.deepEqual(result, [ [ 'id', 'Some name1', 'Some name2', 'Some name3' ], [ 'measure1', 100, 300, 5 ] ]);
     done();
   });
 
