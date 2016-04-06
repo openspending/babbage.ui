@@ -5,6 +5,7 @@ import SanKeyChartComponent from './sankey'
 import TableComponent from './table'
 import TreeMapComponent from './treemap'
 import PivotTableComponent from './pivottable'
+import FactsComponent from './facts'
 import * as Utils from './utils.js'
 
 export {
@@ -15,5 +16,6 @@ export {
   TableComponent,
   TreeMapComponent,
   PivotTableComponent,
+  FactsComponent,
   Utils
 }

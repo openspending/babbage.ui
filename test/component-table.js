@@ -15,7 +15,7 @@ describe('Babbage.ui table component', function() {
       .get('/cubes/test2/aggregate?' +
         'drilldown=administrative_classification_admin3_code.admin3_code%7' +
         'Cadministrative_classification_admin3_code.admin3_label&' +
-        'pagesize=2000&' +
+        'pagesize=30&' +
         'order=approved.sum%3Adesc')
       .reply(200, aggregate2, {'access-control-allow-origin': '*'});
 

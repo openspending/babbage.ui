@@ -6,6 +6,7 @@ import BabbageTableDirective from './table'
 import GeoViewDirective from './geoview'
 import TreemapDirective from './treemap'
 import PivotTableDirective from './pivottable'
+import FactsDirective from './facts'
 
 export {
   BubbleTreeDirective,
@@ -15,5 +16,6 @@ export {
   BabbageTableDirective,
   GeoViewDirective,
   TreemapDirective,
-  PivotTableDirective
+  PivotTableDirective,
+  FactsDirective
 }

@@ -11,6 +11,8 @@ describe('Babbage.ui API', function() {
   var expectedMultiAggregate2 = require('./data/api/expected/multyaggregate2.json');
   var testPackageModel = require('./data/api/package1Model.json');
   var test2PackageModel = require('./data/api/package2Model.json');
+  var facts2 = require('./data/api/facts2.json');
+  var expectedFacts2 = require('./data/api/expected/facts2.json');
 
   before(function(done) {
     nock('http://site.com/')
@@ -83,6 +85,12 @@ describe('Babbage.ui API', function() {
       .persist()
       .get('/cubes/test2/model')
       .reply(200, test2PackageModel, {'access-control-allow-origin': '*'});
+
+    nock('http://site.com/')
+      .persist()
+      .get('/cubes/test2/facts?pagesize=20')
+      .reply(200, facts2, {'access-control-allow-origin': '*'});
+
 
     done();
   });
@@ -456,5 +464,17 @@ describe('Babbage.ui API', function() {
     });
   });
 
+  it('Should return facts data', function(done) {
+    api.facts(
+      'http://site.com/',
+      'test2',
+      {}
+    ).then(function(data) {
+      assert.deepEqual(data, expectedFacts2);
+      done();
+    }).catch(function(e) {
+      console.log(e);
+    });
+  });
 
 });

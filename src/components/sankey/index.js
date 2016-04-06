@@ -36,10 +36,10 @@ export class SanKeyChartComponent extends events.EventEmitter {
     params.source = undefined;
     params.target = undefined;
 
-    params.order = [
-      `${params.aggregates}:desc`,
-      `${params.source}:asc`,
-      `${params.target}:asc`
+    params.order = params.order || [
+      {key: params.aggregates, direction: 'desc'},
+      {key: params.source, direction: 'asc'},
+      {key: params.target, direction: 'asc'}
     ];
 
     params.page = 0;
