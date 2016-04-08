@@ -1,0 +1,54 @@
+<div class="table-babbage" ng-show="tableData.columns.length">
+  <table class="table table-bordered table-condensed">
+    <thead>
+    <tr>
+      <th ng-repeat-start="header in tableData.headers" class="title">
+        {{header.label}}
+      </th>
+      <th ng-repeat-end class="operations" ng-switch="getSort(header.key).direction">
+          <span ng-switch-when="desc" ng-click="setSort(header.key, 'asc')" class="ng-link">
+            <i class="fa fa-sort-desc"></i>
+          </span>
+          <span ng-switch-when="asc" ng-click="setSort(header.key, 'desc')" class="ng-link">
+            <i class="fa fa-sort-asc"></i>
+          </span>
+          <span ng-switch-default ng-click="setSort(header.key, 'desc')" class="ng-link">
+            <i class="fa fa-sort"></i>
+          </span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="rows in tableData.columns">
+      <td ng-repeat="row in rows track by $index" colspan="2" ng-class="{'numeric': tableData.headers[$index].numeric}" >
+          <span ng-if="tableData.headers[$index].numeric">
+            {{ row | number }}
+          </span>
+          <span ng-if="!tableData.headers[$index].numeric">
+            {{ row }}
+          </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="pager">
+    <ul ng-show="showPager" class="pagination pagination-sm">
+      <li ng-class="{'disabled': !hasPrev}">
+        <a class="ng-link" ng-click="setPage(current - 1)">&laquo;</a>
+      </li>
+      <li ng-repeat="page in pages" ng-class="{'active': page.current}">
+        <a class="ng-link" ng-click="setPage(page.page)">{{page.page + 1}}</a>
+      </li>
+      <li ng-class="{'disabled': !hasNext}">
+        <a class="ng-link" ng-click="setPage(current + 1)">&raquo;</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="table-babbage" ng-hide="tableData.columns.length || !queryLoaded">
+  <div class="alert alert-info">
+    <strong>You have not selected any data.</strong> Please choose a set of rows
+    and columns to generate a cross-table.
+  </div>
+</div>

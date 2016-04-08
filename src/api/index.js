@@ -55,7 +55,9 @@ export class Api {
     _.each(params, (value, key) => {
       if (_.isArray(value)) {
         if (key == 'order') {
-          params[key] = value.join(',');
+          params[key] = _.map(value, (item) => {
+            return item.key+':'+item.direction
+          }).join(',');
         } else {
           params[key] = value.join('|');
         }
@@ -168,6 +170,63 @@ export class Api {
     });
   }
 
+  getSimpleLabel(key) {
+    var parts = key.split('.');
+    return (parts.length == 2) ? parts[1] : key;
+  }
+
+  facts(endpoint, cube, originParams) {
+    var that = this;
+    var params = _.cloneDeep(originParams) || {};
+    var measureFields = [];
+    params.page = params.page || 0;
+    params.pagesize = params.pagesize || 20;
+
+    return this.getPackageModel(endpoint, cube).then((model) => {
+      var dimensions = that.getDimensionsFromModel(model);
+      var measures = that.getMeasuresFromModel(model);
+      if (!originParams.fields){
+        originParams.fields = [];
+        _.each(dimensions, (dimension) => {
+          originParams.fields.push(dimension.key);
+        });
+        _.each(measures, (measure) => {
+          originParams.fields.push(measure.value);
+        });
+      }
+      _.each(measures, (measure) => {
+        measureFields.push(measure.value);
+      });
+
+      var factsUrl = that.buildUrl(endpoint, cube, 'facts', params);
+      return that.getJson(factsUrl);
+    }).then((facts) => {
+      var result = {};
+      result.headers = [];
+      result.columns = [];
+      result.info = {};
+      result.info.total = facts.total_fact_count;
+      result.info.pageSize = facts.page_size;
+      result.info.page = facts.page;
+      _.each(facts.fields, (field) => {
+        result.headers.push({
+          key: field,
+          label: that.getSimpleLabel(field),
+          numeric: (measureFields.indexOf(field) > -1)
+        });
+      });
+
+      _.each(facts.data, (raw) => {
+        var column = [];
+        _.each(result.headers, (header) => {
+          column.push(raw[header.key]);
+        });
+        result.columns.push(column);
+      });
+      return result;
+    })
+  }
+
   aggregate(endpoint, cube, originParams) {
     var that = this;
     var params = _.cloneDeep(originParams) || {};
@@ -183,7 +242,7 @@ export class Api {
         if (!params.aggregates) {
           params.aggregates = _.first(measures).key;
         }
-        params.order = params.order || [`${params.aggregates}:desc`];
+        params.order = params.order || [{key: params.aggregates, direction: 'desc'}];
         params.aggregates = undefined; //remove it
 
         var newExtendedGroup = [];
@@ -203,6 +262,7 @@ export class Api {
         params.group = newExtendedGroup;
 
         var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
+
         return that.getJson(aggregateUrl);
       })
       .then((data) => {
