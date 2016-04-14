@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="dist/lib.css">
   <!--<link rel="stylesheet" href="dist/babbage.ui.css">-->
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
-  <script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
@@ -92,6 +92,12 @@
       endpoint="{{apiUrl}}"
     ></pivot-table>
 
+    <facts
+      cube="{{cube}}"
+      state="Facts"
+      endpoint="{{apiUrl}}"
+    ></facts>
+
   </div>
 
 </script>
@@ -105,6 +111,7 @@
   var geoViewDirective = new window.Babbage.BabbageClasses.GeoViewDirective();
   var tableDirective = new window.Babbage.BabbageClasses.BabbageTableDirective();
   var pivotTableDirective = new window.Babbage.BabbageClasses.PivotTableDirective();
+  var factsDirective = new window.Babbage.BabbageClasses.FactsDirective();
 
   var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
 
@@ -115,6 +122,7 @@
   bubbleTreeDirective.init(demo);
   geoViewDirective.init(demo);
   pivotTableDirective.init(demo);
+  factsDirective.init(demo);
 
   demo.config(['$routeProvider',
     function($routeProvider) {
@@ -131,8 +139,12 @@
     $scope.cube = 'a0f62a17e1fc9e6bea3e94a2f41fbba2:boost-moldova-2014';
     $scope.apiUrl = 'http://s145.okserver.org/api/3';
     $scope.Char = {
+//      order: [{key: 'classification_economic_econ1_label.econ1_label', direction: 'asc'}],
       group: ['classification_economic_econ1_label.econ1_label'],
       aggregates: 'adjusted.sum'
+    };
+
+    $scope.Facts = {
     };
 
     $scope.MultiChar = {

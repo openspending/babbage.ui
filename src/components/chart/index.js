@@ -14,14 +14,6 @@ export class ChartComponent extends events.EventEmitter {
     this.chart = null;
   }
 
-  refresh() {
-    var bounds = this.wrapper.getBoundingClientRect();
-    this.chart.resize({
-      height: bounds.height,
-      width: bounds.width
-    });
-  }
-
   build(chartType, endpoint, cube, params, wrapper, colorSchema) {
     params = _.cloneDeep(params);
 
@@ -30,17 +22,8 @@ export class ChartComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
 
-    var size = {
-      width: this.wrapper.clientWidth,
-      height: this.wrapper.clientWidth * 0.6
-    };
-
-    d3.select(this.wrapper)
-      .style('width', size.width + 'px')
-      .style('height', size.height + 'px');
-
     if (chartType == 'line') {
-      params.order = [_.first(params.group) + ':asc'];
+      params.order = params.order || [{key: _.first(params.group), direction: ':asc'}];
     }
 
     var series;
@@ -49,9 +32,9 @@ export class ChartComponent extends events.EventEmitter {
       params.group = _.union(params.group, params.series);
       series = _.first(params.series);
       params.series = undefined;
-      params.order = [
-        series + ':asc',
-        params.aggregates + ':desc',
+      params.order = params.order || [
+        {key: series, direction: 'asc'},
+        {key: params.aggregates, direction: 'desc'}
       ];
     }
 
