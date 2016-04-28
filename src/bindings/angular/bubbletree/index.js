@@ -20,6 +20,9 @@ export class BubbleTreeDirective {
             var wrapper = element.find('.bubbletree')[0];
 
             bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            bubbleTree.on('click', (bubbleTreeComponent, item) => {
+              $scope.$emit('bubbletree-click', bubbleTreeComponent, item);
+            });
 
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;
