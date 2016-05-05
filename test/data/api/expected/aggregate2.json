@@ -18,17 +18,17 @@
       "measures": [
         {
           "key": "executed.sum",
-          "name": "executed",
+          "name": "Executed",
           "value": 50
         },
         {
           "key": "adjusted.sum",
-          "name": "adjusted",
+          "name": "Adjusted",
           "value": 100
         },
         {
           "key": "approved.sum",
-          "name": "approved",
+          "name": "Approved",
           "value": 100
         }
       ]
@@ -45,17 +45,17 @@
       "measures": [
         {
           "key": "executed.sum",
-          "name": "executed",
+          "name": "Executed",
           "value": 100
         },
         {
           "key": "adjusted.sum",
-          "name": "adjusted",
+          "name": "Adjusted",
           "value": 100
         },
         {
           "key": "approved.sum",
-          "name": "approved",
+          "name": "Approved",
           "value": 200
         }
       ]
@@ -72,17 +72,17 @@
       "measures": [
         {
           "key": "executed.sum",
-          "name": "executed",
+          "name": "Executed",
           "value": 0
         },
         {
           "key": "adjusted.sum",
-          "name": "adjusted",
+          "name": "Adjusted",
           "value": 50
         },
         {
           "key": "approved.sum",
-          "name": "approved",
+          "name": "Approved",
           "value": 50
         }
       ]

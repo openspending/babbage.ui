@@ -72,17 +72,17 @@
       "measures": [
         {
           "key": "executed.sum",
-          "name": "executed",
+          "name": "Executed",
           "value": 0
         },
         {
           "key": "adjusted.sum",
-          "name": "adjusted",
+          "name": "Adjusted",
           "value": 50
         },
         {
           "key": "approved.sum",
-          "name": "approved",
+          "name": "Approved",
           "value": 50
         }
       ]

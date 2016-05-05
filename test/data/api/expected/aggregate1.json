@@ -16,7 +16,7 @@
       "measures": [
         {
           "key": "amount.sum",
-          "name": "amount",
+          "name": "Amount",
           "value": 100
         }
       ]
@@ -33,7 +33,7 @@
       "measures": [
         {
           "key": "amount.sum",
-          "name": "amount",
+          "name": "Amount",
           "value": 200
         }
       ]
@@ -50,7 +50,7 @@
       "measures": [
         {
           "key": "amount.sum",
-          "name": "amount",
+          "name": "Amount",
           "value": 50
         }
       ]

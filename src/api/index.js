@@ -181,8 +181,10 @@ export class Api {
     var measureFields = [];
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 20;
+    var model;
 
-    return this.getPackageModel(endpoint, cube).then((model) => {
+    return this.getPackageModel(endpoint, cube).then((_model) => {
+      model = _model;
       var dimensions = that.getDimensionsFromModel(model);
       var measures = that.getMeasuresFromModel(model);
       if (!originParams.fields){
@@ -194,8 +196,8 @@ export class Api {
           originParams.fields.push(measure.value);
         });
       }
-      _.each(measures, (measure) => {
-        measureFields.push(measure.value);
+      _.each(model.measures, (measure, key) => {
+        measureFields.push(key);
       });
 
       var factsUrl = that.buildUrl(endpoint, cube, 'facts', params);
@@ -209,9 +211,17 @@ export class Api {
       result.info.pageSize = facts.page_size;
       result.info.page = facts.page;
       _.each(facts.fields, (field) => {
+        var fieldParts = field.split('.');
+        var conceptKey = fieldParts[0];
+        var attribute = fieldParts[1];
+        var concept = model.dimensions[conceptKey] || model.measures[conceptKey];
+        if ( attribute && concept.attributes ) {
+          concept = concept.attributes[attribute];
+        }
+
         result.headers.push({
           key: field,
-          label: that.getSimpleLabel(field),
+          label: concept.label,
           numeric: (measureFields.indexOf(field) > -1)
         });
       });

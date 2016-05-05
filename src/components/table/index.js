@@ -23,7 +23,7 @@ export class TableComponent extends events.EventEmitter {
 
     _.each(cell.dimensions, (dimension) => {
       var dimensionData = _.find(dimensions, {key: dimension.keyField});
-      rows.push(dimensionData.name);
+      rows.push(dimensionData.code || dimensionData.name);
     });
 
     _.each(cell.measures, (measure) => {

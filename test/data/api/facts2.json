@@ -3,8 +3,7 @@
     "approved",
     "adjusted",
     "executed",
-    "classification_administrative_admin1.admin1",
-    "datetime.year"
+    "administrative_classification_admin1.admin1"
   ],
   "cell": [
   ],
@@ -16,38 +15,33 @@
   "data": [
     {
       "executed": 0.0,
-      "classification_administrative_admin1.admin1": "Central",
+      "administrative_classification_admin1.admin1": "Central",
       "approved": 100,
-      "adjusted": 200,
-      "datetime.year": 2014
+      "adjusted": 200
     },
     {
       "executed": 5,
-      "classification_administrative_admin1.admin1": "Central",
+      "administrative_classification_admin1.admin1": "Central",
       "approved": 10,
-      "adjusted": 20,
-      "datetime.year": 2014
+      "adjusted": 20
     },
     {
       "executed": 10,
-      "classification_administrative_admin1.admin1": "Central",
+      "administrative_classification_admin1.admin1": "Central",
       "approved": 20,
-      "adjusted": 0,
-      "datetime.year": 2014
+      "adjusted": 0
     },
     {
       "executed": 0.0,
-      "classification_administrative_admin1.admin1": "Central",
+      "administrative_classification_admin1.admin1": "Central",
       "approved": 0,
-      "adjusted": 0,
-      "datetime.year": 2014
+      "adjusted": 0
     },
     {
       "executed": 1,
-      "classification_administrative_admin1.admin1": "Other",
+      "administrative_classification_admin1.admin1": "Other",
       "approved": 2,
-      "adjusted": 1,
-      "datetime.year": 2014
+      "adjusted": 1
     }
   ],
   "page_size": 5

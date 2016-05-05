@@ -4,21 +4,21 @@
     "measures": {
       "adjusted": {
         "column": "adjusted",
-        "label": "adjusted",
+        "label": "Adjusted",
         "ref": "adjusted",
         "currency": "MDL",
         "orig_measure": "adjusted"
       },
       "executed": {
         "column": "executed",
-        "label": "executed",
+        "label": "Executed",
         "ref": "executed",
         "currency": "MDL",
         "orig_measure": "executed"
       },
       "approved": {
         "column": "approved",
-        "label": "approved",
+        "label": "Approved",
         "ref": "approved",
         "currency": "MDL",
         "orig_measure": "approved"
@@ -57,7 +57,7 @@
           "administrative_classification_admin2_code",
           "administrative_classification_admin3_code"
         ],
-        "label": "administrative_classification",
+        "label": "Administrative_classification",
         "ref": "administrative_classification"
       },
       "other": {
@@ -66,14 +66,14 @@
           "other_exp_type",
           "other_transfer"
         ],
-        "label": "other",
+        "label": "Other",
         "ref": "other"
       }
     },
     "dimensions": {
       "location": {
         "key_ref": "location.title",
-        "label": "location",
+        "label": "Location",
         "label_attribute": "title",
         "cardinality_class": null,
         "ref": "location",
@@ -86,14 +86,14 @@
             "column": "admin2_label",
             "orig_attribute": "title",
             "datatype": "string",
-            "label": "title",
+            "label": "Title",
             "ref": "location.title"
           }
         }
       },
       "other_exp_type": {
         "key_ref": "other_exp_type.exp_type",
-        "label": "other.exp_type",
+        "label": "Other-Exp_type",
         "label_attribute": "exp_type",
         "cardinality_class": null,
         "ref": "other_exp_type",
@@ -106,14 +106,14 @@
             "column": "exp_type",
             "orig_attribute": "exp_type",
             "datatype": "string",
-            "label": "exp_type",
+            "label": "Exp_type",
             "ref": "other_exp_type.exp_type"
           }
         }
       },
       "other_transfer": {
         "key_ref": "other_transfer.transfer",
-        "label": "other.transfer",
+        "label": "Other-Transfer",
         "label_attribute": "transfer",
         "cardinality_class": null,
         "ref": "other_transfer",
@@ -126,14 +126,14 @@
             "column": "transfer",
             "orig_attribute": "transfer",
             "datatype": "string",
-            "label": "transfer",
+            "label": "Lransfer",
             "ref": "other_transfer.transfer"
           }
         }
       },
       "administrative_classification_admin3_code": {
         "key_ref": "administrative_classification_admin3_code.admin3_code",
-        "label": "administrative_classification.admin3_code",
+        "label": "Administrative_classification-Admin3_code",
         "label_attribute": "admin3_label",
         "cardinality_class": null,
         "ref": "administrative_classification_admin3_code",
@@ -146,21 +146,21 @@
             "column": "admin3_label",
             "orig_attribute": "admin3_label",
             "datatype": "string",
-            "label": "admin3_label",
+            "label": "Admin3_label",
             "ref": "administrative_classification_admin3_code.admin3_label"
           },
           "admin3_code": {
             "column": "admin3_code",
             "orig_attribute": "admin3_code",
             "datatype": "string",
-            "label": "admin3_code",
+            "label": "Admin3_code",
             "ref": "administrative_classification_admin3_code.admin3_code"
           }
         }
       },
       "other_fin_source": {
         "key_ref": "other_fin_source.fin_source",
-        "label": "other.fin_source",
+        "label": "Other-Fin_source",
         "label_attribute": "fin_source",
         "cardinality_class": null,
         "ref": "other_fin_source",
@@ -173,14 +173,14 @@
             "column": "fin_source",
             "orig_attribute": "fin_source",
             "datatype": "string",
-            "label": "fin_source",
+            "label": "Fin_source",
             "ref": "other_fin_source.fin_source"
           }
         }
       },
       "administrative_classification_admin1": {
         "key_ref": "administrative_classification_admin1.admin1",
-        "label": "administrative_classification.admin1",
+        "label": "aAministrative_classification-Admin1",
         "label_attribute": "admin1",
         "cardinality_class": null,
         "ref": "administrative_classification_admin1",
@@ -193,14 +193,14 @@
             "column": "admin1",
             "orig_attribute": "admin1",
             "datatype": "string",
-            "label": "admin1",
+            "label": "Admin1",
             "ref": "administrative_classification_admin1.admin1"
           }
         }
       },
       "administrative_classification_admin2_code": {
         "key_ref": "administrative_classification_admin2_code.admin2_code",
-        "label": "administrative_classification.admin2_code",
+        "label": "Administrative_classification-Admin2_code",
         "label_attribute": "admin2_label",
         "cardinality_class": null,
         "ref": "administrative_classification_admin2_code",
@@ -213,14 +213,14 @@
             "column": "admin2_code",
             "orig_attribute": "admin2_code",
             "datatype": "string",
-            "label": "admin2_code",
+            "label": "Admin2_code",
             "ref": "administrative_classification_admin2_code.admin2_code"
           },
           "admin2_label": {
             "column": "admin2_label",
             "orig_attribute": "admin2_label",
             "datatype": "string",
-            "label": "admin2_label",
+            "label": "Admin2_label",
             "ref": "administrative_classification_admin2_code.admin2_label"
           }
         }
