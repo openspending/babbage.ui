@@ -293,6 +293,7 @@ export class Api {
           _.each(measures, (measure) => {
             measuresResult.push({
               key: measure.key,
+              name: measure.value,
               value: cell[measure.key]
             });
           });

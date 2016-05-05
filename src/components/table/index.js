@@ -28,7 +28,7 @@ export class TableComponent extends events.EventEmitter {
 
     _.each(cell.measures, (measure) => {
       var measureInfo = _.find(measures, {key: measure.key});
-      rows.push(measureInfo.value);
+      rows.push(measureInfo.name || measureInfo.value);
     });
 
     result.push(rows);

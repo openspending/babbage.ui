@@ -1,25 +1,23 @@
 {
   "data": [
     {
-      "admin1": "National Social Insurance Company",
-      "exp_type": "289",
+      "administrative_classification.admin1": "National Social Insurance Company",
+      "other.exp_type": "289",
       "value": 100
     },
     {
-      "admin1": "National Health Insurance Company",
-      "exp_type": "322",
+      "administrative_classification.admin1": "National Health Insurance Company",
+      "other.exp_type": "322",
       "value": 150
     },
     {
-      "admin1": "General actions",
-      "exp_type": "200",
+      "administrative_classification.admin1": "General actions",
+      "other.exp_type": "200",
       "value": 50
     }
   ],
-  "rows": [
-    "exp_type"
-  ],
+  "rows": [ "other.exp_type" ],
   "cols": [
-    "admin1"
+    "administrative_classification.admin1"
   ]
 }

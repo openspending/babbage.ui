@@ -34,7 +34,7 @@ describe('Babbage.ui table component', function() {
 
   it('Should build headers of table', function(done) {
     var measures = [
-      {key: 'executed.sum', value: 'executed'},
+      {key: 'executed.sum', value: 'executed' },
       {key: 'adjusted.sum', value: 'adjusted'},
       {key: 'approved.sum', value: 'approved'}
     ];

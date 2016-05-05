@@ -65,7 +65,7 @@ export function buildC3Columns(data, xDimensionField, seriesDimensionField, aggr
     }
 
     var measure = _.find(item.measures, {key: aggregates});
-    var field = seriesDimensionField ? seriesDimension.nameValue : measure.key;
+    var field = seriesDimensionField ? seriesDimension.nameValue : measure.name;
 
     if (!series[field]) {
       series[field] = columns.push([field]) - 1;

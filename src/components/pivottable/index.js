@@ -28,7 +28,7 @@ export class PivotTableComponent extends events.EventEmitter {
       .then((result) => {
         dimensions = {};
         _.each(result, (item) => {
-          dimensions[item.key] = item.name;
+          dimensions[item.key] = item.code;
         });
 
         return api.getMeasures(endpoint, cube);
@@ -36,7 +36,7 @@ export class PivotTableComponent extends events.EventEmitter {
       .then((result) => {
         measures = {};
         _.each(result, (item) => {
-          measures[item.key] = item.value;
+          measures[item.key] = item.name;
         });
 
         params.page = 0;
