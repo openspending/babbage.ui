@@ -3,10 +3,9 @@
  */
 module.exports.checkForTextOverflow = function(selector, textOverflowHandler){
     var result = false;
-    var rectangles = $(selector);
-    rectangles.each(function(index, item){
+    var elementsForTextOverflowCheck = $(selector);
+    elementsForTextOverflowCheck.each(function(index, item){
         if(($(item)[0].offsetWidth < $(item)[0].scrollWidth) || ($(item)[0].offsetHeight < $(item)[0].scrollHeight)){
-            $(item).empty();
             textOverflowHandler(item);
             result = true;
         }
