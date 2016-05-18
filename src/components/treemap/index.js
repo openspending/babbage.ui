@@ -109,8 +109,7 @@ export class TreeMapComponent extends events.EventEmitter {
 
     var listdiv = d3.select(wrapper).append("div")
         .style("position", "relative")
-        .style("width", size.width + "px")
-        .style("height", size.height + "px");
+        .style("width", size.width + "px");
 
     // Check & Remove all rectangles with text overlfow:
     var boxContentRemover = (item => $(item).empty());
@@ -130,9 +129,9 @@ export class TreeMapComponent extends events.EventEmitter {
           .append("tr")
           .attr("class","datarow")
           .html(function(d){
-            //if (d._percentage < 0.02) {
-            //return '';
-            //}
+            if (d._percentage < 0.02) {
+              return '';
+            }
 
             return d.children ? null : `<td><span>${d._name}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
           }).select("td")
