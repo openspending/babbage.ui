@@ -3,6 +3,7 @@ import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
+import * as TreemapUtils from './utils.js'
 
 var api = new Api();
 
@@ -71,7 +72,7 @@ export class TreeMapComponent extends events.EventEmitter {
         cell._key = dimension.keyValue;
         cell._name = dimension.nameValue;
         cell._color = Utils.colorScale(i, colorSchema);
-        cell._percentage = measure.value / Math.max(data.summary, 1);
+        cell._percentage = measure.value / Math.max(data.summary[measure.key], 1);
         root.children.push(cell);
       }
 
@@ -106,7 +107,41 @@ export class TreeMapComponent extends events.EventEmitter {
         .delay(function(d, i) { return Math.min(i * 30, 1500); })
         .style("background", function(d) { return d._color; });
 
-      this.emit('endAggregate', that, data);
+    var listdiv = d3.select(wrapper).append("div")
+        .style("position", "relative")
+        .style("width", size.width + "px")
+        .style("height", size.height + "px");
+
+    // Check & Remove all rectangles with text overlfow:
+    var boxContentRemover = (item => $(item).empty());
+    var hasTextOverlow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
+    if(hasTextOverlow) {
+      // Add treemap list:
+      var nodetable = listdiv.datum(root)
+          .append("table")
+          .attr("class", "nodetable");
+      nodetable.append("tr").html("<th>title</th><th>amount</th><th>share</th>");
+      nodetable
+          .selectAll(".datarow")
+          .data(that.treemap.nodes.sort(function(x, y){
+            return x._percentage < y._percentage;
+          }))
+          .enter()
+          .append("tr")
+          .attr("class","datarow")
+          .html(function(d){
+            //if (d._percentage < 0.02) {
+            //return '';
+            //}
+
+            return d.children ? null : `<td><span>${d._name}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
+          }).select("td")
+          .insert("span", ":first-child")
+          .style("background", function(d) { return d._color; })
+          .attr("class", "colorbox");
+    }
+    
+    this.emit('endAggregate', that, data);
     });
   }
 }
