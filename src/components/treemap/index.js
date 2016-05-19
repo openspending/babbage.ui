@@ -107,14 +107,14 @@ export class TreeMapComponent extends events.EventEmitter {
         .delay(function(d, i) { return Math.min(i * 30, 1500); })
         .style("background", function(d) { return d._color; });
 
-    var listdiv = d3.select(wrapper).append("div")
-        .style("position", "relative")
-        .style("width", size.width + "px");
-
     // Check & Remove all rectangles with text overlfow:
     var boxContentRemover = (item => $(item).empty());
     var hasTextOverlow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
     if(hasTextOverlow) {
+      var listdiv = d3.select(wrapper).append("div")
+          .style("position", "relative")
+          .style("width", size.width + "px");
+
       // Add treemap list:
       var nodetable = listdiv.datum(root)
           .append("table")
