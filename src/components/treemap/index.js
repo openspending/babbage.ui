@@ -132,7 +132,7 @@ export class TreeMapComponent extends events.EventEmitter {
             if (d._percentage < 0.02) {
               return '';
             }
-            let name = d.href ? `<a href="${d.href}">${d._name}</a>` : d._name;
+            let name = d.href ? `<a href=\"${d.href}\">${d._name}</a>` : d._name;
 
             return d.children ? null : `<td><span>${name}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
           }).select("td")
