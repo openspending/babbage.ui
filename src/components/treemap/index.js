@@ -15,10 +15,10 @@ function positionNode() {
       return d.y + "px";
     })
     .style("width", (d) => {
-      return Math.max(0, d.dx - 1) + "px"
+      return Math.max(0, d.dx - 1) + "px";
     })
     .style("height", (d) => {
-      return Math.max(0, d.dy - 1) + "px"
+      return Math.max(0, d.dy - 1) + "px";
     });
 };
 
@@ -109,8 +109,8 @@ export class TreeMapComponent extends events.EventEmitter {
 
     // Check & Remove all rectangles with text overlfow:
     var boxContentRemover = (item => $(item).empty());
-    var hasTextOverlow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
-    if(hasTextOverlow) {
+    var hasTextOverflow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
+    if(hasTextOverflow) {
       var listdiv = d3.select(wrapper).append("div")
           .style("position", "relative")
           .style("width", size.width + "px");
