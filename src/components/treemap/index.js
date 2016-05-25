@@ -119,26 +119,37 @@ export class TreeMapComponent extends events.EventEmitter {
       var nodetable = listdiv.datum(root)
           .append("table")
           .attr("class", "nodetable");
-      nodetable.append("tr").html("<th>title</th><th>amount</th><th>share</th>");
-      nodetable
+      let nodeheader = nodetable.append("tr").html("<th>title</th><th>amount</th><th>share</th>");
+      let noderows = nodetable
           .selectAll(".datarow")
           .data(that.treemap.nodes.sort(function(x, y){
             return x._percentage < y._percentage;
           }))
           .enter()
           .append("tr")
-          .attr("class","datarow")
+          .attr("class","datarow");
+
+      noderows.selectAll("tr")
           .html(function(d){
             if (d._percentage < 0.02) {
               return '';
             }
-            let name = d.href ? `<a href=\"${d.href}\">${d._name}</a>` : d._name;
+            let name_href = d.href ? `<a href=\"${d.href}\">${d._name}</a>` : d._name;
 
-            return d.children ? null : `<td><span>${name}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
+            return d.children ? null : `<td><span>${name_href}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
           }).select("td")
           .insert("span", ":first-child")
           .style("background", function(d) { return d._color; })
           .attr("class", "colorbox");
+
+      // Add sort functionality:
+      let mapping = {"title":"_name", "amount":"_area_fmt", "share":"_percentage"};
+      nodeheader.selectAll("td").data(that.treemap.nodes).on("click", function(selection){
+        that.treemap.nodes.sort(function(x,y){
+            let attribute = mapping[selection];
+            return x[attribute] < y[attribute];
+          });
+      });
     }
     
     this.emit('endAggregate', that, data);
