@@ -72,9 +72,14 @@ export class TreeMapComponent extends events.EventEmitter {
         cell._key = dimension.keyValue;
         cell._name = dimension.nameValue;
         cell._color = Utils.colorScale(i, colorSchema);
-        cell._percentage = measure.value / Math.max(data.summary[measure.key], 1);
+
+        cell._percentage = (data.summary && measure.value && measure.key)
+            ? (measure.value / Math.max(data.summary[measure.key], 1))
+            : 1;
         root.children.push(cell);
       }
+
+      that.emit('dataLoaded', that, root.children);
 
       var node = div.datum(root).selectAll(".node")
         .data(that.treemap.nodes)
@@ -107,52 +112,13 @@ export class TreeMapComponent extends events.EventEmitter {
         .delay(function(d, i) { return Math.min(i * 30, 1500); })
         .style("background", function(d) { return d._color; });
 
-    // Check & Remove all rectangles with text overlfow:
-    var boxContentRemover = (item => $(item).empty());
-    var hasTextOverflow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
-    if(hasTextOverflow) {
-      var listdiv = d3.select(wrapper).append("div")
-          .style("position", "relative")
-          .style("width", size.width + "px");
-
-      // Add treemap list:
-      var nodetable = listdiv.datum(root)
-          .append("table")
-          .attr("class", "nodetable");
-      let nodeheader = nodetable.append("tr").html("<th>title</th><th>amount</th><th>share</th>");
-      let noderows = nodetable
-          .selectAll(".datarow")
-          .data(that.treemap.nodes.sort(function(x, y){
-            return x._percentage < y._percentage;
-          }))
-          .enter()
-          .append("tr")
-          .attr("class","datarow");
-
-      noderows.selectAll("tr")
-          .html(function(d){
-            if (d._percentage < 0.02) {
-              return '';
-            }
-            let name_href = d.href ? `<a href=\"${d.href}\">${d._name}</a>` : d._name;
-
-            return d.children ? null : `<td><span>${name_href}</span></td><td>${d._area_fmt}</td><td>${(d._percentage *100).toFixed(2)}%</td>`;
-          }).select("td")
-          .insert("span", ":first-child")
-          .style("background", function(d) { return d._color; })
-          .attr("class", "colorbox");
-
-      // Add sort functionality:
-      let mapping = {"title":"_name", "amount":"_area_fmt", "share":"_percentage"};
-      nodeheader.selectAll("td").data(that.treemap.nodes).on("click", function(selection){
-        that.treemap.nodes.sort(function(x,y){
-            let attribute = mapping[selection];
-            return x[attribute] < y[attribute];
-          });
-      });
-    }
-    
-    this.emit('endAggregate', that, data);
+      // Check & Remove all rectangles with text overlfow:
+      var boxContentRemover = (item => $(item).empty());
+      var hasTextOverflow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
+      if(hasTextOverflow) {
+        that.emit('textOverflow', that);
+      };
+      that.emit('endAggregate', that, data);
     });
   }
 }

@@ -25,6 +25,18 @@ class TreemapDirective {
 
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;
+
+            // TreeMap-Table:
+            $scope.showTreeMapTable = false;
+            treeMap.on('textOverflow', treeMapComponent => {
+              $scope.showTreeMapTable = true;
+              $scope.$apply();
+            });
+            treeMap.on('dataLoaded', (treeMapComponent, data) => {
+              $scope.treeMapData = data;
+              $scope.$apply();
+            });
+
           }
         }
       }

@@ -11,3 +11,22 @@
 </div>
 
 <div class="treemap-chart"></div>
+
+<div class="treemap-table">
+  <table class="nodetable table-striped">
+    <thead>
+    <tr>
+      <th>title</th>
+      <th>amount</th>
+      <th>share</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="dataElement in treeMapData" class="datarow">
+      <td><span class="colorbox" ng-style="{'background-color':dataElement._color}"></span>{{ dataElement._name }}</td>
+      <td>{{ dataElement._area_fmt }}</td>
+      <td>{{ (dataElement._percentage * 100).toFixed(2) }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
