@@ -60,7 +60,9 @@ export class TreeMapComponent extends events.EventEmitter {
 
     api.aggregate(endpoint, cube, params).then((data) => {
       var root = {
-        children: []
+        children: [],
+        summary: data.summary[params.aggregates],
+        summary_fmt: Utils.numberFormat(data.summary[params.aggregates])
       };
 
       for (var i in data.cells) {
@@ -73,13 +75,13 @@ export class TreeMapComponent extends events.EventEmitter {
         cell._name = dimension.nameValue;
         cell._color = Utils.colorScale(i, colorSchema);
 
-        cell._percentage = (data.summary && measure.value && measure.key)
-            ? (measure.value / Math.max(data.summary[measure.key], 1))
+        cell._percentage = (measure.value && data.summary && params.aggregates)
+            ? (measure.value / Math.max(data.summary[params.aggregates], 1))
             : 1;
         root.children.push(cell);
       }
 
-      that.emit('dataLoaded', that, root.children);
+      that.emit('dataLoaded', that, root);
 
       var node = div.datum(root).selectAll(".node")
         .data(that.treemap.nodes)

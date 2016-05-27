@@ -16,17 +16,39 @@
   <table class="nodetable table-striped">
     <thead>
     <tr>
-      <th>title</th>
-      <th>amount</th>
-      <th>share</th>
+      <th>
+        <a href="#" ng-click="sortType = '_name'; sortReverse = !sortReverse">
+          title
+          <span ng-show="sortType == '_name'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+        </a>
+      </th>
+      <th>
+        <a href="#" ng-click="sortType = 'value'; sortReverse = !sortReverse">
+          amount
+          <span ng-show="sortType == 'value'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+        </a>
+      </th>
+      <th>
+        <a href="#" ng-click="sortType = '_percentage'; sortReverse = !sortReverse">
+          share
+          <span ng-show="sortType == '_percentage'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+        </a>
+      </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="dataElement in treeMapData" class="datarow">
+    <tr ng-repeat="dataElement in treeMapData.children | orderBy:sortType:sortReverse" class="datarow">
       <td><span class="colorbox" ng-style="{'background-color':dataElement._color}"></span>{{ dataElement._name }}</td>
       <td>{{ dataElement._area_fmt }}</td>
-      <td>{{ (dataElement._percentage * 100).toFixed(2) }}</td>
+      <td>{{ (dataElement._percentage * 100).toFixed(2) }}%</td>
     </tr>
     </tbody>
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td>{{ treeMapData.summary_fmt }}</td>
+        <td>100%</td>
+      </tr>
+    </tfoot>
   </table>
 </div>
