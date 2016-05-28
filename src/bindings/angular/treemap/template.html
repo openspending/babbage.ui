@@ -17,19 +17,19 @@
     <thead>
     <tr>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = '_name'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
+        <a href="#" ng-click="treeMapTable.sortAttr = '_name'; treeMapTable.invertSorting();">
           title
           <span ng-show="treeMapTable.sortAttr == '_name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
+        <a href="#" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.invertSorting();">
           amount
           <span ng-show="sortType == 'value'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = '_percentage'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
+        <a href="#" ng-click="treeMapTable.sortAttr = '_percentage'; treeMapTable.invertSorting();">
           share
           <span ng-show="treeMapTable.sortAttr == '_percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>

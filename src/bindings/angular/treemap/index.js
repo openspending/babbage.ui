@@ -31,7 +31,8 @@ class TreemapDirective {
               show: false,
               sortAttr: 'value',
               sortDesc: true,
-              data: null
+              data: null,
+              invertSorting: () => { sortDesc = !sortDesc; }
             };
             treeMap.on('textOverflow', treeMapComponent => {
               $scope.treeMapTable.show = true;
