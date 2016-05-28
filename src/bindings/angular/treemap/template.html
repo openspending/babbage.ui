@@ -37,10 +37,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow">
+    <tr ng-repeat="item in treeMapTable.data.children | filter:treeMapTable.itemFilter  | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow">
       <td><span class="colorbox" ng-style="{'background-color':item._color}"></span>{{ item._name }}</td>
       <td>{{ item._area_fmt }}</td>
       <td>{{ (item._percentage * 100).toFixed(2) }}%</td>
+    </tr>
+    <tr ng-if="treeMapTable.existSmallItems" class="smallItems">
+      <td colspan="3">
+        <a href="#" ng-click="treeMapTable.activateFilter(false)" ng-show="treeMapTable.filterActive">
+          {{ 'Show small items' }}
+        </a>
+        <a href="#" ng-click="treeMapTable.activateFilter(true)" ng-show="!treeMapTable.filterActive">
+          {{ 'Hide small items' }}
+        </a>
+      </td>
     </tr>
     </tbody>
     <tfoot>

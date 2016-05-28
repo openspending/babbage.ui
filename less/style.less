@@ -167,8 +167,12 @@
       border-top: black solid medium;
     }
 
-    tbody tr:hover {
+    tbody tr:not(.smallItems):hover {
       background-color: yellow;
+    }
+
+    .smallItems{
+      text-align: right;
     }
 
     th {
