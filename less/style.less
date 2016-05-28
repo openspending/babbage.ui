@@ -118,7 +118,6 @@
 
 /* Tree maps */
 .treemap-chart {
-  min-height: 500px;
   overflow: hidden;
 
   .node {
@@ -149,13 +148,13 @@
   // }
 }
 
-.treemap-table {
+.treemap-list {
   .node:hover {
     //text-indent: 2px;
     text-decoration: none;
   }
 
-  .nodetable {
+  .treemap-table {
     margin-top: 10px;
     width:100%;
 
@@ -164,7 +163,7 @@
       line-height: 2em;
     }
 
-    tr:not(:first-child):hover {
+    tbody tr:hover {
       background-color: yellow;
     }
 

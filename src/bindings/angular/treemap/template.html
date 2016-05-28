@@ -12,8 +12,8 @@
 
 <div class="treemap-chart"></div>
 
-<div class="treemap-table">
-  <table class="nodetable table-striped">
+<div class="treemap-list" ng-if="treeMapTable.show">
+  <table class="treemap-table table-striped">
     <thead>
     <tr>
       <th>
@@ -37,10 +37,10 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="dataElement in treeMapData.children | orderBy:sortType:sortReverse" class="datarow">
-      <td><span class="colorbox" ng-style="{'background-color':dataElement._color}"></span>{{ dataElement._name }}</td>
-      <td>{{ dataElement._area_fmt }}</td>
-      <td>{{ (dataElement._percentage * 100).toFixed(2) }}%</td>
+    <tr ng-repeat="item in treeMapData.children | orderBy:sortType:sortReverse" class="datarow">
+      <td><span class="colorbox" ng-style="{'background-color':item._color}"></span>{{ item._name }}</td>
+      <td>{{ item._area_fmt }}</td>
+      <td>{{ (item._percentage * 100).toFixed(2) }}%</td>
     </tr>
     </tbody>
     <tfoot>
