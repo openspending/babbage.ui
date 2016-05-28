@@ -27,15 +27,18 @@ class TreemapDirective {
             $scope.queryLoaded = true;
 
             // TreeMap-Table:
-            $scope.treeMapTable = { show: false };
-            $scope.sortType     = 'value'; // set the default sort type
-            $scope.sortReverse  = true;  // set the default sort order
+            $scope.treeMapTable = {
+              show: false,
+              sortAttr: 'value',
+              sortDesc: true,
+              data: null
+            };
             treeMap.on('textOverflow', treeMapComponent => {
               $scope.treeMapTable.show = true;
               $scope.$apply();
             });
             treeMap.on('dataLoaded', (treeMapComponent, root) => {
-              $scope.treeMapData = root;
+              $scope.treeMapTable.data = root;
               $scope.$apply();
             });
 

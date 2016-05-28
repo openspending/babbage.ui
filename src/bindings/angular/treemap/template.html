@@ -17,27 +17,27 @@
     <thead>
     <tr>
       <th>
-        <a href="#" ng-click="sortType = '_name'; sortReverse = !sortReverse">
+        <a href="#" ng-click="treeMapTable.sortAttr = '_name'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
           title
-          <span ng-show="sortType == '_name'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          <span ng-show="treeMapTable.sortAttr == '_name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="sortType = 'value'; sortReverse = !sortReverse">
+        <a href="#" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
           amount
-          <span ng-show="sortType == 'value'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          <span ng-show="sortType == 'value'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="sortType = '_percentage'; sortReverse = !sortReverse">
+        <a href="#" ng-click="treeMapTable.sortAttr = '_percentage'; treeMapTable.sortDesc = !treeMapTable.sortDesc">
           share
-          <span ng-show="sortType == '_percentage'" class="fa" ng-class="sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          <span ng-show="treeMapTable.sortAttr == '_percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="item in treeMapData.children | orderBy:sortType:sortReverse" class="datarow">
+    <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow">
       <td><span class="colorbox" ng-style="{'background-color':item._color}"></span>{{ item._name }}</td>
       <td>{{ item._area_fmt }}</td>
       <td>{{ (item._percentage * 100).toFixed(2) }}%</td>
@@ -46,7 +46,7 @@
     <tfoot>
       <tr>
         <td>Total</td>
-        <td>{{ treeMapData.summary_fmt }}</td>
+        <td>{{ treeMapTable.data.summary_fmt }}</td>
         <td>100%</td>
       </tr>
     </tfoot>
