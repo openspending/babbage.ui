@@ -27,25 +27,12 @@ class TreemapDirective {
             $scope.queryLoaded = true;
 
             // TreeMap-Table:
-            var itemFilter = (item => item._percentage >= 0.02);
             $scope.treeMapTable = {
               show: false,
               sortAttr: '_percentage',
               sortDesc: true,
               data: null,
-              invertSorting: function(){ this.sortDesc = !this.sortDesc; },
-              existSmallItems: false,
-              itemFilter: itemFilter,
-              filterActive: true,
-              activateFilter: function(enable) {
-                if (enable) {
-                  this.filterActive = true;
-                  this.itemFilter = itemFilter;
-                } else {
-                  this.filterActive = false;
-                  this.itemFilter = (item => true);
-                }
-              }
+              invertSorting: function(){ this.sortDesc = !this.sortDesc; }
             };
             treeMap.on('textOverflow', treeMapComponent => {
               $scope.treeMapTable.show = true;
@@ -53,7 +40,6 @@ class TreemapDirective {
             });
             treeMap.on('dataLoaded', (treeMapComponent, root) => {
               $scope.treeMapTable.data = root;
-              $scope.treeMapTable.existSmallItems = !root.children.every(item => item._percentage >= 0.02);
               $scope.$apply();
             });
 
