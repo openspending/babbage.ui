@@ -77,7 +77,7 @@ export class TreeMapComponent extends events.EventEmitter {
 
         cell._percentage = (measure.value && data.summary && params.aggregates)
             ? (measure.value / Math.max(data.summary[params.aggregates], 1))
-            : 1;
+            : 0;
         root.children.push(cell);
       }
 
