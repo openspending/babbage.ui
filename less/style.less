@@ -148,16 +148,31 @@
   // }
 }
 
+
+
 .treemap-list {
   .node:hover {
     //text-indent: 2px;
     text-decoration: none;
   }
 
-  .treemap-table {
+  .treemap-table-bar {
     margin-top: 10px;
+    text-align: left;
+  }
+
+  .treemap-table {
     width:100%;
     color: #2a2d34;
+
+    transition: opacity 0.6s ease-in-out;
+    line-height: 2;
+    opacity: 1;
+
+    &.ng-hide {
+      line-height: 0;
+      opacity: 0;
+    }
 
     tr {
       border-top: 1px solid #ddd;

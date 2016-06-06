@@ -12,8 +12,18 @@
 
 <div class="treemap-chart"></div>
 
-<div class="treemap-list" ng-if="treeMapTable.show">
-  <table class="treemap-table table-striped">
+<div class="treemap-list">
+  <div class="treemap-table-bar">
+    <a href="#" ng-click="treeMapTable.show=false;" ng-show="treeMapTable.show">
+      <span class="fa fa-caret-up"></span>
+      Hide list
+    </a>
+    <a href="#" ng-click="treeMapTable.show=true;" ng-hide="treeMapTable.show">
+      <span class="fa fa-caret-down"></span>
+      Show list
+    </a>
+  </div>
+  <table class="treemap-table table-striped animate-show" ng-show="treeMapTable.show">
     <thead>
     <tr>
       <th>

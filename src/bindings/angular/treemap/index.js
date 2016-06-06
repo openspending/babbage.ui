@@ -28,16 +28,12 @@ class TreemapDirective {
 
             // TreeMap-Table:
             $scope.treeMapTable = {
-              show: false,
+              show: true,
               sortAttr: '_percentage',
               sortDesc: true,
               data: null,
               invertSorting: function(){ this.sortDesc = !this.sortDesc; }
             };
-            treeMap.on('textOverflow', treeMapComponent => {
-              $scope.treeMapTable.show = true;
-              $scope.$apply();
-            });
             treeMap.on('dataLoaded', (treeMapComponent, root) => {
               $scope.treeMapTable.data = root;
               $scope.$apply();
