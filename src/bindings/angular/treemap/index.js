@@ -32,7 +32,12 @@ class TreemapDirective {
               sortAttr: '_percentage',
               sortDesc: true,
               data: null,
-              invertSorting: function(){ this.sortDesc = !this.sortDesc; }
+              invertSorting: function(){ this.sortDesc = !this.sortDesc; },
+              toggle: function($event) {
+                var treeMapTable = $($event.currentTarget).closest(".treemap-list").find(".treemap-table");
+                this.show ? treeMapTable.fadeOut() : treeMapTable.fadeIn();
+                this.show = !this.show;
+              }
             };
             treeMap.on('dataLoaded', (treeMapComponent, root) => {
               $scope.treeMapTable.data = root;

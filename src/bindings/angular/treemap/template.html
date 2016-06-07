@@ -14,16 +14,16 @@
 
 <div class="treemap-list">
   <div class="treemap-table-bar">
-    <a href="#" ng-click="treeMapTable.show=false;" ng-show="treeMapTable.show">
+    <a href="#" ng-click="treeMapTable.toggle($event)" ng-show="treeMapTable.show">
       <span class="fa fa-caret-up"></span>
       Hide list
     </a>
-    <a href="#" ng-click="treeMapTable.show=true;" ng-hide="treeMapTable.show">
+    <a href="#" ng-click="treeMapTable.toggle($event)" ng-hide="treeMapTable.show">
       <span class="fa fa-caret-down"></span>
       Show list
     </a>
   </div>
-  <table class="treemap-table table-striped animate-show" ng-show="treeMapTable.show" ng-animate="'treemap-list'">
+  <table class="treemap-table table-striped">
     <thead>
     <tr>
       <th>
