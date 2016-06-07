@@ -165,13 +165,24 @@
     width:100%;
     color: #2a2d34;
 
-    transition: opacity 0.6s ease-in-out;
-    line-height: 2;
-    opacity: 1;
+    &.animate-show {
+      line-height: 2em;
+      opacity: 1;
+      padding: 10px;
+    }
 
-    &.ng-hide {
+    &.animate-show.ng-hide-add, &.animate-show.ng-hide-remove {
+      -webkit-transition: all linear 0.5s;
+      -moz-transition: all linear 0.5s;
+      -ms-transition: all linear 0.5s;
+      -o-transition: all linear 0.5s;
+      transition: all linear 0.5s;
+    }
+
+    &.animate-show.ng-hide {
       line-height: 0;
       opacity: 0;
+      padding: 0 10px;
     }
 
     tr {
