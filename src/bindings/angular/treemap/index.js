@@ -34,8 +34,12 @@ class TreemapDirective {
               data: null,
               invertSorting: function(){ this.sortDesc = !this.sortDesc; },
               toggle: function() {
-                var treeMapTable = $(".treemap-table");
-                this.show ? treeMapTable.fadeOut() : treeMapTable.fadeIn();
+                var treeMap = $(".treemap-table");
+                if(this.show) {
+                  treeMap.fadeOut();
+                } else {
+                  treeMap.fadeIn();
+                }
                 this.show = !this.show;
               }
             };
