@@ -29,9 +29,10 @@ class TreemapDirective {
               data: null,
               invertSorting: function(){ this.sortDesc = !this.sortDesc; },
               toggle: () => {
+                let treeMapTable = $scope.treeMapTable;
                 let treeMapSection = $(".treemap-table");
-                this.show ? treeMapSection.fadeOut() : treeMapSection.fadeIn();
-                this.show = !this.show;
+                treeMapTable.show ? treeMapSection.fadeOut() : treeMapSection.fadeIn();
+                treeMapTable.show = !treeMapTable.show;
               },
               selectTableRow: (item) => {
                 $scope.$emit('treemap-click', treeMap, item);
