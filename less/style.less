@@ -153,6 +153,59 @@
   }
 }
 
+.treemap-list {
+
+  .treemap-table-bar {
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  .treemap-table {
+    width:100%;
+    color: #2a2d34;
+
+    tr {
+      border-top: 1px solid #ddd;
+      line-height: 2em;
+    }
+
+    tfoot tr {
+      border-top: #ddd solid 2px;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    td:not(:first-child), th:not(:first-child) {
+      text-align: right;
+      padding-left: 20px;
+    }
+
+    tbody tr:hover {
+      background-color: #3a99d9;
+      color: white;
+    }
+
+
+    // td:not(:first-child){
+     // font-family: @font-family-monospace;
+    //}
+
+    tfoot td {
+      font-weight: bolder;
+    }
+
+    .colorbox {
+      height: 1em;
+      width: 1em;
+      display: inline-block;
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+  }
+}
+
 .sankey-babbage {
     .node rect {
       //cursor: move;
