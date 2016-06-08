@@ -28,10 +28,13 @@ class TreemapDirective {
               sortDesc: true,
               data: null,
               invertSorting: function(){ this.sortDesc = !this.sortDesc; },
-              toggle: function() {
-                var treeMapSection = $(".treemap-table");
+              toggle: () => {
+                let treeMapSection = $(".treemap-table");
                 this.show ? treeMapSection.fadeOut() : treeMapSection.fadeIn();
                 this.show = !this.show;
+              },
+              selectTableRow: (item) => {
+                $scope.$emit('treemap-click', treeMap, item);
               }
             };
             treeMap.on('dataLoaded', (treeMapComponent, root) => {
