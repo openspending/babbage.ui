@@ -18,13 +18,34 @@ class TreemapDirective {
             var treeMap = new TreeMapComponent();
             var wrapper = element.find('.treemap-chart')[0];
 
-            treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            $scope.cutoffWarning = false;
+            $scope.queryLoaded = true;
+
+            // TreeMap-Table:
+            $scope.treeMapTable = {
+              show: true,
+              sortAttr: '_percentage',
+              sortDesc: true,
+              data: null,
+              invertSorting: function(){ this.sortDesc = !this.sortDesc; },
+              toggle: () => {
+                let treeMapTable = $scope.treeMapTable;
+                let treeMapSection = $(".treemap-table");
+                treeMapTable.show ? treeMapSection.fadeOut() : treeMapSection.fadeIn();
+                treeMapTable.show = !treeMapTable.show;
+              },
+              selectTableRow: (item) => {
+                $scope.$emit('treemap-click', treeMap, item);
+              }
+            };
+            treeMap.on('dataLoaded', (treeMapComponent, root) => {
+              $scope.treeMapTable.data = root;
+              $scope.$apply();
+            });
             treeMap.on('click', (treeMapComponent, item) => {
               $scope.$emit('treemap-click', treeMapComponent, item);
             });
-
-            $scope.cutoffWarning = false;
-            $scope.queryLoaded = true;
+            treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
           }
         }
       }
