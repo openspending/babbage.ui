@@ -2,6 +2,9 @@
   "summary": {
     "amount.sum": 350
   },
+  "currency": {
+    "amount.sum": "UGX"
+  },
   "count": 3,
   "cells": [
     {

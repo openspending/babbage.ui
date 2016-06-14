@@ -49,14 +49,14 @@
     <tbody>
     <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow" ng-click="treeMapTable.selectTableRow(item)">
       <td><span class="colorbox" ng-style="{'background-color':item._color}"></span>{{ item._name }}</td>
-      <td>{{ item._area_fmt }}</td>
+      <td>{{ item._area_fmt_currency }}</td>
       <td>{{ (item._percentage * 100).toFixed(2) }}%</td>
     </tr>
     </tbody>
     <tfoot>
       <tr>
         <td>Total</td>
-        <td>{{ treeMapTable.data.summary_fmt }}</td>
+        <td>{{ treeMapTable.data.summary_fmt_currency }}</td>
         <td>100%</td>
       </tr>
     </tfoot>
