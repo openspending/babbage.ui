@@ -21,7 +21,7 @@
     "src"
   ],
   "dependencies": {
-    "bluebird": "^3.3.3",
+    "bluebird": "^3.4.1",
     "bubbletree": "git+https://github.com/okfn/bubbletree.git",
     "c3": "git+https://github.com/masayuki0812/c3.git",
     "d3": "^3.5.16",

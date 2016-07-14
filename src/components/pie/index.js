@@ -43,7 +43,7 @@ export class PieChartComponent extends events.EventEmitter {
       });
 
       this.emit('endAggregate', that, data);
-    });
+    }).catch((err) => { console.error("PIE_BUILD_ERR:", err) });
   }
 }
 

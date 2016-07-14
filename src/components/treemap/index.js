@@ -121,7 +121,7 @@ export class TreeMapComponent extends events.EventEmitter {
 
       this.emit('dataLoaded', that, root);
       this.emit('endAggregate', that, data);
-    });
+    }).catch((err) => { console.error("TREEMAP_ERR:", err) });
   }
 }
 
