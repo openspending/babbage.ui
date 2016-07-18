@@ -4,6 +4,11 @@
     "adjusted.sum": 250,
     "approved.sum": 350
   },
+  "currency": {
+    "executed.sum": "MDL",
+    "adjusted.sum": "MDL",
+    "approved.sum": "MDL"
+  },
   "page": 1,
   "cell": [],
   "page_size": 500,
