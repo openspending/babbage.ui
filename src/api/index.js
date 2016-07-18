@@ -15,15 +15,22 @@ export class Api {
       return Promise.resolve(this.cache[url]);
     } else {
       return fetch(url).then(function(response) {
-        return response.text()
+        if (response.status >= 400) {
+          return Promise.reject(new Error(`
+            code: ${response.status},
+            message: ${response.statusText}
+          `));
+        } else {
+          return response.text()
+        }
       }).then(function(text) {
         return that.cache[url] = text
-      });
+      }).catch(Promise.reject);
     }
   }
 
   getJson(url) {
-    return this.get(url).then(JSON.parse);
+    return this.get(url).then(JSON.parse).catch(function(err) { console.error("getJson:", err)});
   }
 
   flush() {

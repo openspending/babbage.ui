@@ -63,7 +63,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
       });
 
       this.emit('endAggregate', that, data);
-    });
+    }).catch((err) => { console.error("BUBBLETREE_ERR:", err) });
   }
 }
 
