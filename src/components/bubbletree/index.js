@@ -54,10 +54,16 @@ export class BubbleTreeComponent extends events.EventEmitter {
       that.bubbleTree = new BubbleTree({
         autoColors: true,
         data: bubbleTreeData,
-        container: wrapper
+        container: wrapper,
+        nodeClickCallback: (node) => {
+          if (node.level > 0) {
+            that.emit('click', that, node);
+          }
+        }
       });
+
       this.emit('endAggregate', that, data);
-    });
+    }).catch((err) => { console.error("BUBBLETREE_ERR:", err) });
   }
 }
 

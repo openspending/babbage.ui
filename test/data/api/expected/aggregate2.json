@@ -4,6 +4,11 @@
     "adjusted.sum": 250,
     "approved.sum": 350
   },
+  "currency": {
+    "executed.sum": "MDL",
+    "adjusted.sum": "MDL",
+    "approved.sum": "MDL"
+  },
   "count": 88,
   "cells": [
     {
@@ -18,14 +23,17 @@
       "measures": [
         {
           "key": "executed.sum",
+          "name": "Executed",
           "value": 50
         },
         {
           "key": "adjusted.sum",
+          "name": "Adjusted",
           "value": 100
         },
         {
           "key": "approved.sum",
+          "name": "Approved",
           "value": 100
         }
       ]
@@ -42,14 +50,17 @@
       "measures": [
         {
           "key": "executed.sum",
+          "name": "Executed",
           "value": 100
         },
         {
           "key": "adjusted.sum",
+          "name": "Adjusted",
           "value": 100
         },
         {
           "key": "approved.sum",
+          "name": "Approved",
           "value": 200
         }
       ]
@@ -66,14 +77,17 @@
       "measures": [
         {
           "key": "executed.sum",
+          "name": "Executed",
           "value": 0
         },
         {
           "key": "adjusted.sum",
+          "name": "Adjusted",
           "value": 50
         },
         {
           "key": "approved.sum",
+          "name": "Approved",
           "value": 50
         }
       ]

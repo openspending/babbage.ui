@@ -3,6 +3,7 @@ import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
+import * as TreemapUtils from './utils.js'
 
 var api = new Api();
 
@@ -14,10 +15,10 @@ function positionNode() {
       return d.y + "px";
     })
     .style("width", (d) => {
-      return Math.max(0, d.dx - 1) + "px"
+      return Math.max(0, d.dx - 1) + "px";
     })
     .style("height", (d) => {
-      return Math.max(0, d.dy - 1) + "px"
+      return Math.max(0, d.dy - 1) + "px";
     });
 };
 
@@ -58,20 +59,27 @@ export class TreeMapComponent extends events.EventEmitter {
 
 
     api.aggregate(endpoint, cube, params).then((data) => {
-      var root = {
-        children: []
-      };
+      var root = {};
+      root.children = [];
+      root.summary = data.summary[params.aggregates];
+      root.currency = data.currency[params.aggregates];
+      root.summary_fmt = Utils.numberFormat(data.summary[params.aggregates]);
+      root.summary_fmt_currency = Utils.moneyFormat(root.summary_fmt, root.currency);
 
       for (var i in data.cells) {
         var dimension = _.first(data.cells[i].dimensions);
         var measure = _.find(data.cells[i].measures, {key: params.aggregates});
         var cell = {};
         cell._area_fmt = Utils.numberFormat(Math.round(measure.value));
+        cell._area_fmt_currency = Utils.moneyFormat(cell._area_fmt, root.currency);
         cell._value = measure.value;
         cell._key = dimension.keyValue;
         cell._name = dimension.nameValue;
         cell._color = Utils.colorScale(i, colorSchema);
-        cell._percentage = measure.value / Math.max(data.summary, 1);
+
+        cell._percentage = (measure.value && data.summary && params.aggregates)
+            ? (measure.value / Math.max(data.summary[params.aggregates], 1))
+            : 0;
         root.children.push(cell);
       }
 
@@ -88,7 +96,7 @@ export class TreeMapComponent extends events.EventEmitter {
           if (d._percentage < 0.02) {
             return '';
           }
-          return d.children ? null : '<span class="amount">' + d._area_fmt + '</span>' + d._name;
+          return d.children ? null : `<span class=\'amount\'>${d._area_fmt_currency}</span>${d._name}`;
         })
         .on("click", (d) => {
           that.emit('click', that, d);
@@ -106,8 +114,16 @@ export class TreeMapComponent extends events.EventEmitter {
         .delay(function(d, i) { return Math.min(i * 30, 1500); })
         .style("background", function(d) { return d._color; });
 
+      // Check & Remove all rectangles with text overlfow:
+      var boxContentRemover = (item => $(item).empty());
+      var hasTextOverflow = TreemapUtils.checkForTextOverflow("a.node", boxContentRemover);
+      if(hasTextOverflow) {
+        that.emit('textOverflow', that);
+      };
+
+      this.emit('dataLoaded', that, root);
       this.emit('endAggregate', that, data);
-    });
+    }).catch((err) => { console.error("TREEMAP_ERR:", err) });
   }
 }
 

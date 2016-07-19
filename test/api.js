@@ -199,9 +199,9 @@ describe('Babbage.ui API', function() {
     api.getPackageModel('http://site.com/', 'test2').then(function(model) {
       var measures = api.getMeasuresFromModel(model);
       assert.deepEqual(measures, [
-        {key: 'executed.sum', value: 'executed'},
-        {key: 'adjusted.sum', value: 'adjusted'},
-        {key: 'approved.sum', value: 'approved'}
+        {key: 'executed.sum', value: 'Executed'},
+        {key: 'adjusted.sum', value: 'Adjusted'},
+        {key: 'approved.sum', value: 'Approved'}
       ]);
       done();
     });
@@ -210,9 +210,9 @@ describe('Babbage.ui API', function() {
   it('Should return `Measures` by endpoint and cube', function(done) {
     api.getMeasures('http://site.com/', 'test2').then(function(measures) {
       assert.deepEqual(measures, [
-        {key: 'executed.sum', value: 'executed'},
-        {key: 'adjusted.sum', value: 'adjusted'},
-        {key: 'approved.sum', value: 'approved'}
+        {key: 'executed.sum', value: 'Executed'},
+        {key: 'adjusted.sum', value: 'Adjusted'},
+        {key: 'approved.sum', value: 'Approved'}
       ]);
       done();
     });
@@ -258,7 +258,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'from',
           key: 'from.name',
-          code: 'from',
+          code: 'From',
           hierarchy: 'from',
           name: 'from_name',
           label: 'from.name',
@@ -267,7 +267,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_day',
           key: 'time_day.day',
-          code: 'time.day',
+          code: 'Time-Day',
           hierarchy: 'time',
           name: 'time_day',
           label: 'time.day',
@@ -276,7 +276,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_month',
           key: 'time_month.month',
-          code: 'time.month',
+          code: 'Time-Month',
           hierarchy: 'time',
           name: 'time_month',
           label: 'time.month',
@@ -285,7 +285,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_year',
           key: 'time_year.year',
-          code: 'time.year',
+          code: 'Time-Year',
           hierarchy: 'time',
           name: 'time_year',
           label: 'time.year',
@@ -294,7 +294,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'to',
           key: 'to.name',
-          code: 'to',
+          code: 'To',
           hierarchy: 'to',
           name: 'to_name',
           label: 'to.name',
@@ -311,69 +311,55 @@ describe('Babbage.ui API', function() {
       assert.isArray(dimensions);
 
       assert.deepEqual(dimensions, [
-        {
-          id: 'administrative_classification_admin1',
+        { id: 'administrative_classification_admin1',
           key: 'administrative_classification_admin1.admin1',
-          code: 'administrative_classification.admin1',
+          code: 'Administrative_classification-Admin1',
           hierarchy: 'administrative_classification',
           name: 'admin1',
           label: 'administrative_classification.admin1',
-          drillDown: 'administrative_classification_admin2_code.admin2_code'
-        },
-        {
-          id: 'administrative_classification_admin2_code',
+          drillDown: 'administrative_classification_admin2_code.admin2_code' },
+        { id: 'administrative_classification_admin2_code',
           key: 'administrative_classification_admin2_code.admin2_code',
-          code: 'administrative_classification.admin2_code',
+          code: 'Administrative_classification-Admin2_code',
           hierarchy: 'administrative_classification',
           name: 'admin2_code',
           label: 'administrative_classification.admin2_label',
-          drillDown: 'administrative_classification_admin3_code.admin3_code'
-        },
-        {
-          id: 'administrative_classification_admin3_code',
+          drillDown: 'administrative_classification_admin3_code.admin3_code' },
+        { id: 'administrative_classification_admin3_code',
           key: 'administrative_classification_admin3_code.admin3_code',
-          code: 'administrative_classification.admin3_code',
+          code: 'Administrative_classification-Admin3_code',
           hierarchy: 'administrative_classification',
           name: 'admin3_code',
           label: 'administrative_classification.admin3_label',
-          drillDown: undefined
-        },
-        {
-          id: 'location',
+          drillDown: undefined },
+        { id: 'location',
           key: 'location.title',
-          code: 'location',
+          code: 'Location',
           hierarchy: 'location',
           name: 'admin2_label',
           label: 'location.title',
-          drillDown: undefined
-        },
-        {
-          id: 'other_exp_type',
+          drillDown: undefined },
+        { id: 'other_exp_type',
           key: 'other_exp_type.exp_type',
-          code: 'other.exp_type',
+          code: 'Other-Exp_type',
           hierarchy: 'other',
           name: 'exp_type',
           label: 'other.exp_type',
-          drillDown: 'other_transfer.transfer'
-        },
-        {
-          id: 'other_fin_source',
+          drillDown: 'other_transfer.transfer' },
+        { id: 'other_fin_source',
           key: 'other_fin_source.fin_source',
-          code: 'other.fin_source',
+          code: 'Other-Fin_source',
           hierarchy: 'other',
           name: 'fin_source',
           label: 'other.fin_source',
-          drillDown: 'other_exp_type.exp_type'
-        },
-        {
-          id: 'other_transfer',
+          drillDown: 'other_exp_type.exp_type' },
+        { id: 'other_transfer',
           key: 'other_transfer.transfer',
-          code: 'other.transfer',
+          code: 'Other-Transfer',
           hierarchy: 'other',
           name: 'transfer',
           label: 'other.transfer',
-          drillDown: undefined
-        }
+          drillDown: undefined }
       ]);
       done();
     });
@@ -385,7 +371,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'from',
           key: 'from.name',
-          code: 'from',
+          code: 'From',
           hierarchy: 'from',
           name: 'from_name',
           label: 'from.name',
@@ -394,7 +380,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_day',
           key: 'time_day.day',
-          code: 'time.day',
+          code: 'Time-Day',
           hierarchy: 'time',
           name: 'time_day',
           label: 'time.day',
@@ -403,7 +389,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_month',
           key: 'time_month.month',
-          code: 'time.month',
+          code: 'Time-Month',
           hierarchy: 'time',
           name: 'time_month',
           label: 'time.month',
@@ -412,7 +398,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'time_year',
           key: 'time_year.year',
-          code: 'time.year',
+          code: 'Time-Year',
           hierarchy: 'time',
           name: 'time_year',
           label: 'time.year',
@@ -421,7 +407,7 @@ describe('Babbage.ui API', function() {
         {
           id: 'to',
           key: 'to.name',
-          code: 'to',
+          code: 'To',
           hierarchy: 'to',
           name: 'to_name',
           label: 'to.name',

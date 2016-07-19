@@ -65,7 +65,7 @@ export function buildC3Columns(data, xDimensionField, seriesDimensionField, aggr
     }
 
     var measure = _.find(item.measures, {key: aggregates});
-    var field = seriesDimensionField ? seriesDimension.nameValue : measure.key;
+    var field = seriesDimensionField ? seriesDimension.nameValue : measure.name;
 
     if (!series[field]) {
       series[field] = columns.push([field]) - 1;
@@ -129,4 +129,14 @@ export function buildC3BarColors(data, colorSchema) {
     return [dimension.keyValue, colorScale(index, colorSchema)];
   });
   return result
+};
+
+export function moneyFormat(amount, currency) {
+  if (amount && currency) {
+    let currency_symbol = {USD: "$", GBP:"£", EUR: "€", JPY: "¥"}[currency];
+    let amount_fmt = currency_symbol ? currency_symbol + amount : amount + " " + currency;
+    return amount_fmt ? amount_fmt : "";
+  } else {
+    return amount ? amount : "";
+  }
 };

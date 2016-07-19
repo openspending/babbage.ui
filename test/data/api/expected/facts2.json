@@ -2,27 +2,22 @@
   "headers": [
     {
       "key": "approved",
-      "label": "approved",
+      "label": "Approved",
       "numeric": true
     },
     {
       "key": "adjusted",
-      "label": "adjusted",
+      "label": "Adjusted",
       "numeric": true
     },
     {
       "key": "executed",
-      "label": "executed",
+      "label": "Executed",
       "numeric": true
     },
     {
-      "key": "classification_administrative_admin1.admin1",
-      "label": "admin1",
-      "numeric": false
-    },
-    {
-      "key": "datetime.year",
-      "label": "year",
+      "key": "administrative_classification_admin1.admin1",
+      "label": "Admin1",
       "numeric": false
     }
   ],
@@ -31,36 +26,31 @@
       100,
       200,
       0,
-      "Central",
-      2014
+      "Central"
     ],
     [
       10,
       20,
       5,
-      "Central",
-      2014
+      "Central"
     ],
     [
       20,
       0,
       10,
-      "Central",
-      2014
+      "Central"
     ],
     [
       0,
       0,
       0,
-      "Central",
-      2014
+      "Central"
     ],
     [
       2,
       1,
       1,
-      "Other",
-      2014
+      "Other"
     ]
   ],
   "info": {

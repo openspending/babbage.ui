@@ -7,20 +7,20 @@
         "key_attribute": "name",
         "cardinality_class": null,
         "label_ref": "to.name",
-        "label": "to",
+        "label": "To",
         "hierarchy": "to",
         "attributes": {
           "name": {
             "ref": "to.name",
             "column": "to_name",
             "datatype": "string",
-            "label": "name"
+            "label": "Name"
           },
           "label": {
             "ref": "to.label",
             "column": "to_label",
             "datatype": "string",
-            "label": "label"
+            "label": "Label"
           }
         },
         "label_attribute": "name",
@@ -31,20 +31,20 @@
         "key_attribute": "name",
         "cardinality_class": null,
         "label_ref": "from.name",
-        "label": "from",
+        "label": "From",
         "hierarchy": "from",
         "attributes": {
           "name": {
             "ref": "from.name",
             "column": "from_name",
             "datatype": "string",
-            "label": "name"
+            "label": "Name"
           },
           "label": {
             "ref": "from.label",
             "column": "from_label",
             "datatype": "string",
-            "label": "label"
+            "label": "Label"
           }
         },
         "label_attribute": "name",
@@ -55,14 +55,14 @@
         "key_attribute": "month",
         "cardinality_class": null,
         "label_ref": "time_month.month",
-        "label": "time.month",
+        "label": "Time-Month",
         "hierarchy": "time",
         "attributes": {
           "month": {
             "ref": "time_month.month",
             "column": "time_month",
             "datatype": "integer",
-            "label": "month"
+            "label": "Month"
           }
         },
         "label_attribute": "month",
@@ -73,14 +73,14 @@
         "key_attribute": "year",
         "cardinality_class": null,
         "label_ref": "time_year.year",
-        "label": "time.year",
+        "label": "Time-Year",
         "hierarchy": "time",
         "attributes": {
           "year": {
             "ref": "time_year.year",
             "column": "time_year",
             "datatype": "integer",
-            "label": "year"
+            "label": "Year"
           }
         },
         "label_attribute": "year",
@@ -91,14 +91,14 @@
         "key_attribute": "day",
         "cardinality_class": null,
         "label_ref": "time_day.day",
-        "label": "time.day",
+        "label": "Time-Day",
         "hierarchy": "time",
         "attributes": {
           "day": {
             "ref": "time_day.day",
             "column": "time_day",
             "datatype": "integer",
-            "label": "day"
+            "label": "Day"
           }
         },
         "label_attribute": "day",
@@ -110,7 +110,7 @@
         "ref": "amount",
         "column": "amount",
         "currency": "UGX",
-        "label": "amount"
+        "label": "Amount"
       }
     },
     "hierarchies": {
@@ -129,7 +129,7 @@
         "ref": "amount.sum",
         "measure": "amount",
         "function": "sum",
-        "label": "amount"
+        "label": "Amount"
       },
       "_count": {
         "ref": "_count",

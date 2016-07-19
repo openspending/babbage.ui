@@ -15,15 +15,22 @@ export class Api {
       return Promise.resolve(this.cache[url]);
     } else {
       return fetch(url).then(function(response) {
-        return response.text()
+        if (response.status >= 400) {
+          return Promise.reject(new Error(`
+            code: ${response.status},
+            message: ${response.statusText}
+          `));
+        } else {
+          return response.text()
+        }
       }).then(function(text) {
         return that.cache[url] = text
-      });
+      }).catch(Promise.reject);
     }
   }
 
   getJson(url) {
-    return this.get(url).then(JSON.parse);
+    return this.get(url).then(JSON.parse).catch(function(err) { console.error("getJson:", err)});
   }
 
   flush() {
@@ -181,8 +188,10 @@ export class Api {
     var measureFields = [];
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 20;
+    var model;
 
-    return this.getPackageModel(endpoint, cube).then((model) => {
+    return this.getPackageModel(endpoint, cube).then((_model) => {
+      model = _model;
       var dimensions = that.getDimensionsFromModel(model);
       var measures = that.getMeasuresFromModel(model);
       if (!originParams.fields){
@@ -194,8 +203,8 @@ export class Api {
           originParams.fields.push(measure.value);
         });
       }
-      _.each(measures, (measure) => {
-        measureFields.push(measure.value);
+      _.each(model.measures, (measure, key) => {
+        measureFields.push(key);
       });
 
       var factsUrl = that.buildUrl(endpoint, cube, 'facts', params);
@@ -209,9 +218,17 @@ export class Api {
       result.info.pageSize = facts.page_size;
       result.info.page = facts.page;
       _.each(facts.fields, (field) => {
+        var fieldParts = field.split('.');
+        var conceptKey = fieldParts[0];
+        var attribute = fieldParts[1];
+        var concept = model.dimensions[conceptKey] || model.measures[conceptKey];
+        if ( attribute && concept.attributes ) {
+          concept = concept.attributes[attribute];
+        }
+
         result.headers.push({
           key: field,
-          label: that.getSimpleLabel(field),
+          label: concept.label,
           numeric: (measureFields.indexOf(field) > -1)
         });
       });
@@ -235,9 +252,11 @@ export class Api {
     params.pagesize = params.pagesize || 30;
     var dimensions = [];
     var measures = [];
+    var measureModelList;
 
     return this.getPackageModel(endpoint, cube).then((model) => {
         measures = that.getMeasuresFromModel(model);
+        measureModelList = _.values(model.measures);
 
         if (!params.aggregates) {
           params.aggregates = _.first(measures).key;
@@ -268,13 +287,16 @@ export class Api {
       .then((data) => {
 
         var result = {
+          currency: {},
           summary: {},
           count: data.total_cell_count,
           cells: []
         };
 
         _.each(measures, (measure) => {
+          let measureModel = _.find(measureModelList, {'label': measure.value});
           result.summary[measure.key] = data.summary[measure.key];
+          result.currency[measure.key] = measureModel["currency"];
         });
 
         _.each(data.cells, (cell) => {
@@ -293,6 +315,7 @@ export class Api {
           _.each(measures, (measure) => {
             measuresResult.push({
               key: measure.key,
+              name: measure.value,
               value: cell[measure.key]
             });
           });

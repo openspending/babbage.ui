@@ -2,6 +2,9 @@
   "summary": {
     "amount.sum": 350
   },
+  "currency": {
+    "amount.sum": "UGX"
+  },
   "count": 3,
   "cells": [
     {
@@ -16,6 +19,7 @@
       "measures": [
         {
           "key": "amount.sum",
+          "name": "Amount",
           "value": 100
         }
       ]
@@ -32,6 +36,7 @@
       "measures": [
         {
           "key": "amount.sum",
+          "name": "Amount",
           "value": 200
         }
       ]
@@ -48,6 +53,7 @@
       "measures": [
         {
           "key": "amount.sum",
+          "name": "Amount",
           "value": 50
         }
       ]
