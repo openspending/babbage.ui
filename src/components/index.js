@@ -6,6 +6,7 @@ import TableComponent from './table'
 import TreeMapComponent from './treemap'
 import PivotTableComponent from './pivottable'
 import FactsComponent from './facts'
+import RadarChartComponent from './radar'
 import * as Utils from './utils.js'
 
 export {
@@ -17,5 +18,6 @@ export {
   TreeMapComponent,
   PivotTableComponent,
   FactsComponent,
+  RadarChartComponent,
   Utils
 }

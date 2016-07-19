@@ -1,5 +1,4 @@
 import RadarChartComponent from '../../../components/radar'
-import RadarChart from "radar-chart-d3";
 
 export class RadarChartDirective {
   init(angularModule) {
@@ -18,8 +17,10 @@ export class RadarChartDirective {
           link: function($scope, element) {
             var radarChart = new RadarChartComponent();
             var wrapper = element.find('.radar-chart')[0];
+            radarChart.getPivotData($scope.endpoint, $scope.cube, $scope.state).then((result) => {
 
-            radarChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+              radarChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper, result);
+            });
 
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;
