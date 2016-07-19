@@ -9,7 +9,6 @@ export class RadarChartComponent extends events.EventEmitter {
     constructor() {
         super();
         this.wrapper = null;
-        this.chart = null;
     }
 
     getPivotData(endpoint, cube, params) {
@@ -61,8 +60,6 @@ export class RadarChartComponent extends events.EventEmitter {
                 result.cols = _.map(cols, (col) => {
                     return dimensions[col];
                 });
-                debugger;
-
                 _.each(data.cells, (cell) => {
                     var item = {};
                     _.each(params.group, (key) => {
@@ -72,9 +69,6 @@ export class RadarChartComponent extends events.EventEmitter {
                     var measure = _.find(cell.measures, {key: params.aggregates});
                     item.value = measure.value;
                     result.data.push(item);
-
-
-
 
                 });
 
@@ -313,7 +307,7 @@ export class RadarChartComponent extends events.EventEmitter {
                     .attr("class", "legend")
                     .attr("height", 100)
                     .attr("width", 200)
-                    .attr('transform', 'translate(90,20)')
+                    .attr('transform', 'translate('+cfg.w+',20)')
                 ;
             //Create colour squares
             legend.selectAll('rect')
@@ -460,11 +454,6 @@ export class RadarChartComponent extends events.EventEmitter {
         }//RadarChart
 
 
-        //var columns = Utils.buildC3RadarColumns(data, params.aggregates);
-        /*  var colors = {};
-         _.each(columns, (value, index) => {
-         colors[value[0]]= Utils.colorScale(index) ;
-         });*/
         var cells = result.data;
 
 
@@ -495,12 +484,18 @@ export class RadarChartComponent extends events.EventEmitter {
                     else return {axis: dim1val, value: 0};
                 });
 
-                var total = _.sum(_.map(axes, function(axis){return axis.value;}));
-                return {className: dim0val, axes: axes, total:total}
+                var total = _.sum(_.map(axes, function (axis) {
+                    return axis.value;
+                }));
+                return {className: dim0val, axes: axes, total: total}
             });
 
-        values = _.reverse(_.sortBy(values, function(clazz){return clazz.total;}));
-        dim0vals = _.map(values,function(value){return value.className});
+        values = _.reverse(_.sortBy(values, function (clazz) {
+            return clazz.total;
+        }));
+        dim0vals = _.map(values, function (value) {
+            return value.className
+        });
 
         var margin = {top: 100, right: 100, bottom: 100, left: 100},
             width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
@@ -520,11 +515,6 @@ export class RadarChartComponent extends events.EventEmitter {
 
 
         RadarChart(wrapper, values, dim0vals, radarChartOptions);
-
-        //that.chart = RadarChart.chart();
-
-        // RadarChart.draw(wrapper, values  /*$scope.cube*/);
-
 
     }
 }
