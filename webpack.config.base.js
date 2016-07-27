@@ -4,7 +4,11 @@ var buildTarget = process.env.BUILD_TARGET || '';
 
 var targetPath = './src/index.js';
 if (buildTarget) {
-  targetPath = './src/bindings/' + buildTarget + '/index.js';
+  var ext = '.js';
+  if (buildTarget == 'vuejs') {
+    ext = '.vue';
+  }
+  targetPath = './src/bindings/' + buildTarget + '/index' + ext;
 }
 
 module.exports = {
@@ -12,6 +16,7 @@ module.exports = {
   devtool: 'source-map',
   module: {
     loaders: [
+      { test: /\.vue$/, loader: 'vue' },
       { test: /\.js$/, loaders: [ 'babel-loader' ], exclude: /node_modules/ },
       { test: /\.html$/, loader: 'raw' }
     ]

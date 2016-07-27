@@ -7,16 +7,16 @@
   "main": "lib/index.js",
   "scripts": {
     "build:lib": "gulp",
-
     "build:dist:angular": "BUILD_TARGET=angular webpack --config webpack.config.development.js",
     "build:dist:angular:min": "BUILD_TARGET=angular webpack --config webpack.config.production.js",
-
-    "build:dist": "npm run build:dist:angular",
-    "build:dist:min": "npm run build:dist:angular:min",
-
+    "build:dist:vuejs": "BUILD_TARGET=vuejs webpack --config webpack.config.development.js",
+    "build:dist:vuejs:min": "BUILD_TARGET=vuejs webpack --config webpack.config.production.js",
+    "build:dist:core": "BUILD_TARGET=core webpack --config webpack.config.development.js",
+    "build:dist:core:min": "BUILD_TARGET=core webpack --config webpack.config.production.js",
+    "build:dist": "for i in $(ls -d ./src/bindings/*/); do i=${i##./src/bindings/}; i=${i%%/}; npm run build:dist:$i; done",
+    "build:dist:min": "for i in $(ls -d ./src/bindings/*/); do i=${i##./src/bindings/}; i=${i%%/}; npm run build:dist:$i:min; done",
     "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
     "prepublish": "npm run build",
-
     "review": "jscs lib test",
     "fix": "jscs lib test --fix",
     "test": "mocha"
@@ -63,6 +63,9 @@
     "nock": "^7.2.2",
     "raw-loader": "^0.5.1",
     "through2": "^2.0.1",
+    "vue-html-loader": "^1.2.3",
+    "vue-loader": "^8.5.3",
+    "vue-style-loader": "^1.0.0",
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1"
   },
