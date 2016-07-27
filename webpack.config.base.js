@@ -1,7 +1,14 @@
 'use strict'
 
+var buildTarget = process.env.BUILD_TARGET || '';
+
+var targetPath = './src/index.js';
+if (buildTarget) {
+  targetPath = './src/bindings/' + buildTarget + '/index.js';
+}
+
 module.exports = {
-  entry:  './src/index.js',
+  entry:  targetPath,
   devtool: 'source-map',
   module: {
     loaders: [

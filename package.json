@@ -7,10 +7,16 @@
   "main": "lib/index.js",
   "scripts": {
     "build:lib": "gulp",
-    "build:dist": "webpack --config webpack.config.development.js",
-    "build:dist:min": "webpack --config webpack.config.production.js",
+
+    "build:dist:angular": "BUILD_TARGET=angular webpack --config webpack.config.development.js",
+    "build:dist:angular:min": "BUILD_TARGET=angular webpack --config webpack.config.production.js",
+
+    "build:dist": "npm run build:dist:angular",
+    "build:dist:min": "npm run build:dist:angular:min",
+
     "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
     "prepublish": "npm run build",
+
     "review": "jscs lib test",
     "fix": "jscs lib test --fix",
     "test": "mocha"

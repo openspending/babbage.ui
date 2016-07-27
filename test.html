@@ -4,8 +4,7 @@
   <meta charset="utf-8">
   <title>babbage.ui</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="dist/lib.css">
-  <!--<link rel="stylesheet" href="dist/babbage.ui.css">-->
+  <link rel="stylesheet" href="dist/babbage.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -17,24 +16,19 @@
 <body>
 <div ng-view>
 </div>
-<style>
-  .pie-chart {
-
-  }
-</style>
 
 <script type="text/ng-template" id="demo.html">
   <div id="pieChart">
     <pie-chart
       cube="{{cube}}"
-      state="Char"
+      state="stateForCharts"
       endpoint="{{apiUrl}}"
       ></pie-chart>
 
     <chart
       cube="{{cube}}"
       type="bar"
-      state="MultiChar"
+      state="stateForMultiSeriesCharts"
       endpoint="{{apiUrl}}"
     ></chart>
 
@@ -42,39 +36,39 @@
     <chart
       cube="{{cube}}"
       type="line"
-      state="MultiChar"
+      state="stateForMultiSeriesCharts"
       endpoint="{{apiUrl}}"
     ></chart>
 
     <chart
     cube="{{cube}}"
     type="bar"
-    state="Char"
+    state="stateForCharts"
     endpoint="{{apiUrl}}"
     ></chart>
 
     <chart
     cube="{{cube}}"
     type="line"
-    state="Char"
+    state="stateForCharts"
     endpoint="{{apiUrl}}"
     ></chart>
 
     <tree-map
       cube="{{cube}}"
-      state="Char"
+      state="stateForCharts"
       endpoint="{{apiUrl}}"
     ></tree-map>
 
     <bubbletree
       cube="{{cube}}"
-      state="Char"
+      state="stateForCharts"
       endpoint="{{apiUrl}}"
     ></bubbletree>
 
     <geo-view
       cube="{{cube}}"
-      state="geo"
+      state="stateForGeoView"
       endpoint="{{apiUrl}}"
       cosmo-endpoint="{{cosmoEndpoint}}"
       country-code="MD"
@@ -82,19 +76,19 @@
 
     <babbage-table
       cube="{{cube}}"
-      state="Char"
+      state="stateForCharts"
       endpoint="{{apiUrl}}"
     ></babbage-table>
 
     <pivot-table
       cube="{{cube}}"
-      state="Pivot"
+      state="stateForPivot"
       endpoint="{{apiUrl}}"
     ></pivot-table>
 
     <facts
       cube="{{cube}}"
-      state="Facts"
+      state="stateForFacts"
       endpoint="{{apiUrl}}"
     ></facts>
 
@@ -102,16 +96,16 @@
 
 </script>
 
-<script src='dist/babbage.js'></script>
+<script src='dist/babbage-angular.js'></script>
 <script>
-  var pieDirective = new window.Babbage.BabbageClasses.PieChartDirective();
-  var chartDirective = new window.Babbage.BabbageClasses.ChartDirective();
-  var treemapDirective = new window.Babbage.BabbageClasses.TreemapDirective();
-  var bubbleTreeDirective = new window.Babbage.BabbageClasses.BubbleTreeDirective();
-  var geoViewDirective = new window.Babbage.BabbageClasses.GeoViewDirective();
-  var tableDirective = new window.Babbage.BabbageClasses.BabbageTableDirective();
-  var pivotTableDirective = new window.Babbage.BabbageClasses.PivotTableDirective();
-  var factsDirective = new window.Babbage.BabbageClasses.FactsDirective();
+  var pieDirective = new window.Babbage.PieChartDirective();
+  var chartDirective = new window.Babbage.ChartDirective();
+  var treemapDirective = new window.Babbage.TreemapDirective();
+  var bubbleTreeDirective = new window.Babbage.BubbleTreeDirective();
+  var geoViewDirective = new window.Babbage.GeoViewDirective();
+  var tableDirective = new window.Babbage.BabbageTableDirective();
+  var pivotTableDirective = new window.Babbage.PivotTableDirective();
+  var factsDirective = new window.Babbage.FactsDirective();
 
   var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
 
@@ -135,38 +129,34 @@
     }]);
 
   demo.controller('DemoCtrl', function ($scope) {
-//    $scope.cube = '00_01_uganda';
-    $scope.cube = 'a0f62a17e1fc9e6bea3e94a2f41fbba2:boost-moldova-2014';
-    $scope.apiUrl = 'http://s145.okserver.org/api/3';
-    $scope.Char = {
-//      order: [{key: 'classification_economic_econ1_label.econ1_label', direction: 'asc'}],
-      group: ['classification_economic_econ1_label.econ1_label'],
-      aggregates: 'adjusted.sum'
-    };
-
-    $scope.Facts = {
-    };
-
-    $scope.MultiChar = {
-      group: ['classification_economic_econ1_label.econ1_label'],
-      series: ['classification_administrative_admin1.admin1'],
-      aggregates: 'adjusted.sum'
-    };
-
-    $scope.Pivot = {
-      cols: ['administrative_classification_admin1.admin1', 'other_exp_type.exp_type'],
-      rows: ['classification_economic_econ1_label.econ1_label', 'other_fin_source.fin_source'],
-      aggregates: 'adjusted.sum'
-    };
-
+    $scope.cube = 'boost:boost-moldova-2005-2014';
+    $scope.apiUrl = 'http://next.openspending.org/api/3';
     $scope.cosmoEndpoint = 'http://cosmopolitan.openspending.org/v1/';
 
-    $scope.geo = {
-      group: ['location.title'],
+    $scope.stateForCharts = {
+      group: ['administrative_classification_2.admin1'],
       aggregates: 'adjusted.sum'
     };
 
-    // $scope.cube = 'bundeshaushalt';
+    $scope.stateForFacts = {
+    };
+
+    $scope.stateForMultiSeriesCharts = {
+      group: ['administrative_classification_2.admin1'],
+      series: ['date_2.year'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.stateForPivot = {
+      cols: ['date_2.year'],
+      rows: ['administrative_classification_2.admin1', 'fin_source_2.fin_source'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.stateForGeoView = {
+      group: ['geo_source_2.admin2'],
+      aggregates: 'adjusted.sum'
+    };
   });
 </script>
 </body>
