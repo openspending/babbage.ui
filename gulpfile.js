@@ -20,14 +20,14 @@ function processStyles(dir) {
     path.join(nodeModulesDir, '/bubbletree/dist/bubbletree.css'),
     path.join(nodeModulesDir, '/pivottable/dist/pivot.min.css'),
     path.join(nodeModulesDir, '/c3/c3.min.css'),
-    path.join(cssDir, '/build.less'),
+    path.join(cssDir, '/build.less')
   ];
   return gulp.src(files)
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(prefixer({browsers: ['last 4 versions']}))
     .pipe(minifyCss({compatibility: 'ie8'}))
-    .pipe(concat('lib.css'))
+    .pipe(concat('babbage.css'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(dir));
 }

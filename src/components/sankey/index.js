@@ -31,15 +31,15 @@ export class SanKeyChartComponent extends events.EventEmitter {
     this.emit('beginAggregate', this);
 
     params.group = [params.source, params.target];
-    sourceKey = params.source;
-    targetKey = params.target;
+    var sourceKey = params.source;
+    var targetKey = params.target;
     params.source = undefined;
     params.target = undefined;
 
     params.order = params.order || [
       {key: params.aggregates, direction: 'desc'},
-      {key: params.source, direction: 'asc'},
-      {key: params.target, direction: 'asc'}
+      {key: sourceKey, direction: 'asc'},
+      {key: targetKey, direction: 'asc'}
     ];
 
     params.page = 0;
@@ -49,6 +49,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
     if (!svg) {
       svg = d3.select(wrapper).append("svg");
+      svg.attr("class", "sankey-babbage");
       group = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
@@ -88,8 +89,10 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
         if (!objs[sourceId]) {
           graph.nodes.push({
+            key: source.keyValue,
             name: source.nameValue,
-            color: Utils.colorScale(sourceId)
+            color: Utils.colorScale(sourceId),
+            isSource: true
           });
           objs[sourceId] = {idx: graph.nodes.length - 1};
         }
@@ -97,8 +100,10 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
         if (!objs[targetId]) {
           graph.nodes.push({
+            key: target.keyValue,
             name: target.nameValue,
-            color: targetScale(targetId)
+            color: targetScale(targetId),
+            isTarget: true
           });
           objs[targetId] = {
             idx: graph.nodes.length - 1
@@ -108,10 +113,11 @@ export class SanKeyChartComponent extends events.EventEmitter {
         graph.links.push(link);
       });
 
-      this.sankey = sankey = d3.sankey()
+      this.sankey = d3.sankey()
         .nodeWidth(unit)
         .nodePadding(unit * 0.6)
         .size([size.width, size.height]);
+      var sankey = this.sankey;
 
       var path = sankey.link();
 
@@ -148,6 +154,9 @@ export class SanKeyChartComponent extends events.EventEmitter {
         .attr("class", "node")
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
+        })
+        .on("click", (d) => {
+          that.emit('click', that, d);
         });
 
       node.append("rect")
