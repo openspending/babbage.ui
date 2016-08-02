@@ -14,6 +14,14 @@ if (buildTarget) {
 module.exports = {
   entry:  targetPath,
   devtool: 'source-map',
+  externals: {
+    // require("jquery") is external and available
+    // on the global var jQuery
+    'jquery': 'jQuery',
+    // same d3 and c3
+    'd3': 'd3',
+    'c3': 'c3'
+  },
   module: {
     loaders: [
       { test: /\.vue$/, loader: 'vue' },

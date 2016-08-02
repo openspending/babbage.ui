@@ -15,11 +15,6 @@ var developmentConfig = {
     filename: targetFileName,
     path: './dist'
   },
-  externals: {
-    // require("jquery") is external and available
-    // on the global var jQuery
-    'jquery': 'jQuery'
-  },
   plugins:  [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({

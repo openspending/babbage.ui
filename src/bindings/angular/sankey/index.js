@@ -18,7 +18,14 @@ export class SanKeyChartDirective {
             var sanKeyChart = new SanKeyChartComponent();
             var wrapper = element.find('.sankey-chart')[0];
 
+            $scope.cutoffWarning = false;
+            $scope.queryLoaded = true;
+
             sanKeyChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+
+            sanKeyChart.on('click', (sankeyComponent, item) => {
+              $scope.$emit('sankey-click', sankeyComponent, item);
+            });
           }
         }
       }
