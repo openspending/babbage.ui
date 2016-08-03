@@ -78,7 +78,8 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
         var link = {
           value: measure.value,
-          number: d3.format("0,000")(measure.value)
+          number: d3.format("0,000")(measure.value),
+          isLink: true
         };
 
         if (link.value == 0 || !sourceId || !targetId) {
@@ -141,6 +142,9 @@ export class SanKeyChartComponent extends events.EventEmitter {
         })
         .sort(function(a, b) {
           return b.dy - a.dy;
+        })
+        .on("click", (d) => {
+          that.emit('click', that, d);
         });
 
       link.append("title")
