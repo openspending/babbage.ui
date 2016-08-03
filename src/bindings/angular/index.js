@@ -7,6 +7,7 @@ import GeoViewDirective from './geoview'
 import TreemapDirective from './treemap'
 import PivotTableDirective from './pivottable'
 import FactsDirective from './facts'
+import RadarChartDirective from './radar'
 
 export {
   BubbleTreeDirective,
@@ -17,5 +18,6 @@ export {
   GeoViewDirective,
   TreemapDirective,
   PivotTableDirective,
-  FactsDirective
+  FactsDirective,
+  RadarChartDirective
 }
