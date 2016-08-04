@@ -16,27 +16,110 @@ components for business intelligence.
 
 ### Usage
 
-```html
-<babbage slicer="http://host.org/slicer" cube="sales">
-    <div class="row">
-        <div class="col-md-4">
-            <babbage-filter-panel></babbage-filter-panel>
-        </div>
-        <div class="col-md-8">
-            <babbage-table></babbage-table>
-        </div>
-    </div>
-</babbage>
+#### Preparing your `angular` application
+
+There are two ways to use `angular` bindings in your application:
+
+- `require` components from `/src/bindings/*` (ES2016 code) or from `/lib/bindings/*` (compiled sources) directory;
+- add `/dist/babbage-*.js` or `/dist/babbage-*.min.js` file to html page. Important note: ensure that `c3`, `d3` and `jQuery` objects are available in global scope. They are marked as external to allow extending them. Also see notes for some visualizations.   
+ 
+Then you should initialize library components, in example:
+ 
+```javascript
+
+// This two lines should be used only with CommonJS code;
+// when using webpack bundles - angular and Babbage will be available
+// in global scope
+var angular = require('angular');
+var Babbage = require('babbage.ui/lib/bindings/angular');
+
+var pieDirective = new Babbage.PieChartDirective();
+var chartDirective = new Babbage.ChartDirective();
+var treeMapDirective = new Babbage.TreemapDirective();
+var bubbleTreeDirective = new Babbage.BubbleTreeDirective();
+var tableDirective = new Babbage.BabbageTableDirective();
+var geoViewDirective = new Babbage.GeoViewDirective();
+var pivotTableDirective = new Babbage.PivotTableDirective();
+var factsDirective = new Babbage.FactsDirective();
+var sankeyDirective = new Babbage.SanKeyChartDirective();
+
+var module = angular.module('babbage.ui', []);
+
+pieDirective.init(module);
+chartDirective.init(module);
+treeMapDirective.init(module);
+tableDirective.init(module);
+bubbleTreeDirective.init(module);
+geoViewDirective.init(module);
+pivotTableDirective.init(module);
+factsDirective.init(module);
+sankeyDirective.init(module);
 ```
 
-Or, with inline config:
+#### Using `angular` bindings
+
+Common parameters for each visualization: 
+
+- `aggregates` - string; single key of measure. 
+- `filter` - array of strings; each string should contain key of dimension and filter value, separated by pipe `|`. 
+- `order` - array of objects; each object should have `key` (key of measure or dimension) and `direction` fields. Possible values for `direction` are `asc` and `desc`. 
+ 
+Other visualizations may require other additional parameters.
+ 
+##### Treemap, BubbleTree, Facts, Table, Map components and charts  
 
 ```html
-<babbage slicer="http://host.org/slicer" cube="sales">
-    <babbage-treemap drilldown="region" measure="sales_usd" cut="time.year:2015">
-    </babbage-treemap>
-</babbage>
+<tree-map endpoint="http://example.com/api/" cube="demo" state="state"></tree-map>
+
+<bubbletree endpoint="http://example.com/api/" cube="demo" state="state"></bubbletree>
+
+<facts endpoint="http://example.com/api/" cube="demo" state="state"></facts>
+
+<babbage-table endpoint="http://example.com/api/" cube="demo" state="state"></babbage-table>
+
+<geo-view endpoint="http://example.com/api/" cube="demo" state="state"
+    cosmo-endpoint="http://example.com/cosmopolitan/" 
+    currency-sign="USD" 
+    country-code="US"></geo-view>
+ 
+<chart type="bar" endpoint="http://example.com/api/" cube="demo" state="state"></pivot>
+
+<chart type="line" endpoint="http://example.com/api/" cube="demo" state="state"></pivot>
+
+<pie-chart endpoint="http://example.com/api/" cube="demo" state="state"></pie-chart>   
 ```
+
+Additional required fields:
+
+- `group` - array of strings - keys of dimensions to group by.
+
+Important notes:
+
+- BubbleTree requires [bubbletree](https://github.com/okfn/bubbletree) library (take care about its dependencies too).
+- TreeMap and Map visualizations require [d3](https://github.com/d3/d3) library.
+- All charts require [c3](https://github.com/masayuki0812/c3) library.    
+
+##### Pivot Table
+
+```html
+<pivot-table endpoint="http://example.com/api/" cube="demo" state="state"></pivot-table>
+```
+
+Additional required fields:
+- `rows` - array of strings - keys of dimensions to use as rows. 
+- `cols` - array of strings - keys of dimensions to use as columns. 
+  
+##### Sankey
+
+```html
+<san-key-chart endpoint="http://example.com/api/" cube="demo" state="state"></san-key-chart>
+```
+
+Additional required fields:
+- `source` - string - key of dimension to use as source (left nodes on graph). 
+- `target` - string - key of dimension to use as target (right nodes on graph).
+ 
+Important note: this visualization requires [sankey](https://github.com/d3/d3-plugins/tree/master/sankey) plugin for [d3](https://github.com/d3/d3). 
 
 ### Example
 
@@ -44,9 +127,11 @@ Clone the repository and open ``index.html`` to see ``babbage`` in action, no pr
 
 ### Dev installation
 
-* Dev tool installation with [npm](https://www.npmjs.com/): ``npm install`` (see ``package.json``)
-* Web packaging with [Bower](http://bower.io/): ``bower install`` (see ``bower.json``)
-* Build automation with [Grunt](http://gruntjs.com/): ``grunt`` without arguments runs the ``default`` task (see ``Gruntfile.js``)
+* Dev tool installation with [npm](https://www.npmjs.com/): ``npm install`` (see ``package.json``).
+* Compile library sources using `npm run build:lib`.
+* Use `npm run build:dist` or `npm run build:dist:min` to create `webpack` bundles for each binding. Also use `npm run build` to completely rebuild the library.
+* Run tests with `npm test`. 
+* Check code style with `npm run review`. Run `npm run fix` to check code style and automatically fix errors.  
 
 ### A few links
 
