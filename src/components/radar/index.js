@@ -9,6 +9,7 @@ export class RadarChartComponent extends events.EventEmitter {
     constructor() {
         super();
         this.wrapper = null;
+        this.downloader = null;
     }
 
     getPivotData(endpoint, cube, params) {
@@ -27,6 +28,7 @@ export class RadarChartComponent extends events.EventEmitter {
         var measures = {};
         var dimensions = [];
 
+        api.downloader = this.downloader;
         return api.getDimensions(endpoint, cube)
             .then((result) => {
                 dimensions = {};
@@ -38,6 +40,7 @@ export class RadarChartComponent extends events.EventEmitter {
 
                 });
 
+                api.downloader = this.downloader;
                 return api.getMeasures(endpoint, cube);
             })
             .then((result) => {
@@ -48,6 +51,7 @@ export class RadarChartComponent extends events.EventEmitter {
 
                 params.page = 0;
                 params.pagesize = 2000;
+                api.downloader = this.downloader;
                 return api.aggregate(endpoint, cube, params)
             })
             .then((data) => {

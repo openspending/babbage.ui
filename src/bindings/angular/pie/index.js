@@ -3,14 +3,14 @@ import PieChartComponent from '../../../components/pie'
 export class PieChartDirective {
   init(angularModule) {
     angularModule.directive('pieChart', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -18,6 +18,7 @@ export class PieChartDirective {
             var pieChart = new PieChartComponent();
             var wrapper = element.find('.pie-chart')[0];
 
+            pieChart.downloader = $scope.downloader;
             pieChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
 
             $scope.cutoffWarning = false;

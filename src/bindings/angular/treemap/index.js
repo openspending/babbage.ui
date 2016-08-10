@@ -3,14 +3,14 @@ import TreeMapComponent from '../../../components/treemap'
 class TreemapDirective {
   init(angularModule) {
     angularModule.directive('treeMap', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -45,6 +45,7 @@ class TreemapDirective {
             treeMap.on('click', (treeMapComponent, item) => {
               $scope.$emit('treemap-click', treeMapComponent, item);
             });
+            treeMap.downloader = $scope.downloader;
             treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
           }
         }

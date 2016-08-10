@@ -18,15 +18,17 @@ export class GeoViewDirective {
             state: '=',
             countryCode: '@',
             currencySign: '@?',
+            downloader: '=?'
           },
           template: '<geoview class="geoview-container" country-code="{{ countryCode }}" ' +
           'currency-sign="{{ currencySign }}" cosmo-endpoint="{{ cosmoEndpoint }}" ' +
           'values="values"></geoview>',
           replace: false,
-          link: function($scope, element) {
+          link: function($scope) {
             var geoView = new GeoViewComponent();
 
             $q((resolve, reject) => {
+              geoView.downloader = $scope.downloader;
               geoView.getGeoMapData(
                 $scope.endpoint,
                 $scope.cube,

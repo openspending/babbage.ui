@@ -4,14 +4,14 @@ import PivotTable from 'pivottable'
 export class PivotTableDirective {
   init(angularModule) {
     angularModule.directive('pivotTable', [
-      '$timeout', '$q',
-      function($timeout, $q) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -22,6 +22,7 @@ export class PivotTableDirective {
             var intFormat = numberFormat({digitsAfterDecimal: 0});
 
             var wrapper = element.find('.pivot-table')[0];
+            pivotTableComponent.downloader = $scope.downloader;
             pivotTableComponent.getPivotData($scope.endpoint, $scope.cube, $scope.state).then((result) => {
               $(wrapper).pivot(
                 result.data,

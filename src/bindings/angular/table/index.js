@@ -3,21 +3,23 @@ import TableComponent from '../../../components/table'
 export class BabbageTableDirective {
   init(angularModule) {
     angularModule.directive('babbageTable', [
-      '$timeout', '$q',
-      function($timeout, $q) {
+      '$q',
+      function($q) {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
-          link: function($scope, element) {
+          link: function($scope) {
             var babbageTable = new TableComponent();
 
             $q((resolve, reject) => {
+              babbageTable.downloader = $scope.downloader;
               babbageTable.getTableData($scope.endpoint, $scope.cube, $scope.state)
                 .then(resolve)
                 .catch(reject)

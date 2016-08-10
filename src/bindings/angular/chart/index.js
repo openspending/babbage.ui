@@ -11,7 +11,8 @@ export class ChartDirective {
             endpoint: '@',
             cube: '@',
             type: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -19,6 +20,7 @@ export class ChartDirective {
             var chart = new ChartComponent();
             var wrapper = element.find('.chart-babbage')[0];
 
+            chart.downloader = $scope.downloader;
             chart.build($scope.type, $scope.endpoint, $scope.cube, $scope.state, wrapper);
 
             $scope.cutoffWarning = false;

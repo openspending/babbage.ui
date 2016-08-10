@@ -3,15 +3,15 @@ import BubbleTreeComponent from '../../../components/bubbletree'
 export class BubbleTreeDirective {
   init(angularModule) {
     angularModule.directive('bubbletree', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
             type: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -19,6 +19,7 @@ export class BubbleTreeDirective {
             var bubbleTree = new BubbleTreeComponent();
             var wrapper = element.find('.bubbletree')[0];
 
+            bubbleTree.downloader = $scope.downloader;
             bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
             bubbleTree.on('click', (bubbleTreeComponent, item) => {
               $scope.$emit('bubbletree-click', bubbleTreeComponent, item);
