@@ -20,13 +20,14 @@ function positionNode() {
     .style("height", (d) => {
       return Math.max(0, d.dy - 1) + "px";
     });
-};
+}
 
 export class TreeMapComponent extends events.EventEmitter {
   constructor() {
     super();
     this.wrapper = null;
     this.treemap = null;
+    this.downloader = null;
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -58,6 +59,7 @@ export class TreeMapComponent extends events.EventEmitter {
       .style("height", size.height + "px");
 
 
+    api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params).then((data) => {
       var root = {};
       root.children = [];

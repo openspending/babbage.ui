@@ -1,40 +1,26 @@
-import 'isomorphic-fetch'
 import _ from 'lodash'
-import Promise from 'bluebird'
 import querystring from 'querystring'
 import url from 'url'
+import { getDefaultDownloader } from './downloader'
 
 export class Api {
   constructor() {
-    this.cache = {};
+    this.downloader = null;
   }
 
   get(url) {
-    var that = this;
-    if (this.cache[url]) {
-      return Promise.resolve(this.cache[url]);
-    } else {
-      return fetch(url).then(function(response) {
-        if (response.status >= 400) {
-          return Promise.reject(new Error(`
-            code: ${response.status},
-            message: ${response.statusText}
-          `));
-        } else {
-          return response.text()
-        }
-      }).then(function(text) {
-        return that.cache[url] = text
-      }).catch(Promise.reject);
-    }
+    var downloader = this.downloader || getDefaultDownloader();
+    return downloader.get(url);
   }
 
   getJson(url) {
-    return this.get(url).then(JSON.parse).catch(function(err) { console.error("getJson:", err)});
+    var downloader = this.downloader || getDefaultDownloader();
+    return downloader.getJson(url);
   }
 
   flush() {
-    this.cache = {}
+    var downloader = this.downloader || getDefaultDownloader();
+    return downloader.flush();
   }
 
   transformParams(params) {

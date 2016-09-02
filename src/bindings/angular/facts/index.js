@@ -10,13 +10,15 @@ export class FactsDirective {
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
-          link: function($scope, element) {
+          link: function($scope) {
             function update() {
               $q((resolve, reject) => {
+                facts.downloader = $scope.downloader;
                 facts.getTableData($scope.endpoint, $scope.cube, $scope.state)
                   .then(resolve)
                   .catch(reject)

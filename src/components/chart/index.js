@@ -12,6 +12,7 @@ export class ChartComponent extends events.EventEmitter {
     super();
     this.wrapper = null;
     this.chart = null;
+    this.downloader = null;
   }
 
   build(chartType, endpoint, cube, params, wrapper, colorSchema) {
@@ -45,6 +46,7 @@ export class ChartComponent extends events.EventEmitter {
     params.page = 0;
     params.pagesize = 2000;
 
+    api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params).then((data) => {
 
         var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);

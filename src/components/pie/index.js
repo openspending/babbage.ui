@@ -11,6 +11,7 @@ export class PieChartComponent extends events.EventEmitter {
     super();
     this.wrapper = null;
     this.chart = null;
+    this.downloader = null;
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -21,6 +22,7 @@ export class PieChartComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
 
+    api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params).then((data) => {
 
       var columns = Utils.buildC3PieColumns(data, params.aggregates);

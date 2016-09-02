@@ -3,22 +3,22 @@ import RadarChartComponent from '../../../components/radar'
 export class RadarChartDirective {
   init(angularModule) {
     angularModule.directive('radarChart', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
             var radarChart = new RadarChartComponent();
             var wrapper = element.find('.radar-chart')[0];
+            radarChart.downloader = $scope.downloader;
             radarChart.getPivotData($scope.endpoint, $scope.cube, $scope.state).then((result) => {
-
               radarChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper, result);
             });
 

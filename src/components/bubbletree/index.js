@@ -14,6 +14,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
     super();
     this.wrapper = null;
     this.bubbleTree = null;
+    this.downloader = null;
   }
 
   generateBubbuleTreeData (cells, params) {
@@ -45,6 +46,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
 
+    api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params).then((data) => {
       var bubbleTreeData = this.generateBubbuleTreeData(
         data.cells,

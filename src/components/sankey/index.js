@@ -11,6 +11,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
     super();
     this.wrapper = null;
     this.sankey = null;
+    this.downloader = null;
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -54,6 +55,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
 
+    api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params).then((data) => {
 
       size.height = data.cells.length * unit;

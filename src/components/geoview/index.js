@@ -6,6 +6,7 @@ var api = new Api();
 export class GeoViewComponent extends events.EventEmitter {
   constructor() {
     super();
+    this.downloader = null;
   }
 
   getGeoMapData(endpoint, cube, params) {
@@ -16,6 +17,7 @@ export class GeoViewComponent extends events.EventEmitter {
 
     this.emit('beginAggregate', this);
 
+    api.downloader = this.downloader;
     return api.aggregate(endpoint, cube, params).then((data) => {
         _.each(data.cells, (cell) => {
           var dimension = _.first(cell.dimensions);

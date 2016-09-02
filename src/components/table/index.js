@@ -6,6 +6,7 @@ var api = new Api();
 export class TableComponent extends events.EventEmitter {
   constructor() {
     super();
+    this.downloader = null;
   }
 
   showKeys(items) {
@@ -49,15 +50,18 @@ export class TableComponent extends events.EventEmitter {
     var measures = {};
     var dimensions = [];
 
+    api.downloader = this.downloader;
     return api.getDimensions(endpoint, cube)
       .then((result) => {
         dimensions = result;
 
+        api.downloader = this.downloader;
         return api.getMeasures(endpoint, cube);
       })
       .then((result) => {
         measures = result;
 
+        api.downloader = this.downloader;
         return api.aggregate(endpoint, cube, params)
       })
       .then((data) => {

@@ -3,14 +3,14 @@ import SanKeyChartComponent from '../../../components/sankey'
 export class SanKeyChartDirective {
   init(angularModule) {
     angularModule.directive('sanKeyChart', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
-            state: '='
+            state: '=',
+            downloader: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -21,6 +21,7 @@ export class SanKeyChartDirective {
             $scope.cutoffWarning = false;
             $scope.queryLoaded = true;
 
+            sanKeyChart.downloader = $scope.downloader;
             sanKeyChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
 
             sanKeyChart.on('click', (sankeyComponent, item) => {
