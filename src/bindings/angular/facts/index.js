@@ -1,4 +1,5 @@
 import FactsComponent from '../../../components/facts'
+import _ from 'lodash';
 
 export class FactsDirective {
   init(angularModule) {
@@ -16,7 +17,14 @@ export class FactsDirective {
           template: require('./template.html'),
           replace: false,
           link: function($scope) {
-            function update() {
+            $scope.status = {
+              isLoading: true,
+              isEmpty: false,
+              isCutOff: false,
+              cutoff: 0
+            };
+
+            function update(facts) {
               $q((resolve, reject) => {
                 facts.downloader = $scope.downloader;
                 facts.getTableData($scope.endpoint, $scope.cube, $scope.state)
@@ -56,6 +64,18 @@ export class FactsDirective {
             }
 
             var facts = new FactsComponent();
+            facts.on('loading', () => {
+              $scope.status.isLoading = true;
+              $scope.status.isEmpty = false;
+              $scope.status.isCutOff = false;
+              $scope.$applyAsync();
+            });
+            facts.on('ready', (component, data, error) => {
+              $scope.status.isLoading = false;
+              $scope.status.isEmpty = !(_.isObject(data) && (data.columns.length > 0));
+              $scope.status.isCutOff = false;
+              $scope.$applyAsync();
+            });
 
             $scope.getSort = function(field) {
               return _.find($scope.state.order, {key: field});
@@ -63,17 +83,17 @@ export class FactsDirective {
 
             $scope.setSort = function(key, direction) {
               $scope.state.order = [{key: key, direction: direction}];
-              update();
+              update(facts);
             }
 
             $scope.setPage = function(page) {
               if (page >= 0 && page <= $scope.num) {
                 $scope.state.page = page+1;
-                update();
+                update(facts);
               }
             }
 
-            update();
+            update(facts);
           }
         }
       }

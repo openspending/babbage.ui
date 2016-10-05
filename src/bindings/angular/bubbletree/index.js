@@ -1,4 +1,5 @@
 import BubbleTreeComponent from '../../../components/bubbletree'
+import _ from 'lodash'
 
 export class BubbleTreeDirective {
   init(angularModule) {
@@ -16,17 +17,35 @@ export class BubbleTreeDirective {
           template: require('./template.html'),
           replace: false,
           link: function($scope, element) {
+            $scope.status = {
+              isLoading: true,
+              isEmpty: false,
+              isCutOff: false,
+              cutoff: 0
+            };
+
             var bubbleTree = new BubbleTreeComponent();
             var wrapper = element.find('.bubbletree')[0];
 
-            bubbleTree.downloader = $scope.downloader;
-            bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            bubbleTree.on('loading', () => {
+              $scope.status.isLoading = true;
+              $scope.status.isEmpty = false;
+              $scope.status.isCutOff = false;
+              $scope.$applyAsync();
+            });
+            bubbleTree.on('ready', (component, data, error) => {
+              $scope.status.isLoading = false;
+              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isCutOff = false;
+              $scope.$applyAsync();
+            });
             bubbleTree.on('click', (bubbleTreeComponent, item) => {
               $scope.$emit('bubbletree-click', bubbleTreeComponent, item);
+              $scope.$applyAsync();
             });
 
-            $scope.cutoffWarning = false;
-            $scope.queryLoaded = true;
+            bubbleTree.downloader = $scope.downloader;
+            bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
           }
         }
       }

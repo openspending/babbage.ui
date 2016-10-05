@@ -5,14 +5,17 @@ import _ from 'lodash'
 import events from 'events'
 var api = new Api();
 
-
 export class ChartComponent extends events.EventEmitter {
-
   constructor() {
     super();
     this.wrapper = null;
     this.chart = null;
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
   build(chartType, endpoint, cube, params, wrapper, colorSchema) {
@@ -21,7 +24,7 @@ export class ChartComponent extends events.EventEmitter {
     var that = this;
     this.wrapper = wrapper;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
 
     if (chartType == 'line') {
       params.order = params.order || [{key: _.first(params.group), direction: ':asc'}];
@@ -47,8 +50,8 @@ export class ChartComponent extends events.EventEmitter {
     params.pagesize = 2000;
 
     api.downloader = this.downloader;
-    api.aggregate(endpoint, cube, params).then((data) => {
-
+    api.aggregate(endpoint, cube, params)
+      .then((data) => {
         var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);
         var types = {};
         var c3Groups = _.map(_.slice(columns, 1), (column) => {return column[0]});
@@ -65,7 +68,7 @@ export class ChartComponent extends events.EventEmitter {
               var c = d.id || d;
               if ((chartType == 'bar') && !series) {
                 c = d.index;
-              };
+              }
               return Utils.colorScale(c);
             },
             type: chartType || 'bar',
@@ -100,10 +103,13 @@ export class ChartComponent extends events.EventEmitter {
           }
         });
 
-        this.emit('endAggregate', that, data);
-      }
-    )
-    ;
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
+      });
   }
 }
 

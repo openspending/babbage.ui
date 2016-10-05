@@ -7,7 +7,6 @@ import BubbleTree from 'bubbletree'
 window.BubbleTree = BubbleTree;
 var api = new Api();
 
-
 export class BubbleTreeComponent extends events.EventEmitter {
 
   constructor() {
@@ -15,9 +14,14 @@ export class BubbleTreeComponent extends events.EventEmitter {
     this.wrapper = null;
     this.bubbleTree = null;
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
-  generateBubbuleTreeData (cells, params) {
+  generateBubbleTreeData (cells, params) {
     var children = [];
     _.each(cells, (cell) => {
       var dimension = _.first(cell.dimensions);
@@ -44,28 +48,34 @@ export class BubbleTreeComponent extends events.EventEmitter {
     var that = this;
     this.wrapper = wrapper;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
 
     api.downloader = this.downloader;
-    api.aggregate(endpoint, cube, params).then((data) => {
-      var bubbleTreeData = this.generateBubbuleTreeData(
-        data.cells,
-        params
-      );
+    api.aggregate(endpoint, cube, params)
+      .then((data) => {
+        var bubbleTreeData = that.generateBubbleTreeData(
+          data.cells,
+          params
+        );
 
-      that.bubbleTree = new BubbleTree({
-        autoColors: true,
-        data: bubbleTreeData,
-        container: wrapper,
-        nodeClickCallback: (node) => {
-          if (node.level > 0) {
-            that.emit('click', that, node);
+        that.bubbleTree = new BubbleTree({
+          autoColors: true,
+          data: bubbleTreeData,
+          container: wrapper,
+          nodeClickCallback: (node) => {
+            if (node.level > 0) {
+              that.emit('click', that, node);
+            }
           }
-        }
-      });
+        });
 
-      this.emit('endAggregate', that, data);
-    }).catch((err) => { console.error("BUBBLETREE_ERR:", err) });
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
+      });
   }
 }
 
