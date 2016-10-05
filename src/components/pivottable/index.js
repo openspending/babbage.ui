@@ -7,6 +7,11 @@ export class PivotTableComponent extends events.EventEmitter {
   constructor() {
     super();
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
   getPivotData(endpoint, cube, params) {
@@ -21,7 +26,7 @@ export class PivotTableComponent extends events.EventEmitter {
 
     var that = this;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
     var measures = {};
     var dimensions = [];
 
@@ -70,8 +75,13 @@ export class PivotTableComponent extends events.EventEmitter {
           result.data.push(item);
         });
 
-        this.emit('endAggregate', that, data);
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
         return result;
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
       });
   }
 

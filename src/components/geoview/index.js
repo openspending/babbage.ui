@@ -7,6 +7,11 @@ export class GeoViewComponent extends events.EventEmitter {
   constructor() {
     super();
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
   getGeoMapData(endpoint, cube, params) {
@@ -15,10 +20,11 @@ export class GeoViewComponent extends events.EventEmitter {
 
     var that = this;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
 
     api.downloader = this.downloader;
-    return api.aggregate(endpoint, cube, params).then((data) => {
+    return api.aggregate(endpoint, cube, params)
+      .then((data) => {
         _.each(data.cells, (cell) => {
           var dimension = _.first(cell.dimensions);
           var measure = _.find(cell.measures, {key: params.aggregates});
@@ -26,9 +32,14 @@ export class GeoViewComponent extends events.EventEmitter {
           result[nameValue] = measure.value;
         });
 
-        this.emit('endAggregate', that, data);
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
         return result;
-    });
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
+      });
   }
 
 }

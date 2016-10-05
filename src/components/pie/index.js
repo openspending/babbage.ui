@@ -12,6 +12,11 @@ export class PieChartComponent extends events.EventEmitter {
     this.wrapper = null;
     this.chart = null;
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -20,32 +25,37 @@ export class PieChartComponent extends events.EventEmitter {
     var that = this;
     this.wrapper = wrapper;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
 
     api.downloader = this.downloader;
-    api.aggregate(endpoint, cube, params).then((data) => {
+    api.aggregate(endpoint, cube, params)
+      .then((data) => {
+        var columns = Utils.buildC3PieColumns(data, params.aggregates);
+        var colors = {};
+        _.each(columns, (value, index) => {
+          colors[value[0]]= Utils.colorScale(index) ;
+        });
 
-      var columns = Utils.buildC3PieColumns(data, params.aggregates);
-      var colors = {};
-      _.each(columns, (value, index) => {
-        colors[value[0]]= Utils.colorScale(index) ;
-      });
-
-      that.chart = c3.generate({
-        bindto: that.wrapper,
-        data: {
-          names: Utils.buildC3Names(data),
-          columns: columns,
-          colors: colors,
-          type: 'pie',
-          onclick: (d, element) => {
-            that.emit('click', that, d);
+        that.chart = c3.generate({
+          bindto: that.wrapper,
+          data: {
+            names: Utils.buildC3Names(data),
+            columns: columns,
+            colors: colors,
+            type: 'pie',
+            onclick: (d, element) => {
+              that.emit('click', that, d);
+            }
           }
-        }
-      });
+        });
 
-      this.emit('endAggregate', that, data);
-    }).catch((err) => { console.error("PIE_BUILD_ERR:", err) });
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
+      });
   }
 }
 

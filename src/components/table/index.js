@@ -7,6 +7,11 @@ export class TableComponent extends events.EventEmitter {
   constructor() {
     super();
     this.downloader = null;
+
+    // Prevent from throwing exception in EventEmitter
+    this.on('error', (sender, error) => {
+      console.trace(error);
+    });
   }
 
   showKeys(items) {
@@ -46,7 +51,7 @@ export class TableComponent extends events.EventEmitter {
 
     var that = this;
 
-    this.emit('beginAggregate', this);
+    that.emit('loading', that);
     var measures = {};
     var dimensions = [];
 
@@ -67,9 +72,14 @@ export class TableComponent extends events.EventEmitter {
       .then((data) => {
         result.headers = that.getHeaders(dimensions, measures, data.cells);
         result.columns = data.cells;
-        this.emit('endAggregate', that, data);
+        that.emit('loaded', that, data);
+        that.emit('ready', that, data, null);
 
         return result;
+      })
+      .catch((error) => {
+        that.emit('error', that, error);
+        that.emit('ready', that, null, error);
       });
   }
 

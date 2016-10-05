@@ -1,4 +1,13 @@
-<div class="table-babbage" ng-show="tableData.columns.length">
+<div class="alert alert-info" ng-hide="!status.isLoading">
+  <i class="babbage-loading-icon"></i><strong>Loading data.</strong> Please wait...
+</div>
+
+<div class="alert alert-warning" ng-show="status.isEmpty">
+  <strong>You have not selected any data.</strong> Please choose a set of rows
+  and columns to generate a cross-table.
+</div>
+
+<div class="table-babbage" ng-show="!status.isEmpty">
   <table class="table table-bordered table-condensed">
     <thead>
     <tr ng-repeat="header in tableData.headers">
@@ -18,11 +27,4 @@
     </tr>
     </tbody>
   </table>
-</div>
-
-<div class="table-babbage" ng-hide="tableData.columns.length || !queryLoaded">
-  <div class="alert alert-info">
-    <strong>You have not selected any data.</strong> Please choose a set of rows
-    and columns to generate a cross-table.
-  </div>
 </div>
