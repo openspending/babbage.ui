@@ -294,7 +294,7 @@ export class Api {
         };
 
         _.each(measures, (measure) => {
-          let measureModel = _.find(measureModelList, {'label': measure.value});
+          let measureModel = _.find(measureModelList, {'ref': measure.value});
           result.summary[measure.key] = data.summary[measure.key];
           result.currency[measure.key] = measureModel["currency"];
         });
