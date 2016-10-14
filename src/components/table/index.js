@@ -27,15 +27,17 @@ export class TableComponent extends events.EventEmitter {
     var rows = [];
     var cell = _.first(cells);
 
-    _.each(cell.dimensions, (dimension) => {
-      var dimensionData = _.find(dimensions, {key: dimension.keyField});
-      rows.push(dimensionData.code || dimensionData.name);
-    });
+    if (cell) {
+      _.each(cell.dimensions, (dimension) => {
+        var dimensionData = _.find(dimensions, {key: dimension.keyField});
+        rows.push(dimensionData.code || dimensionData.name);
+      });
 
-    _.each(cell.measures, (measure) => {
-      var measureInfo = _.find(measures, {key: measure.key});
-      rows.push(measureInfo.name || measureInfo.value);
-    });
+      _.each(cell.measures, (measure) => {
+        var measureInfo = _.find(measures, {key: measure.key});
+        rows.push(measureInfo.name || measureInfo.value);
+      });
+    }
 
     result.push(rows);
 
