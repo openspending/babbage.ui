@@ -3,7 +3,7 @@
   "description": "Angular components to use the Cubes Slicer API provided by Babbage.",
   "homepage": "https://github.com/openspending/babbage.ui",
   "license": "MIT",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "main": "lib/index.js",
   "scripts": {
     "build:lib": "gulp",
@@ -21,14 +21,17 @@
     "src"
   ],
   "dependencies": {
+    "babel-plugin-transform-runtime": "^6.15.0",
     "bluebird": "^3.4.1",
     "bubbletree": "git+https://github.com/okfn/bubbletree.git",
     "c3": "git+https://github.com/masayuki0812/c3.git",
+    "css-loader": "^0.25.0",
     "d3": "^3.5.16",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.5.1",
     "pivottable": "git+https://github.com/nicolaskruchten/pivottable.git",
-    "raphael": "^2.1.4"
+    "raphael": "^2.1.4",
+    "vue-hot-reload-api": "^2.0.6"
   },
   "devDependencies": {
     "babel": "^6.5.2",
