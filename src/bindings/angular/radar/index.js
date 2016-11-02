@@ -23,24 +23,26 @@ export class RadarChartDirective {
               cutoff: 0
             };
 
-            var radarChart = new RadarChartComponent();
+            var component = new RadarChartComponent();
             var wrapper = element.find('.radar-chart')[0];
 
-            radarChart.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            radarChart.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.data.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.data.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
 
-            radarChart.downloader = $scope.downloader;
-            radarChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.downloader = $scope.downloader;
+            component.build($scope.endpoint, $scope.cube,
+              $scope.state, wrapper);
           }
         }
       }

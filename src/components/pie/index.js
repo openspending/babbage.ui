@@ -1,4 +1,5 @@
 import { Api } from '../../api/index'
+import d3 from 'd3'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
@@ -33,9 +34,16 @@ export class PieChartComponent extends events.EventEmitter {
         var columns = Utils.buildC3PieColumns(data, params.aggregates);
         var colors = {};
         _.each(columns, (value, index) => {
-          colors[value[0]]= Utils.colorScale(index) ;
+          colors[value[0]] = Utils.colorScale(index);
         });
 
+        var currency = data.currency[params.aggregates];
+        var valueFormat = function(value) {
+          return Utils.moneyFormat(
+            Utils.numberFormat(Math.round(value)),
+            currency);
+        };
+        var ratioFormat = d3.format('.1%');
         that.chart = c3.generate({
           bindto: that.wrapper,
           data: {
@@ -45,6 +53,20 @@ export class PieChartComponent extends events.EventEmitter {
             type: 'pie',
             onclick: (d, element) => {
               that.emit('click', that, d);
+            }
+          },
+          pie: {
+            label: {
+              format: (value, ratio, id) => {
+                return valueFormat(value);
+              }
+            }
+          },
+          tooltip: {
+            format: {
+              value: (value, ratio, id, index) => {
+                return valueFormat(value) + ' (' + ratioFormat(ratio) + ')';
+              }
             }
           }
         });

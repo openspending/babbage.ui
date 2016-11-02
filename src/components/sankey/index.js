@@ -54,18 +54,18 @@ export class SanKeyChartComponent extends events.EventEmitter {
     unit = Math.max(400, size.height) / 20;
 
     if (!svg) {
-      svg = d3.select(wrapper).append("svg");
-      svg.attr("class", "sankey-babbage");
-      group = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      svg = d3.select(wrapper).append('svg');
+      svg.attr('class', 'sankey-babbage');
+      group = svg.append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
     api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         size.height = data.cells.length * unit;
-        svg.attr("height", size.height + margin.top + margin.bottom);
-        svg.attr("width", size.width);
+        svg.attr('height', size.height + margin.top + margin.bottom);
+        svg.attr('width', size.width);
 
         var graph = {
           nodes: [],
@@ -74,6 +74,13 @@ export class SanKeyChartComponent extends events.EventEmitter {
         var objs = {};
 
         var targetScale = d3.scale.ordinal().range(['#ddd', '#ccc', '#eee', '#bbb']);
+
+        var currency = data.currency[params.aggregates];
+        var valueFormat = function(value) {
+          return Utils.moneyFormat(
+            Utils.numberFormat(Math.round(value)),
+            currency);
+        };
 
         _.each(data.cells, (cell) => {
           var source = _.find(cell.dimensions, {keyField: sourceKey});
@@ -85,7 +92,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
           var link = {
             value: measure.value,
-            number: d3.format("0,000")(measure.value),
+            number: valueFormat(measure.value),
             isLink: true
           };
 
@@ -136,72 +143,72 @@ export class SanKeyChartComponent extends events.EventEmitter {
 
         group.selectAll('g').remove();
 
-        var link = group.append("g").selectAll(".link")
+        var link = group.append('g').selectAll('.link')
           .data(graph.links)
-          .enter().append("path")
-          .attr("class", "link")
-          .attr("d", path)
-          .style("stroke-width", function(d) {
+          .enter().append('path')
+          .attr('class', 'link')
+          .attr('d', path)
+          .style('stroke-width', function(d) {
             return Math.max(1, d.dy);
           })
-          .style("stroke", function(d) {
+          .style('stroke', function(d) {
             return d.source.color;
           })
           .sort(function(a, b) {
             return b.dy - a.dy;
           })
-          .on("click", (d) => {
+          .on('click', (d) => {
             that.emit('click', that, d);
           });
 
-        link.append("title")
+        link.append('title')
           .text(function(d) {
-            return d.source.name + " → " + d.target.name + "\n" + d.number;
+            return d.source.name + ' → ' + d.target.name + '\n' + d.number;
           });
 
-        var node = group.append("g").selectAll(".node")
+        var node = group.append('g').selectAll('.node')
           .data(graph.nodes)
-          .enter().append("g")
-          .attr("class", "node")
-          .attr("transform", function(d) {
-            return "translate(" + d.x + "," + d.y + ")";
+          .enter().append('g')
+          .attr('class', 'node')
+          .attr('transform', function(d) {
+            return 'translate(' + d.x + ',' + d.y + ')';
           })
-          .on("click", (d) => {
+          .on('click', (d) => {
             that.emit('click', that, d);
           });
 
-        node.append("rect")
-          .attr("height", function(d) {
+        node.append('rect')
+          .attr('height', function(d) {
             return d.dy;
           })
-          .attr("width", sankey.nodeWidth())
-          .style("fill", function(d) {
+          .attr('width', sankey.nodeWidth())
+          .style('fill', function(d) {
             return d.color;
           })
-          .style("stroke", function(d) {
+          .style('stroke', function(d) {
             return d.color;
           })
-          .append("title")
+          .append('title')
           .text(function(d) {
             return d.name
           });
 
-        node.append("text")
-          .attr("x", -6)
-          .attr("y", function(d) {
+        node.append('text')
+          .attr('x', -6)
+          .attr('y', function(d) {
             return d.dy / 2;
           })
-          .attr("dy", ".35em")
-          .attr("text-anchor", "end")
-          .attr("transform", null)
+          .attr('dy', '.35em')
+          .attr('text-anchor', 'end')
+          .attr('transform', null)
           .text(function(d) {
             return d.name;
           })
           .filter(function(d) {
             return d.x < size.width / 2;
           })
-          .attr("x", 6 + sankey.nodeWidth())
-          .attr("text-anchor", "start");
+          .attr('x', 6 + sankey.nodeWidth())
+          .attr('text-anchor', 'start');
 
 
         that.emit('loaded', that, data);

@@ -41,8 +41,8 @@ describe('Babbage.ui table component', function() {
 
     var dimensions = [
       {
-        key: "administrative_classification_admin3_code.admin3_code",
-        name: "admin3_code"
+        key: 'administrative_classification_admin3_code.admin3_code',
+        name: 'admin3_code'
       }
     ];
     var headers = tableComponent.getHeaders(dimensions, measures, expectedAggregate2.cells);

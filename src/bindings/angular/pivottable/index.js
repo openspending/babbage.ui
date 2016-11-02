@@ -26,17 +26,18 @@ export class PivotTableDirective {
               cutoff: 0
             };
 
-            var pivotTableComponent = new PivotTableComponent();
+            var component = new PivotTableComponent();
 
-            pivotTableComponent.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            pivotTableComponent.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
@@ -46,8 +47,8 @@ export class PivotTableDirective {
             var intFormat = numberFormat({digitsAfterDecimal: 0});
 
             var wrapper = element.find('.pivot-table')[0];
-            pivotTableComponent.downloader = $scope.downloader;
-            pivotTableComponent.getPivotData($scope.endpoint, $scope.cube, $scope.state)
+            component.downloader = $scope.downloader;
+            component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
               .then((result) => {
                 $(wrapper).pivot(
                   result.data,

@@ -23,24 +23,31 @@ export class PieChartDirective {
               cutoff: 0
             };
 
-            var pieChart = new PieChartComponent();
+            var component = new PieChartComponent();
             var wrapper = element.find('.pie-chart')[0];
 
-            pieChart.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            pieChart.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
+            component.on('click', function(component, item) {
+              // item.id => drilldown value
+              $scope.$emit('babbage-ui.click', component, item);
+              $scope.$applyAsync();
+            });
 
-            pieChart.downloader = $scope.downloader;
-            pieChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.downloader = $scope.downloader;
+            component.build($scope.endpoint, $scope.cube,
+              $scope.state, wrapper);
           }
         }
       }
