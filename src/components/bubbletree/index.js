@@ -22,27 +22,33 @@ export class BubbleTreeComponent extends events.EventEmitter {
   }
 
   generateBubbleTreeData (cells, params) {
+    // BubbleTree cannot build nodes with zero amount
     var children = [];
     _.each(cells, (cell) => {
       var dimension = _.first(cell.dimensions);
       var measure = _.find(cell.measures, {key: params.aggregates});
-      children.push({
-        label: dimension.nameValue,
-        amount: measure.value
-      });
+      if (measure.value > 0) {
+        children.push({
+          label: dimension.nameValue,
+          key: dimension.keyValue,
+          amount: measure.value
+        });
+      }
     });
-      return {
-        label: 'Total',
-        amount: _.reduce(
-          children,
-          function(result, item) {
-            return result + item.amount;
-          },
-          0
-        ),
-        children: children
-      };
+    var result = {
+      label: 'Total',
+      key: null,
+      amount: _.reduce(
+        children,
+        function(result, item) {
+          return result + item.amount;
+        },
+        0
+      ),
+      children: children
     };
+    return result.amount > 0 ? result : null;
+  };
 
   build(endpoint, cube, params, wrapper, colorSchema) {
     var that = this;
@@ -58,16 +64,18 @@ export class BubbleTreeComponent extends events.EventEmitter {
           params
         );
 
-        that.bubbleTree = new BubbleTree({
-          autoColors: true,
-          data: bubbleTreeData,
-          container: wrapper,
-          nodeClickCallback: (node) => {
-            if (node.level > 0) {
-              that.emit('click', that, node);
+        if (bubbleTreeData) {
+          that.bubbleTree = new BubbleTree({
+            autoColors: true,
+            data: bubbleTreeData,
+            container: wrapper,
+            nodeClickCallback: (node) => {
+              if (node.level > 0) {
+                that.emit('click', that, node);
+              }
             }
-          }
-        });
+          });
+        }
 
         that.emit('loaded', that, data);
         that.emit('ready', that, data, null);

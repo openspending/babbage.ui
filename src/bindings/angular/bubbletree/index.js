@@ -41,6 +41,7 @@ export class BubbleTreeDirective {
               $scope.$applyAsync();
             });
             bubbleTree.on('click', (component, item) => {
+              // item.key => drilldown value
               $scope.$emit('babbage-ui.click', component, item);
               // Backward compatibility; should be removed on major version change
               $scope.$emit('bubbletree-click', component, item);
