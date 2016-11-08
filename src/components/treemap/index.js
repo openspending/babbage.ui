@@ -1,5 +1,5 @@
 import { Api } from '../../api'
-import c3 from 'c3'
+import d3 from 'd3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
@@ -51,10 +51,10 @@ export class TreeMapComponent extends events.EventEmitter {
       .size([size.width, size.height])
       .sticky(true)
       .sort(function(a, b) {
-        return a._value - b._value;
+        return a.value - b.value;
       })
       .value(function(d) {
-        return d._value;
+        return d.value;
       });
 
     d3.select(wrapper).select('div').remove();
@@ -71,21 +71,22 @@ export class TreeMapComponent extends events.EventEmitter {
         root.children = [];
         root.summary = data.summary[params.aggregates];
         root.currency = data.currency[params.aggregates];
-        root.summary_fmt = Utils.numberFormat(data.summary[params.aggregates]);
-        root.summary_fmt_currency = Utils.moneyFormat(root.summary_fmt, root.currency);
+        root.summaryFmt = Utils.numberFormat(data.summary[params.aggregates]);
+        root.summaryFmtCurrency = Utils.moneyFormat(root.summaryFmt,
+          root.currency);
 
         _.each(data.cells, (item, index) => {
           var dimension = _.first(item.dimensions);
           var measure = _.find(item.measures, {key: params.aggregates});
           var cell = {};
-          cell._area_fmt = Utils.numberFormat(Math.round(measure.value));
-          cell._area_fmt_currency = Utils.moneyFormat(cell._area_fmt, root.currency);
-          cell._value = measure.value;
-          cell._key = dimension.keyValue;
-          cell._name = dimension.nameValue;
-          cell._color = Utils.colorScale(index, colorSchema);
+          cell.areaFmt = Utils.numberFormat(Math.round(measure.value));
+          cell.areaFmtCurrency = Utils.moneyFormat(cell.areaFmt, root.currency);
+          cell.value = measure.value;
+          cell.key = dimension.keyValue;
+          cell.name = dimension.nameValue;
+          cell.color = Utils.colorScale(index, colorSchema);
 
-          cell._percentage = (measure.value && data.summary && params.aggregates)
+          cell.percentage = (measure.value && data.summary && params.aggregates)
             ? (measure.value / Math.max(data.summary[params.aggregates], 1))
             : 0;
           root.children.push(cell);
@@ -101,26 +102,26 @@ export class TreeMapComponent extends events.EventEmitter {
           .call(positionNode)
           .style('background', '#fff')
           .html(function(d) {
-            if (d._percentage < 0.02) {
+            if (d.percentage < 0.02) {
               return '';
             }
-            return d.children ? null : `<span class=\'amount\'>${d._area_fmt_currency}</span>${d._name}`;
+            return d.children ? null : `<span class=\'amount\'>${d.areaFmtCurrency}</span>${d.name}`;
           })
           .on('click', (d) => {
             that.emit('click', that, d);
           })
           .on('mouseover', function(d) {
             d3.select(this).transition().duration(200)
-              .style({'background': d3.rgb(d._color).darker() });
+              .style({'background': d3.rgb(d.color).darker() });
           })
           .on('mouseout', function(d) {
             d3.select(this).transition().duration(500)
-              .style({'background': d._color});
+              .style({'background': d.color});
           })
           .transition()
           .duration(500)
           .delay(function(d, i) { return Math.min(i * 30, 1500); })
-          .style('background', function(d) { return d._color; });
+          .style('background', function(d) { return d.color; });
 
         // Check & Remove all rectangles with text overlfow:
         var boxContentRemover = (item => $(item).empty());

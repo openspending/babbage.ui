@@ -49,7 +49,7 @@ export class Api {
       if (_.isArray(value)) {
         if (key == 'order') {
           params[key] = _.map(value, (item) => {
-            return item.key+':'+item.direction
+            return item.key + ':' + item.direction
           }).join(',');
         } else {
           params[key] = value.join('|');
@@ -78,10 +78,16 @@ export class Api {
 
   getDisplayField(model, field) {
     var result = field;
-    var dimension = _.find(model.dimensions, {key_ref: field});
+    var dimension = _.find(model.dimensions, {
+      // jscs:disable
+      key_ref: field
+      // jscs:enable
+    });
 
     if (dimension) {
+      // jscs:disable
       result = dimension.label_ref;
+      // jscs:enable
     }
 
     return result;
@@ -118,7 +124,9 @@ export class Api {
 
 
   getDimensionKeyById(model, id) {
+    // jscs:disable
     return model.dimensions[id].key_ref;
+    // jscs:enable
   }
 
   getDrillDownDimensionKey(model, dimensionId) {
@@ -176,8 +184,8 @@ export class Api {
     params.pagesize = params.pagesize || 20;
     var model;
 
-    return this.getPackageModel(endpoint, cube).then((_model) => {
-      model = _model;
+    return this.getPackageModel(endpoint, cube).then((packageModel) => {
+      model = packageModel;
       var dimensions = that.getDimensionsFromModel(model);
       var measures = that.getMeasuresFromModel(model);
       if (!originParams.fields){
@@ -200,8 +208,10 @@ export class Api {
       result.headers = [];
       result.columns = [];
       result.info = {};
+      // jscs:disable
       result.info.total = facts.total_fact_count;
       result.info.pageSize = facts.page_size;
+      // jscs:enable
       result.info.page = facts.page;
       _.each(facts.fields, (field) => {
         var fieldParts = field.split('.');
@@ -275,14 +285,16 @@ export class Api {
         var result = {
           currency: {},
           summary: {},
+          // jscs:disable
           count: data.total_cell_count,
+          // jscs:enable
           cells: []
         };
 
         _.each(measures, (measure) => {
-          let measureModel = _.find(measureModelList, {'label': measure.value});
+          let measureModel = _.find(measureModelList, {label: measure.value});
           result.summary[measure.key] = data.summary[measure.key];
-          result.currency[measure.key] = measureModel["currency"];
+          result.currency[measure.key] = measureModel.currency;
         });
 
         _.each(data.cells, (cell) => {

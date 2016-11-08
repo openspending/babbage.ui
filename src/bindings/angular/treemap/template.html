@@ -15,11 +15,11 @@
 
 <div class="treemap-list">
   <div class="treemap-table-bar">
-    <a href="#" ng-click="treeMapTable.toggle()" ng-show="treeMapTable.show">
+    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-show="treeMapTable.show">
       <span class="fa fa-caret-up"></span>
       Hide list
     </a>
-    <a href="#" ng-click="treeMapTable.toggle()" ng-hide="treeMapTable.show">
+    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-hide="treeMapTable.show">
       <span class="fa fa-caret-down"></span>
       Show list
     </a>
@@ -28,36 +28,36 @@
     <thead>
     <tr>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = '_name'; treeMapTable.invertSorting();">
+        <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'name'; treeMapTable.invertSorting();">
           title
-          <span ng-show="treeMapTable.sortAttr == '_name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          <span ng-show="treeMapTable.sortAttr == 'name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.invertSorting();">
+        <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.invertSorting();">
           amount
           <span ng-show="treeMapTable.sortAttr == 'value'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
-        <a href="#" ng-click="treeMapTable.sortAttr = '_percentage'; treeMapTable.invertSorting();">
+        <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'percentage'; treeMapTable.invertSorting();">
           share
-          <span ng-show="treeMapTable.sortAttr == '_percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          <span ng-show="treeMapTable.sortAttr == 'percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow" ng-click="treeMapTable.selectTableRow(item)">
-      <td><span class="colorbox" ng-style="{'background-color':item._color}"></span>{{ item._name }}</td>
-      <td>{{ item._area_fmt_currency }}</td>
-      <td>{{ (item._percentage * 100).toFixed(2) }}%</td>
+      <td><span class="colorbox" ng-style="{'background-color':item.color}"></span>{{ item.name }}</td>
+      <td>{{ item.areaFmtCurrency }}</td>
+      <td>{{ (item.percentage * 100).toFixed(2) }}%</td>
     </tr>
     </tbody>
     <tfoot>
       <tr>
         <td>Total</td>
-        <td>{{ treeMapTable.data.summary_fmt_currency }}</td>
+        <td>{{ treeMapTable.data.summaryFmtCurrency }}</td>
         <td>100%</td>
       </tr>
     </tfoot>

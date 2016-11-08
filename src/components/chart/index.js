@@ -1,4 +1,5 @@
 import { Api } from '../../api/index'
+import d3 from 'd3'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
@@ -94,7 +95,7 @@ export class ChartComponent extends events.EventEmitter {
             },
             y: {
               tick: {
-                format: d3.format("0,000"),
+                format: d3.format('0,000'),
                 culling: true,
                 fit: true
               },

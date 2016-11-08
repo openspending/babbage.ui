@@ -23,28 +23,30 @@ export class SanKeyChartDirective {
               cutoff: 0
             };
 
-            var sanKeyChart = new SanKeyChartComponent();
+            var component = new SanKeyChartComponent();
             var wrapper = element.find('.sankey-chart')[0];
 
-            sanKeyChart.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            sanKeyChart.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
               $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            sanKeyChart.on('click', (sankeyComponent, item) => {
-              $scope.$emit('sankey-click', sankeyComponent, item);
+            component.on('click', (component, item) => {
+              $scope.$emit('babbage-ui.click', component, item);
+              // Backward compatibility; should be removed on major version change
+              $scope.$emit('sankey-click', component, item);
               $scope.$applyAsync();
             });
 
-            sanKeyChart.downloader = $scope.downloader;
-            sanKeyChart.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.downloader = $scope.downloader;
+            component.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
           }
         }
       }

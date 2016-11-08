@@ -51,7 +51,7 @@
                 </div>
 
         -->
-        <div id="treemap-{{ treemapid }}" class="treemap-chart"></div>
+        <div v-bind:id="treemapid" class="treemap-chart"></div>
 
     </div>
 
@@ -150,7 +150,7 @@
                 // DEBUG:
                 // console.error("TREEMAP: Real thing here .. :P PACKAGEID: ", this.treemapid)
                 const treeMap = new TreeMapComponent()
-                const wrapper = document.querySelector(`div#treemap-${this.treemapid}`)
+                const wrapper = document.querySelector(`div#${this.treemapid}`)
                 // Build and track events??
                 // Maybe assign it to a map; so can drill up and down; cached??
                 treeMap.build(this.endpoint, this.cube, this.state, wrapper)

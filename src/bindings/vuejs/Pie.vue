@@ -18,7 +18,7 @@
     </div>
     -->
 
-    <div id="pie-{{ pieid }}" class="pie-chart"></div>
+    <div v-bind:id="pieid" class="pie-chart"></div>
 
 </template>
 
@@ -56,7 +56,7 @@
         methods: {
             rebuildPieChart: function () {
                 const pieChart = new PieChartComponent()
-                const wrapper = document.querySelector(`div#pie-${this.pieid}`)
+                const wrapper = document.querySelector(`div#${this.pieid}`)
 
                 pieChart.build(this.endpoint, this.cube, this.state, wrapper)
                 pieChart.on('click', function (PieChartComponent, item) {

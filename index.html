@@ -1,100 +1,101 @@
 <!DOCTYPE html>
-<html ng-app="demo">
+<html ng-app="DemoApplication">
 <head>
   <meta charset="utf-8">
   <title>babbage.ui</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="dist/babbage.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://rawgit.com/c3js/c3/0.4.11/c3.min.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
+  <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+  <script src="https://rawgit.com/d3/d3-plugins/master/sankey/sankey.js" type="text/javascript"></script>
+  <script src="https://rawgit.com/c3js/c3/0.4.11/c3.min.js" type="text/javascript"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
-
 </head>
 <body>
-<div ng-view>
-</div>
+<div ng-controller="DemoController">
+  <pie-chart
+    cube="{{cube}}"
+    state="stateForCharts"
+    endpoint="{{apiUrl}}"
+  ></pie-chart>
 
-<script type="text/ng-template" id="demo.html">
-  <div id="pieChart">
-    <pie-chart
-      cube="{{cube}}"
-      state="stateForCharts"
-      endpoint="{{apiUrl}}"
-      ></pie-chart>
+  <chart
+    cube="{{cube}}"
+    type="bar"
+    state="stateForMultiSeriesCharts"
+    endpoint="{{apiUrl}}"
+  ></chart>
 
-    <chart
-      cube="{{cube}}"
-      type="bar"
-      state="stateForMultiSeriesCharts"
-      endpoint="{{apiUrl}}"
-    ></chart>
+  <chart
+    cube="{{cube}}"
+    type="line"
+    state="stateForMultiSeriesCharts"
+    endpoint="{{apiUrl}}"
+  ></chart>
 
-
-    <chart
-      cube="{{cube}}"
-      type="line"
-      state="stateForMultiSeriesCharts"
-      endpoint="{{apiUrl}}"
-    ></chart>
-
-    <chart
+  <chart
     cube="{{cube}}"
     type="bar"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
-    ></chart>
+  ></chart>
 
-    <chart
+  <chart
     cube="{{cube}}"
     type="line"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
-    ></chart>
+  ></chart>
 
-    <tree-map
-      cube="{{cube}}"
-      state="stateForCharts"
-      endpoint="{{apiUrl}}"
-    ></tree-map>
+  <tree-map
+    cube="{{cube}}"
+    state="stateForCharts"
+    endpoint="{{apiUrl}}"
+  ></tree-map>
 
-    <bubbletree
-      cube="{{cube}}"
-      state="stateForCharts"
-      endpoint="{{apiUrl}}"
-    ></bubbletree>
+  <bubbletree
+    cube="{{cube}}"
+    state="stateForCharts"
+    endpoint="{{apiUrl}}"
+  ></bubbletree>
 
-    <geo-view
-      cube="{{cube}}"
-      state="stateForGeoView"
-      endpoint="{{apiUrl}}"
-      cosmo-endpoint="{{cosmoEndpoint}}"
-      country-code="MD"
-    ></geo-view>
+  <san-key-chart
+    cube="{{cube}}"
+    state="stateForSankey"
+    endpoint="{{apiUrl}}"
+  ></san-key-chart>
 
-    <babbage-table
-      cube="{{cube}}"
-      state="stateForCharts"
-      endpoint="{{apiUrl}}"
-    ></babbage-table>
+  <geo-view
+    cube="{{cube}}"
+    state="stateForGeoView"
+    endpoint="{{apiUrl}}"
+    cosmo-endpoint="{{cosmoEndpoint}}"
+    country-code="MD"
+  ></geo-view>
 
-    <pivot-table
-      cube="{{cube}}"
-      state="stateForPivot"
-      endpoint="{{apiUrl}}"
-    ></pivot-table>
+  <babbage-table
+    cube="{{cube}}"
+    state="stateForCharts"
+    endpoint="{{apiUrl}}"
+  ></babbage-table>
 
-    <facts
-      cube="{{cube}}"
-      state="stateForFacts"
-      endpoint="{{apiUrl}}"
-    ></facts>
+  <pivot-table
+    cube="{{cube}}"
+    state="stateForPivot"
+    endpoint="{{apiUrl}}"
+  ></pivot-table>
 
-  </div>
-
-</script>
+  <facts
+    cube="{{cube}}"
+    state="stateForFacts"
+    endpoint="{{apiUrl}}"
+  ></facts>
+</div>
 
 <script src='dist/babbage-angular.js'></script>
 <script>
@@ -106,8 +107,9 @@
   var tableDirective = new window.Babbage.BabbageTableDirective();
   var pivotTableDirective = new window.Babbage.PivotTableDirective();
   var factsDirective = new window.Babbage.FactsDirective();
+  var sankeyDirective = new window.Babbage.SanKeyChartDirective();
 
-  var demo = angular.module('demo', ['ngRoute', 'angular.filter']);
+  var demo = angular.module('DemoApplication', ['angular.filter']);
 
   pieDirective.init(demo);
   chartDirective.init(demo);
@@ -117,18 +119,9 @@
   geoViewDirective.init(demo);
   pivotTableDirective.init(demo);
   factsDirective.init(demo);
+  sankeyDirective.init(demo);
 
-  demo.config(['$routeProvider',
-    function($routeProvider) {
-      $routeProvider.
-      when('/', {
-        templateUrl: 'demo.html',
-        controller: 'DemoCtrl',
-        reloadOnSearch: false
-      });
-    }]);
-
-  demo.controller('DemoCtrl', function ($scope) {
+  demo.controller('DemoController', function ($scope) {
     $scope.cube = 'boost:boost-moldova-2005-2014';
     $scope.apiUrl = 'http://next.openspending.org/api/3';
     $scope.cosmoEndpoint = 'http://cosmopolitan.openspending.org/v1/';
@@ -153,10 +146,20 @@
       aggregates: 'adjusted.sum'
     };
 
+    $scope.stateForSankey = {
+      source: ['administrative_classification_2.admin1'],
+      target: ['administrative_classification_3.admin2'],
+      aggregates: 'adjusted.sum'
+    };
+
     $scope.stateForGeoView = {
       group: ['geo_source_2.admin2'],
       aggregates: 'adjusted.sum'
     };
+
+    $scope.$on('babbage-ui.click', function($event, component, item) {
+      console.log('Click', component, item);
+    });
   });
 </script>
 </body>

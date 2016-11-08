@@ -7,7 +7,7 @@ var includeFile = require('gulp-include-file');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var less = require('gulp-less');
-var minifyCss = require('gulp-minify-css');
+var minifyCss = require('gulp-clean-css');
 var prefixer = require('gulp-autoprefixer');
 
 var cssDir = path.join(__dirname, '/less');
