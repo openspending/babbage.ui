@@ -4,8 +4,7 @@ import _ from 'lodash';
 export class ChartDirective {
   init(angularModule) {
     angularModule.directive('chart', [
-      '$window',
-      function($window) {
+      function() {
         return {
           restrict: 'EA',
           scope: {
@@ -25,24 +24,26 @@ export class ChartDirective {
               cutoff: 0
             };
 
-            var chart = new ChartComponent();
+            var component = new ChartComponent();
             var wrapper = element.find('.chart-babbage')[0];
 
-            chart.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            chart.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
 
-            chart.downloader = $scope.downloader;
-            chart.build($scope.type, $scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.downloader = $scope.downloader;
+            component.build($scope.type, $scope.endpoint,
+              $scope.cube, $scope.state, wrapper);
           }
         }
       }

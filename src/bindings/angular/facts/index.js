@@ -33,8 +33,9 @@ export class FactsDirective {
               })
                 .then((tableData) => {
                   $scope.tableData = tableData;
-                  $scope.current = parseInt(tableData.info.page-1, 10) || 0;
-                  $scope.num = Math.ceil(tableData.info.total / tableData.info.pageSize);
+                  $scope.current = parseInt(tableData.info.page - 1, 10) || 0;
+                  $scope.num = Math.ceil(tableData.info.total /
+                    tableData.info.pageSize);
                   var pages = [];
                   var num = $scope.num;
                   var range = 3;
@@ -43,11 +44,11 @@ export class FactsDirective {
 
                   if (low < 0) {
                     low = 0;
-                    high = Math.min((2*range)+1, num);
+                    high = Math.min((2 * range) + 1, num);
                   }
                   if (high > num) {
                     high = num;
-                    low = Math.max(1, num - (2*range)+1);
+                    low = Math.max(1, num - (2 * range) + 1);
                   }
 
                   for (var page = low; page <= high; page++) {
@@ -72,26 +73,27 @@ export class FactsDirective {
             });
             facts.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.columns.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.columns.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
 
             $scope.getSort = function(field) {
               return _.find($scope.state.order, {key: field});
-            }
+            };
 
             $scope.setSort = function(key, direction) {
               $scope.state.order = [{key: key, direction: direction}];
               update(facts);
-            }
+            };
 
             $scope.setPage = function(page) {
               if (page >= 0 && page <= $scope.num) {
-                $scope.state.page = page+1;
+                $scope.state.page = page + 1;
                 update(facts);
               }
-            }
+            };
 
             update(facts);
           }

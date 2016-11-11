@@ -39,7 +39,7 @@ export class Downloader {
     return this.get(url)
       .then(JSON.parse)
       .catch(function(err) {
-        console.error("getJson:", err)
+        console.error('getJson:', err);
       });
   }
 

@@ -64,7 +64,7 @@
     -->
 
     <div class="bubbletree-wrapper">
-        <div id="bubbletree-{{ bubbletreeid }}"
+        <div v-bind:id="bubbletreeid"
              class="bubbletree"
         >
         </div>
@@ -103,7 +103,7 @@
             // See what is in vm.$root ...
             // console.error("ROOT", util.inspect(this.$root, {depth: 10}))
             if (this.simulation) {
-                console.error("TREEMAP: Simulation Mode ON")
+                console.error("BubbleTree: Simulation Mode ON")
                 const endpoint = "http://next.openspending.org/api/3"
                 // const cube = "boost:boost-moldova-2005-2014"
                 const cube = "0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test"
@@ -140,7 +140,7 @@
             rebuildBubbleTree: function () {
 
                 const bubbleTree = new BubbleTreeComponent()
-                const wrapper = document.querySelector(`div#bubbletree-${this.bubbletreeid}`)
+                const wrapper = document.querySelector(`div#${this.bubbletreeid}`)
 
                 bubbleTree.build(this.endpoint, this.cube, this.state, wrapper);
                 bubbleTree.on('click', function (bubbleTreeComponent, item) {
@@ -163,7 +163,7 @@
                 }
 
                 const bubbleTree = new BubbleTreeComponent()
-                const wrapper = document.querySelector(`div#bubbletree-${this.bubbletreeid}`)
+                const wrapper = document.querySelector(`div#${this.bubbletreeid}`)
 
                 bubbleTree.build(endpoint, cube, state, wrapper);
                 bubbleTree.on('click', function (bubbleTreeComponent, item) {

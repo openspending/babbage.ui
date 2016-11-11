@@ -23,49 +23,53 @@ class TreemapDirective {
               cutoff: 0
             };
 
-            var treeMap = new TreeMapComponent();
+            var component = new TreeMapComponent();
             var wrapper = element.find('.treemap-chart')[0];
 
             // TreeMap-Table:
             $scope.treeMapTable = {
               show: true,
-              sortAttr: '_percentage',
+              sortAttr: 'percentage',
               sortDesc: true,
               data: null,
               invertSorting: function(){ this.sortDesc = !this.sortDesc; },
               toggle: () => {
                 let treeMapTable = $scope.treeMapTable;
-                let treeMapSection = $(".treemap-table");
+                let treeMapSection = $('.treemap-table');
                 treeMapTable.show ? treeMapSection.fadeOut() : treeMapSection.fadeIn();
                 treeMapTable.show = !treeMapTable.show;
               },
               selectTableRow: (item) => {
-                $scope.$emit('treemap-click', treeMap, item);
+                $scope.$emit('babbage-ui.click', component, item);
+                // Backward compatibility; should be removed on major version change
+                $scope.$emit('treemap-click', component, item);
                 $scope.$applyAsync();
               }
             };
-            treeMap.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            treeMap.on('loaded', (treeMapComponent, data, root) => {
+            component.on('loaded', (treeMapComponent, data, root) => {
               $scope.treeMapTable.data = root;
               $scope.$applyAsync();
             });
-            treeMap.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
               $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            treeMap.on('click', (treeMapComponent, item) => {
-              $scope.$emit('treemap-click', treeMapComponent, item);
+            component.on('click', (component, item) => {
+              $scope.$emit('babbage-ui.click', component, item);
+              // Backward compatibility; should be removed on major version change
+              $scope.$emit('treemap-click', component, item);
               $scope.$applyAsync();
             });
-            treeMap.downloader = $scope.downloader;
-            treeMap.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.downloader = $scope.downloader;
+            component.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
           }
         }
       }

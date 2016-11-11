@@ -35,17 +35,22 @@ export class BubbleTreeDirective {
             });
             bubbleTree.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            bubbleTree.on('click', (bubbleTreeComponent, item) => {
-              $scope.$emit('bubbletree-click', bubbleTreeComponent, item);
+            bubbleTree.on('click', (component, item) => {
+              // item.key => drilldown value
+              $scope.$emit('babbage-ui.click', component, item);
+              // Backward compatibility; should be removed on major version change
+              $scope.$emit('bubbletree-click', component, item);
               $scope.$applyAsync();
             });
 
             bubbleTree.downloader = $scope.downloader;
-            bubbleTree.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            bubbleTree.build($scope.endpoint, $scope.cube,
+              $scope.state, wrapper);
           }
         }
       }

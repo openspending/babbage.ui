@@ -24,24 +24,25 @@ export class BabbageTableDirective {
               cutoff: 0
             };
 
-            var babbageTable = new TableComponent();
+            var component = new TableComponent();
 
-            babbageTable.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            babbageTable.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
 
             $q((resolve, reject) => {
-              babbageTable.downloader = $scope.downloader;
-              babbageTable.getTableData($scope.endpoint, $scope.cube, $scope.state)
+              component.downloader = $scope.downloader;
+              component.getTableData($scope.endpoint, $scope.cube, $scope.state)
                 .then(resolve)
                 .catch(reject)
             })

@@ -31,24 +31,25 @@ export class GeoViewDirective {
               cutoff: 0
             };
 
-            var geoView = new GeoViewComponent();
+            var component = new GeoViewComponent();
 
-            geoView.on('loading', () => {
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            geoView.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
-              $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
+              $scope.status.isEmpty = !(_.isObject(data) &&
+                (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
 
             $q((resolve, reject) => {
-              geoView.downloader = $scope.downloader;
-              geoView.getGeoMapData(
+              component.downloader = $scope.downloader;
+              component.getGeoMapData(
                 $scope.endpoint,
                 $scope.cube,
                 $scope.state
@@ -57,7 +58,6 @@ export class GeoViewDirective {
             .then((result) => {
               $scope.values = result;
             });
-
           }
         }
       }
