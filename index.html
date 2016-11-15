@@ -22,6 +22,7 @@
     cube="{{cube}}"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></pie-chart>
 
   <chart
@@ -29,6 +30,7 @@
     type="bar"
     state="stateForMultiSeriesCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></chart>
 
   <chart
@@ -36,6 +38,7 @@
     type="line"
     state="stateForMultiSeriesCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></chart>
 
   <chart
@@ -43,6 +46,7 @@
     type="bar"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></chart>
 
   <chart
@@ -50,24 +54,28 @@
     type="line"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></chart>
 
   <tree-map
     cube="{{cube}}"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></tree-map>
 
   <bubbletree
     cube="{{cube}}"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></bubbletree>
 
   <san-key-chart
     cube="{{cube}}"
     state="stateForSankey"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></san-key-chart>
 
   <geo-view
@@ -76,25 +84,37 @@
     endpoint="{{apiUrl}}"
     cosmo-endpoint="{{cosmoEndpoint}}"
     country-code="MD"
+    currency-sign="MDL"
+    format-value="formatValue"
   ></geo-view>
 
   <babbage-table
     cube="{{cube}}"
     state="stateForCharts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></babbage-table>
 
   <pivot-table
     cube="{{cube}}"
     state="stateForPivot"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></pivot-table>
 
   <facts
     cube="{{cube}}"
     state="stateForFacts"
     endpoint="{{apiUrl}}"
+    format-value="formatValue"
   ></facts>
+
+  <radar-chart
+    cube="{{cube}}"
+    state="stateForRadar"
+    endpoint="{{apiUrl}}"
+    format-value="formatValue"
+  ></radar-chart>
 </div>
 
 <script src='dist/babbage-angular.js'></script>
@@ -108,6 +128,7 @@
   var pivotTableDirective = new window.Babbage.PivotTableDirective();
   var factsDirective = new window.Babbage.FactsDirective();
   var sankeyDirective = new window.Babbage.SanKeyChartDirective();
+  var radarDirective = new window.Babbage.RadarChartDirective();
 
   var demo = angular.module('DemoApplication', ['angular.filter']);
 
@@ -120,11 +141,16 @@
   pivotTableDirective.init(demo);
   factsDirective.init(demo);
   sankeyDirective.init(demo);
+  radarDirective.init(demo);
 
   demo.controller('DemoController', function ($scope) {
     $scope.cube = 'boost:boost-moldova-2005-2014';
     $scope.apiUrl = 'http://next.openspending.org/api/3';
     $scope.cosmoEndpoint = 'http://cosmopolitan.openspending.org/v1/';
+
+    $scope.formatValue = function(value) {
+      return ':-) ' + (parseFloat(value) || 0.0).toFixed(2);
+    };
 
     $scope.stateForCharts = {
       group: ['administrative_classification_2.admin1'],
@@ -143,6 +169,12 @@
     $scope.stateForPivot = {
       cols: ['date_2.year'],
       rows: ['administrative_classification_2.admin1', 'fin_source_2.fin_source'],
+      aggregates: 'adjusted.sum'
+    };
+
+    $scope.stateForRadar = {
+      cols: ['date_2.year'],
+      rows: ['fin_source_2.fin_source'],
       aggregates: 'adjusted.sum'
     };
 

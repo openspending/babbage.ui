@@ -14,7 +14,8 @@ export class PivotTableDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -43,8 +44,12 @@ export class PivotTableDirective {
             });
 
             var sum = $.pivotUtilities.aggregatorTemplates.sum;
-            var numberFormat = $.pivotUtilities.numberFormat;
-            var intFormat = numberFormat({digitsAfterDecimal: 0});
+
+            var formatValue = $scope.formatValue;
+            if (!_.isFunction(formatValue)) {
+              var numberFormat = $.pivotUtilities.numberFormat;
+              formatValue = numberFormat({digitsAfterDecimal: 0});
+            }
 
             var wrapper = element.find('.pivot-table')[0];
             component.downloader = $scope.downloader;
@@ -55,7 +60,7 @@ export class PivotTableDirective {
                   {
                     rows: result.rows,
                     cols: result.cols,
-                    aggregator: sum(intFormat)(['value'])
+                    aggregator: sum(formatValue)(['value']),
                   }
                 );
                 $scope.$applyAsync();

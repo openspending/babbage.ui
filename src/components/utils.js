@@ -139,3 +139,7 @@ export function moneyFormat(amount, currency) {
     return amount ? amount : '';
   }
 }
+
+export function defaultFormatValue(value) {
+  return numberFormat(Math.round(value))
+}

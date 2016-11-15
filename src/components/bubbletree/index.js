@@ -1,5 +1,4 @@
 import { Api } from '../../api/index'
-import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
@@ -14,11 +13,22 @@ export class BubbleTreeComponent extends events.EventEmitter {
     this.wrapper = null;
     this.bubbleTree = null;
     this.downloader = null;
+    this.formatValue = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getValueFormatter(currency) {
+    var formatValue = this.formatValue;
+    if (!_.isFunction(formatValue)) {
+      formatValue = Utils.defaultFormatValue;
+    }
+    return function(value) {
+      return Utils.moneyFormat(formatValue(value), currency);
+    };
   }
 
   generateBubbleTreeData (cells, params) {
@@ -64,11 +74,15 @@ export class BubbleTreeComponent extends events.EventEmitter {
           params
         );
 
+        var currency = data.currency[params.aggregates];
+        var valueFormat = that.getValueFormatter(currency);
+
         if (bubbleTreeData) {
           that.bubbleTree = new BubbleTree({
             autoColors: true,
             data: bubbleTreeData,
             container: wrapper,
+            formatValue: valueFormat,
             nodeClickCallback: (node) => {
               if (node.level > 0) {
                 that.emit('click', that, node);

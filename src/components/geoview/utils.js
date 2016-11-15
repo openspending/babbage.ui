@@ -129,6 +129,7 @@ function updateValues(geoJson, options) {
   var values = [];
   _.each(geoJson.features, (item) => {
     item.value = options.data[item.properties.name];
+    item.formattedValue = options.formatValue(item.value);
     if (!_.isUndefined(item.value)) {
       values.push(item.value);
     }
@@ -167,14 +168,22 @@ function prepareGeoJson(geoJson, options) {
   updateValues(geoJson, options);
 }
 
-function formatValue(value, currencySign) {
+function formatAmount(value, currencySign, valueFormatter) {
   if (_.isUndefined(value)) {
     return 'N/A';
   }
-  return formatAmount(value, currencySign);
+  valueFormatter = _.isFunction(valueFormatter) ? valueFormatter : _.identity;
+  return valueFormatter(value) +
+    (currencySign ? ' ' + currencySign : '');
 }
 
-function formatAmount(value, currencySign) {
+function formatValue(value) {
+  var num = parseFloat(value);
+  if (!isFinite(num)) {
+    return value;
+  }
+  value = num;
+
   var suffixes = [
     [1000000000, ' Billions'],
     [1000000, ' Millions'],
@@ -189,12 +198,7 @@ function formatAmount(value, currencySign) {
     }
   }
 
-  var result = (new Number(value)).toFixed(2) + suffix;
-  if (currencySign) {
-    result += ' ' + currencySign;
-  }
-
-  return result;
+  return (1.0 * value || 0.0).toFixed(2) + suffix;
 }
 
 function setSelection(datum, options) {
@@ -231,7 +235,7 @@ function setSelection(datum, options) {
       if (d.properties.name) {
         result += d.properties.name + ': ';
       }
-      result += formatValue(d.value, options.currencySign);
+      result += formatAmount(d.formattedValue, options.currencySign);
       return result;
     },
     text: function(d) {
@@ -257,7 +261,8 @@ function setSelection(datum, options) {
       if (datum.properties.name) {
         result += '<span>' + datum.properties.name + '</span>: ';
       }
-      result += '<b>' + formatValue(datum.value, options.currencySign) + '</b>';
+      result += '<b>' + formatAmount(datum.formattedValue,
+        options.currencySign) + '</b>';
 
       return result;
     },
@@ -309,4 +314,5 @@ module.exports.updateScales = updateScales;
 module.exports.updateValues = updateValues;
 module.exports.setSelection = setSelection;
 module.exports.formatAmount = formatAmount;
+module.exports.formatValue = formatValue;
 module.exports.generateValueRanges = generateValueRanges;

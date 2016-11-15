@@ -13,7 +13,8 @@ module.exports = function(ngModule) {
           countryCode: '@',
           currencySign: '@?',
           values: '=?',
-          cosmoEndpoint: '@'
+          cosmoEndpoint: '@',
+          formatValue: '=?'
         },
         template: '<div class="babbage-geoview"></div>',
         replace: false,
@@ -42,6 +43,7 @@ module.exports = function(ngModule) {
                 code: countryCode,
                 data: {},
                 cosmoApiUrl: $scope.cosmoEndpoint,
+                formatValue: $scope.formatValue,
                 bindResize: function(callback) {
                   resizeHandlers.push(callback);
                   $window.addEventListener('resize', callback);

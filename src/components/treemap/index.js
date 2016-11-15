@@ -23,16 +23,26 @@ function positionNode() {
 }
 
 export class TreeMapComponent extends events.EventEmitter {
+
   constructor() {
     super();
     this.wrapper = null;
     this.treemap = null;
     this.downloader = null;
+    this.formatValue = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getValueFormatter() {
+    var formatValue = this.formatValue;
+    if (!_.isFunction(formatValue)) {
+      formatValue = Utils.defaultFormatValue;
+    }
+    return formatValue;
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -67,11 +77,13 @@ export class TreeMapComponent extends events.EventEmitter {
     api.downloader = this.downloader;
     api.aggregate(endpoint, cube, params)
       .then((data) => {
+        var valueFormat = that.getValueFormatter();
+
         var root = {};
         root.children = [];
         root.summary = data.summary[params.aggregates];
         root.currency = data.currency[params.aggregates];
-        root.summaryFmt = Utils.numberFormat(data.summary[params.aggregates]);
+        root.summaryFmt = valueFormat(data.summary[params.aggregates]);
         root.summaryFmtCurrency = Utils.moneyFormat(root.summaryFmt,
           root.currency);
 
@@ -79,7 +91,7 @@ export class TreeMapComponent extends events.EventEmitter {
           var dimension = _.first(item.dimensions);
           var measure = _.find(item.measures, {key: params.aggregates});
           var cell = {};
-          cell.areaFmt = Utils.numberFormat(Math.round(measure.value));
+          cell.areaFmt = valueFormat(measure.value);
           cell.areaFmtCurrency = Utils.moneyFormat(cell.areaFmt, root.currency);
           cell.value = measure.value;
           cell.key = dimension.keyValue;

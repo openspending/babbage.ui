@@ -11,7 +11,8 @@ export class PieChartDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,6 +26,8 @@ export class PieChartDirective {
 
             var component = new PieChartComponent();
             var wrapper = element.find('.pie-chart')[0];
+
+            component.formatValue = $scope.formatValue;
 
             component.on('loading', () => {
               $scope.status.isLoading = true;

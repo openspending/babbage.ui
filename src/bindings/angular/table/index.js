@@ -4,15 +4,16 @@ import _ from 'lodash'
 export class BabbageTableDirective {
   init(angularModule) {
     angularModule.directive('babbageTable', [
-      '$q',
-      function($q) {
+      '$q', '$filter',
+      function($q, $filter) {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -23,6 +24,12 @@ export class BabbageTableDirective {
               isCutOff: false,
               cutoff: 0
             };
+
+            $scope.valueFormatter = $filter('number');
+            $scope.$watch('formatValue', function() {
+              $scope.valueFormatter = _.isFunction($scope.formatValue) ?
+                $scope.formatValue : $filter('number');
+            });
 
             var component = new TableComponent();
 

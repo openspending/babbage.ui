@@ -11,7 +11,8 @@ export class SanKeyChartDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,6 +26,8 @@ export class SanKeyChartDirective {
 
             var component = new SanKeyChartComponent();
             var wrapper = element.find('.sankey-chart')[0];
+
+            component.formatValue = $scope.formatValue;
 
             component.on('loading', () => {
               $scope.status.isLoading = true;

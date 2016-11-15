@@ -12,11 +12,22 @@ export class ChartComponent extends events.EventEmitter {
     this.wrapper = null;
     this.chart = null;
     this.downloader = null;
+    this.formatValue = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getValueFormatter(currency) {
+    var formatValue = this.formatValue;
+    if (!_.isFunction(formatValue)) {
+      formatValue = Utils.defaultFormatValue;
+    }
+    return function(value) {
+      return Utils.moneyFormat(formatValue(value), currency);
+    };
   }
 
   build(chartType, endpoint, cube, params, wrapper, colorSchema) {
@@ -60,6 +71,9 @@ export class ChartComponent extends events.EventEmitter {
           types[column[0]] = chartType;
         });
 
+        var currency = data.currency[params.aggregates];
+        var valueFormat = that.getValueFormatter(currency);
+
         that.chart = c3.generate({
           bindto: that.wrapper,
           data: {
@@ -95,11 +109,16 @@ export class ChartComponent extends events.EventEmitter {
             },
             y: {
               tick: {
-                format: d3.format('0,000'),
+                format: valueFormat,
                 culling: true,
                 fit: true
               },
               lines: [{value: 0}]
+            }
+          },
+          tooltip: {
+            format: {
+              value: valueFormat
             }
           }
         });

@@ -14,10 +14,22 @@ export class PieChartComponent extends events.EventEmitter {
     this.chart = null;
     this.downloader = null;
 
+    this.formatValue = null;
+
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getValueFormatter(currency) {
+    var formatValue = this.formatValue;
+    if (!_.isFunction(formatValue)) {
+      formatValue = Utils.defaultFormatValue;
+    }
+    return function(value) {
+      return Utils.moneyFormat(formatValue(value), currency);
+    };
   }
 
   build(endpoint, cube, params, wrapper, colorSchema) {
@@ -38,11 +50,8 @@ export class PieChartComponent extends events.EventEmitter {
         });
 
         var currency = data.currency[params.aggregates];
-        var valueFormat = function(value) {
-          return Utils.moneyFormat(
-            Utils.numberFormat(Math.round(value)),
-            currency);
-        };
+        var valueFormat = that.getValueFormatter(currency);
+
         var ratioFormat = d3.format('.1%');
         that.chart = c3.generate({
           bindto: that.wrapper,
