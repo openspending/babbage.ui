@@ -1,7 +1,6 @@
 'use strict';
 
 var geoview = require('../../../components/geoview/render');
-var api = require('../../../components/geoview/api');
 
 module.exports = function(ngModule) {
   ngModule.directive('geoview', [
