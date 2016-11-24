@@ -12,7 +12,8 @@ export class BubbleTreeDirective {
             cube: '@',
             type: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -24,23 +25,24 @@ export class BubbleTreeDirective {
               cutoff: 0
             };
 
-            var bubbleTree = new BubbleTreeComponent();
+            var component = new BubbleTreeComponent();
             var wrapper = element.find('.bubbletree')[0];
 
-            bubbleTree.on('loading', () => {
+            component.formatValue = $scope.formatValue;
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            bubbleTree.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
               $scope.status.isEmpty = !(_.isObject(data) &&
                 (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            bubbleTree.on('click', (component, item) => {
+            component.on('click', (component, item) => {
               // item.key => drilldown value
               $scope.$emit('babbage-ui.click', component, item);
               // Backward compatibility; should be removed on major version change
@@ -48,8 +50,8 @@ export class BubbleTreeDirective {
               $scope.$applyAsync();
             });
 
-            bubbleTree.downloader = $scope.downloader;
-            bubbleTree.build($scope.endpoint, $scope.cube,
+            component.downloader = $scope.downloader;
+            component.build($scope.endpoint, $scope.cube,
               $scope.state, wrapper);
           }
         }

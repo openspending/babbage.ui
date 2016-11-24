@@ -11,7 +11,8 @@ class TreemapDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,6 +26,8 @@ class TreemapDirective {
 
             var component = new TreeMapComponent();
             var wrapper = element.find('.treemap-chart')[0];
+
+            component.formatValue = $scope.formatValue;
 
             // TreeMap-Table:
             $scope.treeMapTable = {

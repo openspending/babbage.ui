@@ -169,7 +169,8 @@ function renderLegend(options) {
     var items = [];
     _.each(utils.generateValueRanges(range), (item) => {
       var color = options.color(item.scaledValue);
-      var title = utils.formatAmount(item.value, currencySign);
+      var title = utils.formatAmount(options.formatValue(item.value),
+        currencySign);
       if (item.isMin) {
         title += ' and less';
       }
@@ -193,6 +194,9 @@ function renderLegend(options) {
 }
 
 function render(options) {
+  options.formatValue = _.isFunction(options.formatValue) ?
+    options.formatValue : utils.formatValue;
+
   return api.loadGeoJson(options.cosmoApiUrl, options.code).then((geoObject) => {
     var container = d3.select(options.container);
     var bounds = container.node().getBoundingClientRect();
@@ -206,7 +210,8 @@ function render(options) {
     var path = utils.createPath({
       geoObject: geoObject,
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
+      formatValue: options.formatValue
     });
 
     utils.prepareGeoJson(geoObject, {
@@ -214,13 +219,15 @@ function render(options) {
       color: colorScale,
       width: bounds.width,
       height: bounds.height,
-      data: options.data
+      data: options.data,
+      formatValue: options.formatValue
     });
 
     var infoCard = renderInfoCard({
       container: container,
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
+      formatValue: options.formatValue
     });
 
     var legend = renderLegend({
@@ -229,7 +236,8 @@ function render(options) {
       height: bounds.height,
       color: colorScale,
       currencySign: options.currencySign,
-      range: geoObject.valueRange
+      range: geoObject.valueRange,
+      formatValue: options.formatValue
     });
 
     var map = renderMap(svg.append('g'), {
@@ -242,7 +250,8 @@ function render(options) {
       height: bounds.height,
       currencySign: options.currencySign,
       updateInfoCard: infoCard,
-      bindResize: options.bindResize
+      bindResize: options.bindResize,
+      formatValue: options.formatValue
     });
 
     return {

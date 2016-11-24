@@ -1,7 +1,6 @@
 'use strict';
 
 var geoview = require('../../../components/geoview/render');
-var api = require('../../../components/geoview/api');
 
 module.exports = function(ngModule) {
   ngModule.directive('geoview', [
@@ -13,7 +12,8 @@ module.exports = function(ngModule) {
           countryCode: '@',
           currencySign: '@?',
           values: '=?',
-          cosmoEndpoint: '@'
+          cosmoEndpoint: '@',
+          formatValue: '=?'
         },
         template: '<div class="babbage-geoview"></div>',
         replace: false,
@@ -42,6 +42,7 @@ module.exports = function(ngModule) {
                 code: countryCode,
                 data: {},
                 cosmoApiUrl: $scope.cosmoEndpoint,
+                formatValue: $scope.formatValue,
                 bindResize: function(callback) {
                   resizeHandlers.push(callback);
                   $window.addEventListener('resize', callback);

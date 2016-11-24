@@ -19,7 +19,8 @@ export class GeoViewDirective {
             state: '=',
             countryCode: '@',
             currencySign: '@?',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,

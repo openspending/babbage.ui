@@ -29,7 +29,7 @@
       <tbody>
       <tr ng-repeat="rows in tableData.columns">
         <td ng-repeat="row in rows track by $index" colspan="2" ng-class="{'numeric': tableData.headers[$index].numeric}" >
-          <span ng-if="tableData.headers[$index].numeric">{{ row | number }}</span>
+          <span ng-if="tableData.headers[$index].numeric">{{ valueFormatter(row) }}</span>
           <span ng-if="!tableData.headers[$index].numeric">{{ row }}</span>
         </td>
       </tr>

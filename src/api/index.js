@@ -329,7 +329,7 @@ export class Api {
 
   loadGeoJson(cosmopolitanApiUrl, countryCode) {
     var url = cosmopolitanApiUrl + 'polygons/country:' +
-      encodeURIComponent(countryCode) + '?format=json';
+      encodeURIComponent(countryCode) + '/?format=json';
 
     return this.getJson(url).then((jsonData) => {
       return jsonData.polygon;

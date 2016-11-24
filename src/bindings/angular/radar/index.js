@@ -11,7 +11,8 @@ export class RadarChartDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,6 +26,8 @@ export class RadarChartDirective {
 
             var component = new RadarChartComponent();
             var wrapper = element.find('.radar-chart')[0];
+
+            component.formatValue = $scope.formatValue;
 
             component.on('loading', () => {
               $scope.status.isLoading = true;
