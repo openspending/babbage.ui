@@ -6,11 +6,9 @@
   <strong>No data to display.</strong>
 </div>
 
-<div class="alert alert-danger" ng-show="status.isTooMuchData">
-  <strong>Oh snap!</strong>
-  The query returns too much data and can't be displayed in the table.
-  {{ maxValueMessage }}
-</div>
+<div class="alert alert-danger" ng-show="status.isTooMuchData"
+  ng-bind-html="trustAsHtml(maxValueMessage)"
+></div>
 
 <div class="alert alert-warning" ng-show="status.isCutOff">
   <strong>Too many categories.</strong> The breakdown you have selected contains many

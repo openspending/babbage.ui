@@ -7,7 +7,8 @@ import PivotTable from 'pivottable'
 export class PivotTableDirective {
   init(angularModule) {
     angularModule.directive('pivotTable', [
-      function() {
+      '$sce',
+      function($sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -27,6 +28,18 @@ export class PivotTableDirective {
               isEmpty: false,
               isCutOff: false,
               cutoff: 0
+            };
+
+            if (!$scope.maxValueMessage) {
+              $scope.maxValueMessage = [
+                '<strong>Oh snap!</strong>',
+                'The query returns too much data and can\'t be ' +
+                'displayed in the table.'
+              ].join(' ');
+            }
+
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
             };
 
             var component = new PivotTableComponent();
