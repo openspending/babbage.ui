@@ -15,7 +15,9 @@ export class PivotTableDirective {
             cube: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            maxValueLimit: '@?',
+            maxValueMessage: '@?'
           },
           template: require('./template.html'),
           replace: false,
@@ -33,6 +35,7 @@ export class PivotTableDirective {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
+              $scope.status.isTooMuchData = false;
               $scope.$applyAsync();
             });
             component.on('ready', (component, data, error) => {
@@ -55,14 +58,22 @@ export class PivotTableDirective {
             component.downloader = $scope.downloader;
             component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
               .then((result) => {
-                $(wrapper).pivot(
-                  result.data,
-                  {
-                    rows: result.rows,
-                    cols: result.cols,
-                    aggregator: sum(formatValue)(['value']),
-                  }
-                );
+                var limit = parseInt($scope.maxValueLimit, 10) || 0;
+                if (
+                  (limit > 0) && _.isArray(result.data) &&
+                  (result.data.length > limit)
+                ) {
+                  $scope.status.isTooMuchData = true;
+                } else {
+                  $(wrapper).pivot(
+                    result.data,
+                    {
+                      rows: result.rows,
+                      cols: result.cols,
+                      aggregator: sum(formatValue)(['value']),
+                    }
+                  );
+                }
                 $scope.$applyAsync();
               });
           }
