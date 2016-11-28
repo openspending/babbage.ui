@@ -1,5 +1,6 @@
 import {Api} from '../../api/index';
 import d3 from 'd3'
+import * as Utils from '../utils.js'
 import _ from 'lodash';
 import events from 'events';
 //import RadarChart from 'radar-chart-d3'
@@ -19,14 +20,15 @@ function RadarChart(wrapper, allData, legendOptions, options) {
     opacityCircles: 0.1, 	//The opacity of the circles of each blob
     strokeWidth: 2, 		//The width of the stroke around each blob
     roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-    color: d3.scale.category20()	//Color function
+    color: d3.scale.category20(),	//Color function
+    formatValue: d3.format(',') //Percentage formatting
   };
   var data = _.map(allData, function(datum) {
     return datum.axes;
   });
   var element = d3.select(wrapper);
   //Put all of the options into a variable called cfg
-  _.extend(cfg, options);
+  cfg = _.extend(cfg, options);
 
   //If the supplied maxValue is smaller than the actual one, replace by the max in the data
   var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i) {
@@ -40,7 +42,6 @@ function RadarChart(wrapper, allData, legendOptions, options) {
   });	//Names of each axis
   var total = allAxis.length; //The number of different axes
   var radius = Math.min(cfg.w / 2, cfg.h / 2); //Radius of the outermost circle
-  var Format = d3.format(','); //Percentage formatting
   var angleSlice = Math.PI * 2 / total; //The width in radians of each 'slice'
 
   //Scale for the radius
@@ -96,7 +97,7 @@ function RadarChart(wrapper, allData, legendOptions, options) {
     })
     .style('fill', '#CDCDCD')
     .style('stroke', '#CDCDCD')
-    .style('fill-opacity', cfg.opacityCircles)
+    .style('fill-opacity', cfg.opacityCircles);
     //!.style('filter', 'url(#glow)');
 
   //Text indicating at what % each level is
@@ -112,7 +113,7 @@ function RadarChart(wrapper, allData, legendOptions, options) {
     .style('font-size', '10px')
     .attr('fill', '#737373')
     .text(function(d, i) {
-      return Format(maxValue * d / cfg.levels);
+      return cfg.formatValue(maxValue * d / cfg.levels);
     });
 
   /////////////////////////////////////////////////////////
@@ -265,7 +266,7 @@ function RadarChart(wrapper, allData, legendOptions, options) {
     .style('stroke', function(d, i) {
       return cfg.color(i);
     })
-    .style('fill', 'none')
+    .style('fill', 'none');
     //!.style('filter', 'url(#glow)');
 
   //Append the circles
@@ -320,7 +321,7 @@ function RadarChart(wrapper, allData, legendOptions, options) {
       tooltip
         .attr('x', newX)
         .attr('y', newY)
-        .text(Format(d.value))
+        .text(cfg.formatValue(d.value))
         .transition().duration(200)
         .style('opacity', 1);
     })
@@ -373,11 +374,22 @@ export class RadarChartComponent extends events.EventEmitter {
     super();
     this.wrapper = null;
     this.downloader = null;
+    this.formatValue = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getValueFormatter(currency) {
+    var formatValue = this.formatValue;
+    if (!_.isFunction(formatValue)) {
+      formatValue = Utils.defaultFormatValue;
+    }
+    return function(value) {
+      return Utils.moneyFormat(formatValue(value), currency);
+    };
   }
 
   getPivotData(endpoint, cube, params) {
@@ -436,6 +448,8 @@ export class RadarChartComponent extends events.EventEmitter {
           result.data.push(item);
         });
 
+        result.currency = data.currency[params.aggregates];
+
         return result;
       });
   }
@@ -449,6 +463,8 @@ export class RadarChartComponent extends events.EventEmitter {
     this.getPivotData(endpoint, cube, params)
       .then((result) => {
         var cells = result.data;
+
+        var valueFormat = that.getValueFormatter(result.currency);
 
         var zeroDimensionIndex = result.rows[0];
         var oneDimensionIndex = result.cols[0];
@@ -503,7 +519,8 @@ export class RadarChartComponent extends events.EventEmitter {
           maxValue: 0.5,
           levels: 5,
           roundStrokes: true,
-          color: color
+          color: color,
+          formatValue: valueFormat
         };
 
         RadarChart(wrapper, values, dim0vals, radarChartOptions);

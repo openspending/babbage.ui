@@ -22,7 +22,7 @@
         {{dimension.nameValue}}
       </td>
       <td ng-repeat="measure in rows.measures" class="numeric">
-        {{ measure.value | number }}
+        {{ valueFormatter(measure.value) }}
       </td>
     </tr>
     </tbody>

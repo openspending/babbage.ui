@@ -12,7 +12,8 @@ export class ChartDirective {
             cube: '@',
             type: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -26,6 +27,8 @@ export class ChartDirective {
 
             var component = new ChartComponent();
             var wrapper = element.find('.chart-babbage')[0];
+
+            component.formatValue = $scope.formatValue;
 
             component.on('loading', () => {
               $scope.status.isLoading = true;

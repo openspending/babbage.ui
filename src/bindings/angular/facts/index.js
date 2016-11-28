@@ -4,15 +4,16 @@ import _ from 'lodash';
 export class FactsDirective {
   init(angularModule) {
     angularModule.directive('facts', [
-      '$timeout', '$q',
-      function($timeout, $q) {
+      '$timeout', '$q', '$filter',
+      function($timeout, $q, $filter) {
         return {
           restrict: 'EA',
           scope: {
             endpoint: '@',
             cube: '@',
             state: '=',
-            downloader: '=?'
+            downloader: '=?',
+            formatValue: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -23,6 +24,12 @@ export class FactsDirective {
               isCutOff: false,
               cutoff: 0
             };
+
+            $scope.valueFormatter = $filter('number');
+            $scope.$watch('formatValue', function() {
+              $scope.valueFormatter = _.isFunction($scope.formatValue) ?
+                $scope.formatValue : $filter('number');
+            });
 
             function update(facts) {
               $q((resolve, reject) => {
