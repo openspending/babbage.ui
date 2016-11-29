@@ -1,19 +1,12 @@
-'use strict'
+'use strict';
 
-var _ = require('lodash')
-var webpack = require('webpack')
-var baseConfig = require('./webpack.config.base')
-
-var buildTarget = process.env.BUILD_TARGET || '';
-var targetFileName = 'babbage.min.js';
-if (buildTarget) {
-  targetFileName = 'babbage-' + buildTarget + '.min.js';
-}
+var _ = require('lodash');
+var webpack = require('webpack');
+var baseConfig = require('./webpack.config.base');
 
 var productionConfig = {
   output: {
-    filename: targetFileName,
-    path: './dist'
+    filename: 'babbage-[name].min.js'
   },
   plugins:  [
     new webpack.optimize.OccurenceOrderPlugin(),
@@ -22,13 +15,15 @@ var productionConfig = {
     }),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
+        // jscs:disable
         screw_ie8: true,
+        // jscs:enable
         warnings: false
       }
     })
   ]
-}
+};
 
-var config = _.merge({}, baseConfig, productionConfig)
+var config = _.merge({}, baseConfig, productionConfig);
 
-module.exports = config
+module.exports = config;

@@ -7,7 +7,8 @@ import PivotTable from 'pivottable'
 export class PivotTableDirective {
   init(angularModule) {
     angularModule.directive('pivotTable', [
-      function() {
+      '$sce',
+      function($sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -15,7 +16,9 @@ export class PivotTableDirective {
             cube: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            maxValueLimit: '@?',
+            maxValueMessage: '@?'
           },
           template: require('./template.html'),
           replace: false,
@@ -27,12 +30,25 @@ export class PivotTableDirective {
               cutoff: 0
             };
 
+            if (!$scope.maxValueMessage) {
+              $scope.maxValueMessage = [
+                '<strong>Oh snap!</strong>',
+                'The query returns too much data and can\'t be ' +
+                'displayed in the table.'
+              ].join(' ');
+            }
+
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
+            };
+
             var component = new PivotTableComponent();
 
             component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
+              $scope.status.isTooMuchData = false;
               $scope.$applyAsync();
             });
             component.on('ready', (component, data, error) => {
@@ -55,14 +71,22 @@ export class PivotTableDirective {
             component.downloader = $scope.downloader;
             component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
               .then((result) => {
-                $(wrapper).pivot(
-                  result.data,
-                  {
-                    rows: result.rows,
-                    cols: result.cols,
-                    aggregator: sum(formatValue)(['value']),
-                  }
-                );
+                var limit = parseInt($scope.maxValueLimit, 10) || 0;
+                if (
+                  (limit > 0) && _.isArray(result.data) &&
+                  (result.data.length > limit)
+                ) {
+                  $scope.status.isTooMuchData = true;
+                } else {
+                  $(wrapper).pivot(
+                    result.data,
+                    {
+                      rows: result.rows,
+                      cols: result.cols,
+                      aggregator: sum(formatValue)(['value']),
+                    }
+                  );
+                }
                 $scope.$applyAsync();
               });
           }
