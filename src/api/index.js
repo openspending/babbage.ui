@@ -2,6 +2,7 @@ import _ from 'lodash'
 import querystring from 'querystring'
 import url from 'url'
 import { getDefaultDownloader } from './downloader'
+import { exportResults } from './exporter'
 
 export class Api {
   constructor() {
@@ -236,6 +237,7 @@ export class Api {
         });
         result.columns.push(column);
       });
+      exportResults('facts', result);
       return result;
     })
   }
@@ -323,6 +325,7 @@ export class Api {
             measures: measuresResult
           });
         });
+        exportResults('aggregate', result);
         return result;
       });
   }

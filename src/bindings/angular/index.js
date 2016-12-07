@@ -21,3 +21,8 @@ export {
   FactsDirective,
   RadarChartDirective
 }
+
+
+import { setExportObject } from '../../api/exporter'
+
+setExportObject(window);
