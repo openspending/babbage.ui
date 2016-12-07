@@ -3,9 +3,10 @@
   "description": "Angular components to use the Cubes Slicer API provided by Babbage.",
   "homepage": "https://github.com/openspending/babbage.ui",
   "license": "MIT",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "main": "lib/index.js",
   "scripts": {
+    "start": "xdg-open index.html",
     "build:lib": "gulp",
     "build:dist": "webpack --hide-modules --config webpack.config.development.js",
     "build:dist:min": "webpack --hide-modules --config webpack.config.production.js",

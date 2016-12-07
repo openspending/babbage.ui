@@ -64,6 +64,7 @@ class TreemapDirective {
               $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
+              $scope.$emit('babbage-ui.ready', component, data, error);
             });
             component.on('click', (component, item) => {
               $scope.$emit('babbage-ui.click', component, item);
@@ -72,7 +73,13 @@ class TreemapDirective {
               $scope.$applyAsync();
             });
             component.downloader = $scope.downloader;
+            $scope.$emit('babbage-ui.initialize', component);
             component.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
+            });
           }
         }
       }
