@@ -1,14 +1,15 @@
 import { Api } from '../../api/index'
-import d3 from 'd3'
 import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
 
 export class ChartComponent extends events.EventEmitter {
   constructor() {
     super();
+
+    this._api = null;
+
     this.wrapper = null;
     this.chart = null;
     this.downloader = null;
@@ -18,6 +19,14 @@ export class ChartComponent extends events.EventEmitter {
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getValueFormatter(currency) {
@@ -61,7 +70,7 @@ export class ChartComponent extends events.EventEmitter {
     params.page = 0;
     params.pagesize = 2000;
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);

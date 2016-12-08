@@ -3,8 +3,6 @@ import d3 from 'd3'
 import * as Utils from '../utils.js'
 import _ from 'lodash';
 import events from 'events';
-//import RadarChart from 'radar-chart-d3'
-var api = new Api();
 
 function RadarChart(wrapper, allData, legendOptions, options) {
   var cfg = {
@@ -372,6 +370,9 @@ function RadarChart(wrapper, allData, legendOptions, options) {
 export class RadarChartComponent extends events.EventEmitter {
   constructor() {
     super();
+
+    this._api = null;
+
     this.wrapper = null;
     this.downloader = null;
     this.formatValue = null;
@@ -380,6 +381,14 @@ export class RadarChartComponent extends events.EventEmitter {
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getValueFormatter(currency) {
@@ -405,7 +414,7 @@ export class RadarChartComponent extends events.EventEmitter {
     var measures = {};
     var dimensions = {};
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     return api.getDimensions(endpoint, cube)
       .then((result) => {
         dimensions = {};
@@ -413,7 +422,6 @@ export class RadarChartComponent extends events.EventEmitter {
           dimensions[item.key] = item.code;
         });
 
-        api.downloader = this.downloader;
         return api.getMeasures(endpoint, cube);
       })
       .then((result) => {
@@ -424,7 +432,6 @@ export class RadarChartComponent extends events.EventEmitter {
 
         params.page = 0;
         params.pagesize = 2000;
-        api.downloader = this.downloader;
         return api.aggregate(endpoint, cube, params);
       })
       .then((data) => {

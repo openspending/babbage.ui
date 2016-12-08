@@ -12,6 +12,8 @@
 </div>
 
 <geoview class="geoview-container"
+  ng-if="!!component"
+  component="component"
   country-code="{{ countryCode }}"
   currency-sign="{{ currencySign }}" cosmo-endpoint="{{ cosmoEndpoint }}"
   format-value="formatValue"

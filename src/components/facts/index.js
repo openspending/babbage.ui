@@ -1,11 +1,13 @@
 import { Api } from '../../api/index'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
 
 export class FactsComponent extends events.EventEmitter {
   constructor() {
     super();
+
+    this._api = null;
+
     this.downloader = null;
 
     // Prevent from throwing exception in EventEmitter
@@ -14,12 +16,20 @@ export class FactsComponent extends events.EventEmitter {
     });
   }
 
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
+  }
+
   getTableData(endpoint, cube, params) {
     params = _.cloneDeep(params);
     var that = this;
 
     that.emit('loading', that);
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     return api.facts(endpoint, cube, params)
       .then((data) => {
         that.emit('loaded', that, data);

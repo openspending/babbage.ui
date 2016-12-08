@@ -1,17 +1,28 @@
 import { Api } from '../../api/index'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
+import render from './render'
 
 export class GeoViewComponent extends events.EventEmitter {
   constructor() {
     super();
+
+    this._api = null;
+
     this.downloader = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getGeoMapData(endpoint, cube, params) {
@@ -22,7 +33,7 @@ export class GeoViewComponent extends events.EventEmitter {
 
     that.emit('loading', that);
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     return api.aggregate(endpoint, cube, params)
       .then((data) => {
         _.each(data.cells, (cell) => {
@@ -41,6 +52,10 @@ export class GeoViewComponent extends events.EventEmitter {
         that.emit('error', that, error);
         that.emit('ready', that, null, error);
       });
+  }
+
+  build(options) {
+    return render(options, this.getApiInstance());
   }
 
 }

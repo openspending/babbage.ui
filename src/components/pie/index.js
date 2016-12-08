@@ -4,12 +4,14 @@ import c3 from 'c3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
 
 export class PieChartComponent extends events.EventEmitter {
 
   constructor() {
     super();
+
+    this._api = null;
+
     this.wrapper = null;
     this.chart = null;
     this.downloader = null;
@@ -20,6 +22,14 @@ export class PieChartComponent extends events.EventEmitter {
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getValueFormatter(currency) {
@@ -40,7 +50,7 @@ export class PieChartComponent extends events.EventEmitter {
 
     that.emit('loading', that);
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         var columns = Utils.buildC3PieColumns(data, params.aggregates);
