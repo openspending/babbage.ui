@@ -61,7 +61,7 @@ export class GeoViewDirective {
               $scope.values = result;
             });
 
-            $scope.$on('geoview.ready', function($event) {
+            $scope.$on('babbage-ui.internal.geoview-ready', function($event) {
               $event.stopPropagation();
               $scope.$emit('babbage-ui.ready', component, $scope.values);
             });

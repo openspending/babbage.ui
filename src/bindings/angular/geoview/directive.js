@@ -52,7 +52,7 @@ module.exports = function(ngModule) {
               .then((result) => {
                 handle = result;
                 handle.updateData(data(), currencySign());
-                $scope.$emit('geoview.ready');
+                $scope.$emit('babbage-ui.internal.geoview-ready');
               });
           }
 
