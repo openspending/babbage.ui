@@ -31,10 +31,11 @@ export class FactsDirective {
                 $scope.formatValue : $filter('number');
             });
 
-            function update(facts) {
+            function update(component) {
               $q((resolve, reject) => {
-                facts.downloader = $scope.downloader;
-                facts.getTableData($scope.endpoint, $scope.cube, $scope.state)
+                component.downloader = $scope.downloader;
+                $scope.$emit('babbage-ui.initialize', component);
+                component.getTableData($scope.endpoint, $scope.cube, $scope.state)
                   .then(resolve)
                   .catch(reject)
               })
@@ -71,19 +72,20 @@ export class FactsDirective {
                 });
             }
 
-            var facts = new FactsComponent();
-            facts.on('loading', () => {
+            var component = new FactsComponent();
+            component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
             });
-            facts.on('ready', (component, data, error) => {
+            component.on('ready', (component, data, error) => {
               $scope.status.isLoading = false;
               $scope.status.isEmpty = !(_.isObject(data) &&
                 (data.columns.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
+              $scope.$emit('babbage-ui.ready', component, data, error);
             });
 
             $scope.getSort = function(field) {
@@ -92,17 +94,22 @@ export class FactsDirective {
 
             $scope.setSort = function(key, direction) {
               $scope.state.order = [{key: key, direction: direction}];
-              update(facts);
+              update(component);
             };
 
             $scope.setPage = function(page) {
               if (page >= 0 && page <= $scope.num) {
                 $scope.state.page = page + 1;
-                update(facts);
+                update(component);
               }
             };
 
-            update(facts);
+            update(component);
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
+            });
           }
         }
       }

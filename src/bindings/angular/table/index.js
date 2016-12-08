@@ -45,10 +45,12 @@ export class BabbageTableDirective {
                 (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
+              $scope.$emit('babbage-ui.ready', component, data, error);
             });
 
             $q((resolve, reject) => {
               component.downloader = $scope.downloader;
+              $scope.$emit('babbage-ui.initialize', component);
               component.getTableData($scope.endpoint, $scope.cube, $scope.state)
                 .then(resolve)
                 .catch(reject)
@@ -56,6 +58,11 @@ export class BabbageTableDirective {
               .then((tableData) => {
                 $scope.tableData = tableData;
               });
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
+            });
           }
         }
       }

@@ -41,6 +41,7 @@ export class PieChartDirective {
                 (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
+              $scope.$emit('babbage-ui.ready', component, data, error);
             });
             component.on('click', function(component, item) {
               // item.id => drilldown value
@@ -49,8 +50,14 @@ export class PieChartDirective {
             });
 
             component.downloader = $scope.downloader;
+            $scope.$emit('babbage-ui.initialize', component);
             component.build($scope.endpoint, $scope.cube,
               $scope.state, wrapper);
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
+            });
           }
         }
       }
