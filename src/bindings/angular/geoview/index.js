@@ -50,6 +50,7 @@ export class GeoViewDirective {
 
             $q((resolve, reject) => {
               component.downloader = $scope.downloader;
+              $scope.$emit('babbage-ui.initialize', component);
               component.getGeoMapData(
                 $scope.endpoint,
                 $scope.cube,
@@ -58,6 +59,16 @@ export class GeoViewDirective {
             })
             .then((result) => {
               $scope.values = result;
+            });
+
+            $scope.$on('babbage-ui.internal.geoview-ready', function($event) {
+              $event.stopPropagation();
+              $scope.$emit('babbage-ui.ready', component, $scope.values);
+            });
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
             });
           }
         }

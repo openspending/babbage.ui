@@ -57,6 +57,7 @@ export class PivotTableDirective {
                 (data.cells.length > 0));
               $scope.status.isCutOff = false;
               $scope.$applyAsync();
+              $scope.$emit('babbage-ui.ready', component, data, error);
             });
 
             var sum = $.pivotUtilities.aggregatorTemplates.sum;
@@ -69,6 +70,7 @@ export class PivotTableDirective {
 
             var wrapper = element.find('.pivot-table')[0];
             component.downloader = $scope.downloader;
+            $scope.$emit('babbage-ui.initialize', component);
             component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
               .then((result) => {
                 var limit = parseInt($scope.maxValueLimit, 10) || 0;
@@ -86,9 +88,15 @@ export class PivotTableDirective {
                       aggregator: sum(formatValue)(['value']),
                     }
                   );
+                  $scope.$emit('babbage-ui.table-ready', component);
                 }
                 $scope.$applyAsync();
               });
+
+            $scope.$emit('babbage-ui.create');
+            $scope.$on('$destroy', function() {
+              $scope.$emit('babbage-ui.destroy');
+            });
           }
         }
       }
