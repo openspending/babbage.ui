@@ -33,6 +33,7 @@ export class GeoViewDirective {
             };
 
             var component = new GeoViewComponent();
+            $scope.component = component;
 
             component.on('loading', () => {
               $scope.status.isLoading = true;

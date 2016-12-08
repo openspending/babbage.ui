@@ -1,17 +1,27 @@
 import { Api } from '../../api'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
 
 export class PivotTableComponent extends events.EventEmitter {
   constructor() {
     super();
+
+    this._api = null;
+
     this.downloader = null;
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getPivotData(endpoint, cube, params) {
@@ -30,7 +40,7 @@ export class PivotTableComponent extends events.EventEmitter {
     var measures = {};
     var dimensions = [];
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     return api.getDimensions(endpoint, cube)
       .then((result) => {
         dimensions = {};
@@ -38,7 +48,6 @@ export class PivotTableComponent extends events.EventEmitter {
           dimensions[item.key] = item.code;
         });
 
-        api.downloader = this.downloader;
         return api.getMeasures(endpoint, cube);
       })
       .then((result) => {
@@ -50,7 +59,6 @@ export class PivotTableComponent extends events.EventEmitter {
         params.page = 0;
         params.pagesize = 2000;
 
-        api.downloader = this.downloader;
         return api.aggregate(endpoint, cube, params)
       })
       .then((data) => {

@@ -3,12 +3,14 @@ import d3 from 'd3'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
-var api = new Api();
 
 export class SanKeyChartComponent extends events.EventEmitter {
 
   constructor() {
     super();
+
+    this._api = null;
+
     this.wrapper = null;
     this.sankey = null;
     this.downloader = null;
@@ -18,6 +20,14 @@ export class SanKeyChartComponent extends events.EventEmitter {
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getValueFormatter(currency) {
@@ -71,7 +81,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         size.height = data.cells.length * unit;

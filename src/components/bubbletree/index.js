@@ -4,12 +4,14 @@ import _ from 'lodash'
 import events from 'events'
 import BubbleTree from 'bubbletree'
 window.BubbleTree = BubbleTree;
-var api = new Api();
 
 export class BubbleTreeComponent extends events.EventEmitter {
 
   constructor() {
     super();
+
+    this._api = null;
+
     this.wrapper = null;
     this.bubbleTree = null;
     this.downloader = null;
@@ -19,6 +21,14 @@ export class BubbleTreeComponent extends events.EventEmitter {
     this.on('error', (sender, error) => {
       console.trace(error);
     });
+  }
+
+  getApiInstance() {
+    if (!this._api) {
+      this._api = new Api();
+    }
+    this._api.downloader = this.downloader;
+    return this._api;
   }
 
   getValueFormatter(currency) {
@@ -66,7 +76,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
 
     that.emit('loading', that);
 
-    api.downloader = this.downloader;
+    var api = this.getApiInstance();
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         var bubbleTreeData = that.generateBubbleTreeData(

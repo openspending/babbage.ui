@@ -1,6 +1,6 @@
 'use strict';
 
-var geoview = require('../../../components/geoview/render');
+var _ = require('lodash');
 
 module.exports = function(ngModule) {
   ngModule.directive('geoview', [
@@ -9,6 +9,7 @@ module.exports = function(ngModule) {
       return {
         restrict: 'EA',
         scope: {
+          component: '=',  // GeoViewComponent instance
           countryCode: '@',
           currencySign: '@?',
           values: '=?',
@@ -29,15 +30,30 @@ module.exports = function(ngModule) {
             resizeHandlers = [];
           }
 
-          function createHandle(countryCode, data, currencySign) {
-            // Check if countryCode did not change while loading data
-            if ($scope.countryCode != countryCode) {
+          // This helps to avoid double-rendering of map when re-initializing
+          // during rendering with previous params
+          var lastParams = {
+            countryCode: null,
+            component: null
+          };
+          function createHandle(countryCode, data, currencySign, component) {
+            if (
+              (lastParams.countryCode == countryCode) &&
+              (lastParams.component == component)
+            ) {
               return;
             }
-            handle = null;
-            removeResizeListeners();
+
+            lastParams.countryCode = countryCode;
+            lastParams.component = component;
+
+            if (handle) {
+              handle.destroy();
+              element.empty();
+              removeResizeListeners();
+            }
             $q((resolve, reject) => {
-              geoview({
+              component.build({
                 container: element.find('.babbage-geoview').get(0),
                 code: countryCode,
                 data: {},
@@ -50,50 +66,66 @@ module.exports = function(ngModule) {
               }).then(resolve).catch(reject)
             })
               .then((result) => {
-                handle = result;
-                handle.updateData(data(), currencySign());
-                $scope.$emit('babbage-ui.internal.geoview-ready');
+                // Check if countryCode did not change while loading data
+                if (
+                  (lastParams.countryCode == countryCode) &&
+                  (lastParams.component == component)
+                ) {
+                  handle = result;
+                  handle.updateData(data(), currencySign());
+                  $scope.$emit('babbage-ui.internal.geoview-ready');
+                } else {
+                  result.destroy();
+                  element.empty();
+                }
               });
           }
 
-          if ($scope.countryCode) {
-            createHandle($scope.countryCode, function() {
-              return $scope.values || {};
-            }, function() {
-              return $scope.currencySign;
-            });
+          function init() {
+            if ($scope.countryCode && $scope.component) {
+              createHandle($scope.countryCode, function() {
+                return _.extend({}, $scope.values);
+              }, function() {
+                return $scope.currencySign;
+              }, $scope.component);
+            }
           }
 
-          $scope.$watch('values', function(newValue, oldValue) {
-            if (newValue === oldValue) {
-              return;
-            }
+          function update() {
             if (handle) {
-              handle.updateData(newValue || {}, $scope.currencySign);
+              handle.updateData(_.extend({}, $scope.values),
+                $scope.currencySign);
+            }
+          }
+
+          init();
+
+          $scope.$watch('values', function(newValue, oldValue) {
+            if (newValue !== oldValue) {
+              update();
             }
           }, true);
 
           $scope.$watch('currencySign', function(newValue, oldValue) {
-            if (newValue === oldValue) {
-              return;
-            }
-            if (handle) {
-              handle.updateData($scope.values || {}, newValue);
+            if (newValue !== oldValue) {
+              update();
             }
           }, true);
 
           $scope.$watch('countryCode', function(newValue, oldValue) {
-            if (newValue === oldValue) {
-              return;
+            if ((newValue !== oldValue) || !handle) {
+              init();
             }
-            createHandle(newValue, function() {
-              return $scope.values || {};
-            }, function() {
-              return $scope.currencySign;
-            });
+          });
+
+          $scope.$watch('component', function(newValue, oldValue) {
+            if ((newValue !== oldValue) || !handle) {
+              init();
+            }
           });
 
           $scope.$on('$destroy', function() {
+            lastParams = null;
             removeResizeListeners();
             if (handle) {
               handle.destroy();

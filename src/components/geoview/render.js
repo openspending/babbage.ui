@@ -1,9 +1,7 @@
 'use strict';
-import { Api } from '../../api/index'
 import _ from 'lodash'
 import d3 from 'd3'
 var utils = require('./utils');
-var api = new Api();
 
 function renderMap(layer, options) {
   var geoObject = options.geoObject;
@@ -193,7 +191,7 @@ function renderLegend(options) {
   };
 }
 
-function render(options) {
+function render(options, api) {
   options.formatValue = _.isFunction(options.formatValue) ?
     options.formatValue : utils.formatValue;
 
