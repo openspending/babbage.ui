@@ -23,6 +23,10 @@ export {
 }
 
 
-import { setExportObject } from '../../api/exporter'
+import { setExportFunc } from '../../api/exporter'
 
-setExportObject(window);
+setExportFunc((key, value) => {
+  window.setTimeout(() => {
+    window[key] = value;
+  }, 5000);
+});

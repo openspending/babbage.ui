@@ -1,13 +1,13 @@
 import _ from 'lodash'
 
-var exportObject;
+var exportfunc;
 
-export function setExportObject(obj) {
-  exportObject = obj;
+export function setExportFunc(func) {
+  exportfunc = func;
 }
 
 export function exportResults(method, results) {
-  if (!_.isUndefined(exportObject)) {
-    exportObject['_babbage_results_' + method] = results;
+  if (!_.isUndefined(exportfunc)) {
+    exportfunc('_babbage_results_' + method, results);
   }
 }
