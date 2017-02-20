@@ -1,15 +1,12 @@
-<div class="alert alert-info" ng-hide="!status.isLoading">
-  <i class="babbage-loading-icon"></i><strong>Loading data.</strong> Please wait...
+<div class="alert alert-info" ng-if="status.isLoading">
+  <i class="babbage-loading-icon"></i><span ng-bind-html="trustAsHtml(i18n('loadingData'))"></span>
 </div>
 
-<div class="alert alert-warning" ng-show="status.isEmpty">
-  <strong>No data to display.</strong>
-</div>
+<div class="alert alert-warning" ng-if="status.isEmpty"
+  ng-bind-html="trustAsHtml(i18n('noDataAvailable'))"></div>
 
-<div class="alert alert-warning" ng-show="status.isCutOff">
-  <strong>Too many categories.</strong> The breakdown you have selected contains many
-  different categories, only the {{state.cutoff}} biggest are shown.
-</div>
+<div class="alert alert-warning" ng-if="status.isCutOff"
+  ng-bind-html="trustAsHtml(i18n('tooManyCategories', {count: status.cutoff}))"></div>
 
 <geoview class="geoview-container"
   ng-if="!!component"

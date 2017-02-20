@@ -1,11 +1,12 @@
 import FactsComponent from '../../../components/facts'
-import _ from 'lodash';
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
 
 export class FactsDirective {
   init(angularModule) {
     angularModule.directive('facts', [
-      '$timeout', '$q', '$filter',
-      function($timeout, $q, $filter) {
+      '$timeout', '$q', '$filter', '$sce',
+      function($timeout, $q, $filter, $sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -13,7 +14,8 @@ export class FactsDirective {
             cube: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -23,6 +25,16 @@ export class FactsDirective {
               isEmpty: false,
               isCutOff: false,
               cutoff: 0
+            };
+
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
             };
 
             $scope.valueFormatter = $filter('number');
@@ -44,11 +56,11 @@ export class FactsDirective {
                   $scope.current = parseInt(tableData.info.page - 1, 10) || 0;
                   $scope.num = Math.ceil(tableData.info.total /
                     tableData.info.pageSize);
-                  var pages = [];
-                  var num = $scope.num;
-                  var range = 3;
-                  var low = $scope.current - range;
-                  var high = $scope.current + range;
+                  let pages = [];
+                  let num = $scope.num;
+                  let range = 3;
+                  let low = $scope.current - range;
+                  let high = $scope.current + range;
 
                   if (low < 0) {
                     low = 0;
@@ -59,7 +71,7 @@ export class FactsDirective {
                     low = Math.max(1, num - (2 * range) + 1);
                   }
 
-                  for (var page = low; page <= high; page++) {
+                  for (let page = low; page <= high; page++) {
                     pages.push({
                       page: page,
                       current: page == $scope.current,
@@ -72,7 +84,7 @@ export class FactsDirective {
                 });
             }
 
-            var component = new FactsComponent();
+            let component = new FactsComponent();
             component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
