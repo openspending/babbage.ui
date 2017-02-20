@@ -1,10 +1,12 @@
 import PieChartComponent from '../../../components/pie'
-import _ from 'lodash';
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
 
 export class PieChartDirective {
   init(angularModule) {
     angularModule.directive('pieChart', [
-      function() {
+      '$sce',
+      function($sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -12,7 +14,8 @@ export class PieChartDirective {
             cube: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -24,8 +27,18 @@ export class PieChartDirective {
               cutoff: 0
             };
 
-            var component = new PieChartComponent();
-            var wrapper = element.find('.pie-chart')[0];
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
+            };
+
+            let component = new PieChartComponent();
+            let wrapper = element.find('.pie-chart')[0];
 
             component.formatValue = $scope.formatValue;
 

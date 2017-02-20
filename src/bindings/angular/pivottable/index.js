@@ -1,8 +1,9 @@
 import PivotTableComponent from '../../../components/pivottable'
-import _ from 'lodash';
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
 
 // Include `pivottable` jquery plugin into bundle. Do not remove this line!
-import PivotTable from 'pivottable'
+import 'pivottable'
 
 export class PivotTableDirective {
   init(angularModule) {
@@ -18,7 +19,7 @@ export class PivotTableDirective {
             downloader: '=?',
             formatValue: '=?',
             maxValueLimit: '@?',
-            maxValueMessage: '@?'
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -30,19 +31,17 @@ export class PivotTableDirective {
               cutoff: 0
             };
 
-            if (!$scope.maxValueMessage) {
-              $scope.maxValueMessage = [
-                '<strong>Oh snap!</strong>',
-                'The query returns too much data and can\'t be ' +
-                'displayed in the table.'
-              ].join(' ');
-            }
-
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
             $scope.trustAsHtml = function(value) {
               return $sce.trustAsHtml(value);
             };
 
-            var component = new PivotTableComponent();
+            let component = new PivotTableComponent();
 
             component.on('loading', () => {
               $scope.status.isLoading = true;
@@ -60,20 +59,20 @@ export class PivotTableDirective {
               $scope.$emit('babbage-ui.ready', component, data, error);
             });
 
-            var sum = $.pivotUtilities.aggregatorTemplates.sum;
+            let sum = $.pivotUtilities.aggregatorTemplates.sum;
 
-            var formatValue = $scope.formatValue;
+            let formatValue = $scope.formatValue;
             if (!_.isFunction(formatValue)) {
-              var numberFormat = $.pivotUtilities.numberFormat;
+              let numberFormat = $.pivotUtilities.numberFormat;
               formatValue = numberFormat({digitsAfterDecimal: 0});
             }
 
-            var wrapper = element.find('.pivot-table')[0];
+            let wrapper = element.find('.pivot-table')[0];
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
             component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
               .then((result) => {
-                var limit = parseInt($scope.maxValueLimit, 10) || 0;
+                let limit = parseInt($scope.maxValueLimit, 10) || 0;
                 if (
                   (limit > 0) && _.isArray(result.data) &&
                   (result.data.length > limit)

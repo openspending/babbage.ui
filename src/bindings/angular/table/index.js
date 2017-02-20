@@ -1,11 +1,12 @@
 import TableComponent from '../../../components/table'
-import _ from 'lodash'
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
 
 export class BabbageTableDirective {
   init(angularModule) {
     angularModule.directive('babbageTable', [
-      '$q', '$filter',
-      function($q, $filter) {
+      '$q', '$filter', '$sce',
+      function($q, $filter, $sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -13,7 +14,8 @@ export class BabbageTableDirective {
             cube: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,13 +27,23 @@ export class BabbageTableDirective {
               cutoff: 0
             };
 
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
+            };
+
             $scope.valueFormatter = $filter('number');
             $scope.$watch('formatValue', function() {
               $scope.valueFormatter = _.isFunction($scope.formatValue) ?
                 $scope.formatValue : $filter('number');
             });
 
-            var component = new TableComponent();
+            let component = new TableComponent();
 
             component.on('loading', () => {
               $scope.status.isLoading = true;

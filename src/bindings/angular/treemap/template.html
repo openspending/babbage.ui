@@ -1,27 +1,24 @@
-<div class="alert alert-info" ng-hide="!status.isLoading">
-  <i class="babbage-loading-icon"></i><strong>Loading data.</strong> Please wait...
+<div class="alert alert-info" ng-if="status.isLoading">
+  <i class="babbage-loading-icon"></i><span ng-bind-html="trustAsHtml(i18n('loadingData'))"></span>
 </div>
 
-<div class="alert alert-warning" ng-show="status.isEmpty">
-  <strong>No data to display.</strong>
-</div>
+<div class="alert alert-warning" ng-if="status.isEmpty"
+  ng-bind-html="trustAsHtml(i18n('noDataAvailable'))"></div>
 
-<div class="alert alert-warning" ng-show="status.isCutOff">
-  <strong>Too many tiles.</strong> The breakdown you have selected contains many
-  different categories, only the {{state.cutoff}} biggest are shown.
-</div>
+<div class="alert alert-warning" ng-if="status.isCutOff"
+  ng-bind-html="trustAsHtml(i18n('tooManyCategories', {count: status.cutoff}))"></div>
 
 <div class="treemap-chart"></div>
 
 <div class="treemap-list">
   <div class="treemap-table-bar">
-    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-show="treeMapTable.show">
+    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-if="treeMapTable.show">
       <span class="fa fa-caret-up"></span>
-      Hide list
+      {{ i18n('Hide list') }}
     </a>
-    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-hide="treeMapTable.show">
+    <a href="javascript:void(0)" ng-click="treeMapTable.toggle()" ng-if="!treeMapTable.show">
       <span class="fa fa-caret-down"></span>
-      Show list
+      {{ i18n('Show list') }}
     </a>
   </div>
   <table class="treemap-table table-striped">
@@ -29,20 +26,20 @@
     <tr>
       <th>
         <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'name'; treeMapTable.invertSorting();">
-          title
-          <span ng-show="treeMapTable.sortAttr == 'name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          {{ i18n('title') }}
+          <span ng-if="treeMapTable.sortAttr == 'name'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
         <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'value'; treeMapTable.invertSorting();">
-          amount
-          <span ng-show="treeMapTable.sortAttr == 'value'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          {{ i18n('amount') }}
+          <span ng-if="treeMapTable.sortAttr == 'value'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
       <th>
         <a href="javascript:void(0)" ng-click="treeMapTable.sortAttr = 'percentage'; treeMapTable.invertSorting();">
-          share
-          <span ng-show="treeMapTable.sortAttr == 'percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
+          {{ i18n('percentage') }}
+          <span ng-if="treeMapTable.sortAttr == 'percentage'" class="fa" ng-class="treeMapTable.sortDesc ? 'fa-caret-up' : 'fa-caret-down'"></span>
         </a>
       </th>
     </tr>
@@ -56,7 +53,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td>Total</td>
+        <td>{{ i18n('total') }}</td>
         <td>{{ treeMapTable.data.summaryFmtCurrency }}</td>
         <td>100%</td>
       </tr>

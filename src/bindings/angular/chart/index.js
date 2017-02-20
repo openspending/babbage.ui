@@ -1,10 +1,12 @@
 import ChartComponent from '../../../components/chart'
-import _ from 'lodash';
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
 
 export class ChartDirective {
   init(angularModule) {
     angularModule.directive('chart', [
-      function() {
+      '$sce',
+      function($sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -13,7 +15,8 @@ export class ChartDirective {
             type: '@',
             state: '=',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -25,8 +28,18 @@ export class ChartDirective {
               cutoff: 0
             };
 
-            var component = new ChartComponent();
-            var wrapper = element.find('.chart-babbage')[0];
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
+            };
+
+            let component = new ChartComponent();
+            let wrapper = element.find('.chart-babbage')[0];
 
             component.formatValue = $scope.formatValue;
 

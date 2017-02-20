@@ -1,14 +1,15 @@
 import GeoViewComponent from '../../../components/geoview'
-import _ from 'lodash';
-import directive from './directive';
+import * as _ from 'lodash'
+import {createI18NMapper} from '../utils'
+import directive from './directive'
 
 export class GeoViewDirective {
   init(angularModule) {
     directive(angularModule);
 
     angularModule.directive('geoView', [
-      '$q',
-      function($q) {
+      '$q', '$sce',
+      function($q, $sce) {
         return {
           restrict: 'EA',
           scope: {
@@ -20,7 +21,8 @@ export class GeoViewDirective {
             countryCode: '@',
             currencySign: '@?',
             downloader: '=?',
-            formatValue: '=?'
+            formatValue: '=?',
+            messages: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -32,7 +34,17 @@ export class GeoViewDirective {
               cutoff: 0
             };
 
-            var component = new GeoViewComponent();
+            $scope.i18n = createI18NMapper($scope.messages);
+            $scope.$watch('messages', function(newValue, oldValue) {
+              if (newValue !== oldValue) {
+                $scope.i18n = createI18NMapper($scope.messages);
+              }
+            }, true);
+            $scope.trustAsHtml = function(value) {
+              return $sce.trustAsHtml(value);
+            };
+
+            let component = new GeoViewComponent();
             $scope.component = component;
 
             component.on('loading', () => {
