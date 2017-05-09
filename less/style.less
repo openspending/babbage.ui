@@ -305,3 +305,25 @@
     height: 100%;
   }
 }
+
+.pie-chart {
+  .c3-chart-arc text {
+    .text-stroke();
+    fill: #FFF;
+  }
+}
+
+.bubbletree {
+  .bubbletree-label {
+    .text-stroke();
+    fill: #FFF;
+  }
+}
+
+.text-stroke(@colour: #333, @width: 1px) {
+  text-shadow:
+    -@width -@width 0 @colour,
+     @width -@width 0 @colour,
+    -@width  @width 0 @colour,
+     @width  @width 0 @colour;
+}
