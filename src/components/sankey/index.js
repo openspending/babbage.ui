@@ -16,6 +16,8 @@ export class SanKeyChartComponent extends events.EventEmitter {
     this.downloader = null;
     this.formatValue = null;
 
+    this.CHAR_WIDTH = 10;
+
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
       console.trace(error);
@@ -210,6 +212,25 @@ export class SanKeyChartComponent extends events.EventEmitter {
             return d.name + '\n' + valueFormat(d.value);
           });
 
+        // Add values inside nodes
+        node.filter(function(d) {
+            // Ignore small nodes
+            var estimatedTextWidth = (valueFormat(d.value).length * that.CHAR_WIDTH);
+            return d.dy > estimatedTextWidth;
+          })
+          .append('text')
+            .attr('class', 'nodeValue')
+	          .text(function (d) { return valueFormat(d.value); })
+	          .attr('text-anchor', 'middle')
+            .attr('transform', function (d) {
+              return 'rotate(-90) translate(' +
+                (-d.dy / 2) +
+                ', ' +
+                (sankey.nodeWidth() / 2 + 5) +
+                ')';
+            });
+
+        // Add labels inside links
         node.append('text')
           .attr('x', -6)
           .attr('y', function(d) {
