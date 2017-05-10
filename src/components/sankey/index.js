@@ -207,7 +207,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
           })
           .append('title')
           .text(function(d) {
-            return d.name
+            return d.name + '\n' + valueFormat(d.value);
           });
 
         node.append('text')
