@@ -20,6 +20,7 @@ export const defaultI18NMessages = {
   amount: 'Amount',
   percentage: 'Share',
   total: 'Total',
+  others: 'Others',
 };
 
 function getValueOrDefault(value, defaultValue) {

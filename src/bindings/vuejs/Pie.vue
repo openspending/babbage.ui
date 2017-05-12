@@ -29,7 +29,13 @@
     import PieChartComponent from '../../components/pie'
 
     export default {
-        props: ['cube', 'endpoint', 'pieid', 'simulation'],
+        props: [
+            'cube',
+            'endpoint',
+            'pieid',
+            'simulation',
+            'maxSlices'
+        ],
         components: {},
         data () {
             return {
@@ -58,7 +64,13 @@
                 const pieChart = new PieChartComponent()
                 const wrapper = document.querySelector(`div#${this.pieid}`)
 
-                pieChart.build(this.endpoint, this.cube, this.state, wrapper)
+                pieChart.build(
+                    this.endpoint,
+                    this.cube,
+                    this.state,
+                    wrapper,
+                    this.maxSlices
+                )
                 pieChart.on('click', function (PieChartComponent, item) {
                             // DEBUG:
                             // console.error("EL:", util.inspect(item.id, {depth: 10}))

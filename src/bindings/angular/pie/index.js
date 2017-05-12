@@ -12,6 +12,7 @@ export class PieChartDirective {
           scope: {
             endpoint: '@',
             cube: '@',
+            maxSlices: '@',
             state: '=',
             downloader: '=?',
             formatValue: '=?',
@@ -37,7 +38,7 @@ export class PieChartDirective {
               return $sce.trustAsHtml(value);
             };
 
-            let component = new PieChartComponent();
+            let component = new PieChartComponent($scope.i18n);
             let wrapper = element.find('.pie-chart')[0];
 
             component.formatValue = $scope.formatValue;
@@ -64,8 +65,13 @@ export class PieChartDirective {
 
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
-            component.build($scope.endpoint, $scope.cube,
-              $scope.state, wrapper);
+            component.build(
+              $scope.endpoint,
+              $scope.cube,
+              $scope.state,
+              wrapper,
+              $scope.maxSlices
+            );
 
             $scope.$emit('babbage-ui.create');
             $scope.$on('$destroy', function() {
