@@ -87,6 +87,7 @@ export class TreeMapComponent extends events.EventEmitter {
     api.aggregate(endpoint, cube, params)
       .then((data) => {
         var valueFormat = that.getValueFormatter();
+        const ratioFormat = d3.format('.1%');
 
         var root = {};
         root.children = [];
@@ -120,6 +121,7 @@ export class TreeMapComponent extends events.EventEmitter {
             return d.href;
           })
           .attr('class', 'node')
+          .attr('title', (d) => `${d.name}\n${d.areaFmtCurrency} (${ratioFormat(d.percentage)})`)
           .call(positionNode)
           .style('background', '#fff')
           .html(function(d) {
@@ -144,7 +146,7 @@ export class TreeMapComponent extends events.EventEmitter {
           .delay(function(d, i) { return Math.min(i * 30, 1500); })
           .style('background', function(d) { return d.color; });
 
-        // Check & Remove all rectangles with text overlfow:
+        // Check & Remove all rectangles with text overflow:
         var boxContentRemover = (item => $(item).empty());
         var hasTextOverflow = TreemapUtils.checkForTextOverflow('a.node', boxContentRemover);
         if (hasTextOverflow) {
