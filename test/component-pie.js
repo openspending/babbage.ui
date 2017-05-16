@@ -55,7 +55,9 @@ describe('Babbage.ui pie component', function() {
 
   describe('Grouping data', () => {
     it('Should return the unmodified data if it has no cells', () => {
-      const data = {};
+      const data = {
+        cells: [],
+      };
       assert.deepEqual(pieComponent._groupSlicesIfMoreThan(data), data);
     });
 
@@ -79,7 +81,7 @@ describe('Babbage.ui pie component', function() {
       for (const maxSlices of [-1, 0]) {
         assert.throws(
           () => pieComponent._groupSlicesIfMoreThan(data, maxSlices),
-          RangeError,
+          RangeError
         );
       }
     });

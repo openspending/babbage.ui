@@ -127,42 +127,38 @@ export class PieChartComponent extends events.EventEmitter {
       return data;
     }
 
+    const that = this;
+
     const individualCells = data.cells.slice(0, maxSlices - 1);
     const othersCell = {
-      // Set all dimension's keys that end in "Value" to "Other"
       dimensions: data.cells[0].dimensions.map((dimension) => {
-        const theDimension = {};
-        Object.keys(dimension).forEach((dimensionKey) => {
-          const value = (dimensionKey.endsWith('Value')) ? this.i18n('others') : dimension[dimensionKey];
-          theDimension[dimensionKey] = value;
-        });
-        return theDimension;
-      }),
-
-      // Set measures as the total values minus the other cell's values
-      measures: Object.keys(data.summary).reduce((measures, measureKey) => {
-        const initialMeasure = Object.assign(
+        return Object.assign(
           {},
-          data.cells[0].measures.find((measure) => measure.key === measureKey),
+          dimension,
           {
-            value: data.summary[measureKey],
+            keyValue: 'others',
+            nameValue: that.i18n('others'),
           }
         );
+      }),
 
-        const measure = individualCells.reduce((othersTotal, cell) => {
-          const cellMeasure = cell.measures.find((measure) => measure.key === measureKey);
+      // Set measures as the total values minus the individual cell's values
+      measures: data.cells[0].measures.map((measure) => {
+        const individualCellsTotal = individualCells.reduce((total, cell) => {
+          const cellMeasure = cell.measures.find((m) => m.key === measure.key);
+          return total + cellMeasure.value;
+        }, 0);
 
-          othersTotal.value -= cellMeasure.value;
-
-          return othersTotal;
-        }, initialMeasure);
-
-        return [
-          ...measures,
+        return Object.assign(
+          {},
           measure,
-        ];
-      }, []),
+          {
+            value: data.summary[measure.key] - individualCellsTotal,
+          }
+        );
+      }),
     };
+
 
     return Object.assign(
       {},
