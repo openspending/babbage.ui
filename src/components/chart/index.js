@@ -76,6 +76,7 @@ export class ChartComponent extends events.EventEmitter {
         var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);
         var types = {};
         var c3Groups = _.map(_.slice(columns, 1), (column) => {return column[0]});
+        var showLegend = (c3Groups.length > 1);
         _.each(_.slice(columns, 1), (column) => {
           types[column[0]] = chartType;
         });
@@ -129,6 +130,9 @@ export class ChartComponent extends events.EventEmitter {
             format: {
               value: valueFormat
             }
+          },
+          legend: {
+            show: showLegend
           }
         });
 
