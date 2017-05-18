@@ -13,9 +13,9 @@ var scale = d3.scale.ordinal();
 export var numberFormat = d3.format('0,000');
 
 export function colorScale(index, colorSchema) {
-  scale.range(
-    _.isArray(colorSchema) || defaultColorSchema
-  );
+  const colors = (_.isArray(colorSchema)) ? colorSchema : defaultColorSchema;
+
+  scale.range(colors);
 
   return scale(index);
 }

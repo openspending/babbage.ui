@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 var _ = require('lodash');
 
 describe('Babbage.ui component utils', function() {
-  var Utils = require('../lib/components/utils.js');
+  var Utils = require('../src/components/utils.js');
   var data = require('./data/component-utils/data1');
 
   it('Should exists', function(done) {
@@ -36,6 +36,18 @@ describe('Babbage.ui component utils', function() {
     done();
   });
 
+  describe('colorScale', () => {
+    it('Should use the default color schema when one isn\'t passed', () => {
+      assert.isDefined(Utils.colorScale(0));
+    });
 
+    it('Should use the passed color schema', () => {
+      const colorSchema = ['#FFF', '#333', '#000'];
+
+      colorSchema.forEach((color, index) => {
+        assert.equal(Utils.colorScale(index, colorSchema), color);
+      });
+    });
+  });
 });
 
