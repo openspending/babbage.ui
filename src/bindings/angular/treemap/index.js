@@ -15,7 +15,8 @@ class TreemapDirective {
             state: '=',
             downloader: '=?',
             formatValue: '=?',
-            messages: '=?'
+            messages: '=?',
+            colorSchema: '@',
           },
           template: require('./template.html'),
           replace: false,
@@ -87,7 +88,9 @@ class TreemapDirective {
             });
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
-            component.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+
+            const colorSchema = $scope.$eval($scope.colorSchema);
+            component.build($scope.endpoint, $scope.cube, $scope.state, wrapper, colorSchema);
 
             $scope.$emit('babbage-ui.create');
             $scope.$on('$destroy', function() {
