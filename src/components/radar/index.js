@@ -18,7 +18,7 @@ function RadarChart(wrapper, allData, legendOptions, options) {
     opacityCircles: 0.1, 	//The opacity of the circles of each blob
     strokeWidth: 2, 		//The width of the stroke around each blob
     roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-    color: d3.scale.category20(),	//Color function
+    color: Utils.defaultColorScale(),	//Color function
     formatValue: d3.format(',') //Percentage formatting
   };
   var data = _.map(allData, function(datum) {
@@ -461,9 +461,13 @@ export class RadarChartComponent extends events.EventEmitter {
       });
   }
 
-  build(endpoint, cube, params, wrapper) {
+  build(endpoint, cube, params, wrapper, colorScale) {
     var that = this;
     this.wrapper = wrapper;
+
+    if (colorScale === undefined) {
+      colorScale = Utils.defaultColorScale();
+    }
 
     that.emit('loading', that);
 
@@ -517,7 +521,6 @@ export class RadarChartComponent extends events.EventEmitter {
         var margin = {top: 100, right: 100, bottom: 100, left: 100},
           width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
           height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
-        var color = d3.scale.category10();
 
         var radarChartOptions = {
           w: width,
@@ -526,7 +529,7 @@ export class RadarChartComponent extends events.EventEmitter {
           maxValue: 0.5,
           levels: 5,
           roundStrokes: true,
-          color: color,
+          color: colorScale,
           formatValue: valueFormat
         };
 

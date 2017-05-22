@@ -16,7 +16,8 @@ export class ChartDirective {
             state: '=',
             downloader: '=?',
             formatValue: '=?',
-            messages: '=?'
+            messages: '=?',
+            colorScale: '&',
           },
           template: require('./template.html'),
           replace: false,
@@ -60,8 +61,15 @@ export class ChartDirective {
 
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
-            component.build($scope.type, $scope.endpoint,
-              $scope.cube, $scope.state, wrapper);
+
+            component.build(
+              $scope.type,
+              $scope.endpoint,
+              $scope.cube,
+              $scope.state,
+              wrapper,
+              $scope.colorScale()
+            );
 
             $scope.$emit('babbage-ui.create');
             $scope.$on('$destroy', function() {

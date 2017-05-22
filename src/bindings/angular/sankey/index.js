@@ -15,7 +15,8 @@ export class SanKeyChartDirective {
             state: '=',
             downloader: '=?',
             formatValue: '=?',
-            messages: '=?'
+            messages: '=?',
+            colorScale: '&',
           },
           template: require('./template.html'),
           replace: false,
@@ -64,7 +65,13 @@ export class SanKeyChartDirective {
 
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
-            component.build($scope.endpoint, $scope.cube, $scope.state, wrapper);
+            component.build(
+              $scope.endpoint,
+              $scope.cube,
+              $scope.state,
+              wrapper,
+              $scope.colorScale()
+            );
 
             $scope.$emit('babbage-ui.create');
             $scope.$on('$destroy', function() {

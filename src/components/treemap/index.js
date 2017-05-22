@@ -54,9 +54,13 @@ export class TreeMapComponent extends events.EventEmitter {
     return formatValue;
   }
 
-  build(endpoint, cube, params, wrapper, colorSchema) {
+  build(endpoint, cube, params, wrapper, colorScale) {
     params = _.cloneDeep(params);
     var that = this;
+
+    if (colorScale === undefined) {
+      colorScale = Utils.defaultColorScale();
+    }
 
     this.wrapper = wrapper;
     var size = {
@@ -106,7 +110,7 @@ export class TreeMapComponent extends events.EventEmitter {
           cell.value = measure.value;
           cell.key = dimension.keyValue;
           cell.name = dimension.nameValue;
-          cell.color = Utils.colorScale(index, colorSchema);
+          cell.color = colorScale(index);
 
           cell.percentage = (measure.value && data.summary && params.aggregates)
             ? (measure.value / Math.max(data.summary[params.aggregates], 1))

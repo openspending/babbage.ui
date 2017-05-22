@@ -34,7 +34,8 @@
             'endpoint',
             'pieid',
             'simulation',
-            'maxSlices'
+            'maxSlices',
+            'colorScale'
         ],
         components: {},
         data () {
@@ -69,7 +70,8 @@
                     this.cube,
                     this.state,
                     wrapper,
-                    this.maxSlices
+                    this.maxSlices,
+                    this.colorScale
                 )
                 pieChart.on('click', function (PieChartComponent, item) {
                             // DEBUG:
