@@ -26,27 +26,10 @@ describe('Babbage.ui component utils', function() {
     done();
   });
 
-  it('Should build `colors`', function(done) {
-    var result = Utils.buildC3Colors(data);
-    assert.deepEqual(result, [
-      [10, '#CF3D1E'],
-      [20, '#F15623'],
-      [30, '#F68B1F']
-    ]);
-    done();
-  });
-
-  describe('colorScale', () => {
-    it('Should use the default color schema when one isn\'t passed', () => {
-      assert.isDefined(Utils.colorScale(0));
-    });
-
-    it('Should use the passed color schema', () => {
-      const colorSchema = ['#FFF', '#333', '#000'];
-
-      colorSchema.forEach((color, index) => {
-        assert.equal(Utils.colorScale(index, colorSchema), color);
-      });
+  describe('defaultColorScale', () => {
+    it('Should return a color scale', () => {
+      assert.isFunction(Utils.defaultColorScale());
+      assert.isString(Utils.defaultColorScale()(0));
     });
   });
 });

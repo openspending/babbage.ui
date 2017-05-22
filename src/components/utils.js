@@ -100,20 +100,6 @@ export function buildC3BarColumns(data, aggregates) {
 }
 
 
-export function buildC3Colors(data, colorSchema) {
-  return _.map(data.cells, (item, index) => {
-    var dimension = _.first(item.dimensions);
-    return [dimension.keyValue, colorScale(index, colorSchema)];
-  });
-}
-
-export function buildC3BarColors(data, colorSchema) {
-  return _.map(data.cells, (item, index) => {
-    var dimension = _.first(item.dimensions);
-    return [dimension.keyValue, colorScale(index, colorSchema)];
-  });
-}
-
 export function moneyFormat(amount, currency) {
   if (amount && currency) {
     let currencySymbol = {USD: '$', GBP:'£', EUR: '€', JPY: '¥'}[currency];
