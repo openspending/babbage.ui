@@ -4,6 +4,7 @@ import {createI18NMapper} from '../utils'
 
 // Include `pivottable` jquery plugin into bundle. Do not remove this line!
 import 'pivottable'
+const jQuery = require('jquery');
 
 export class PivotTableDirective {
   init(angularModule) {
@@ -59,11 +60,11 @@ export class PivotTableDirective {
               $scope.$emit('babbage-ui.ready', component, data, error);
             });
 
-            let sum = $.pivotUtilities.aggregatorTemplates.sum;
+            let sum = jQuery.pivotUtilities.aggregatorTemplates.sum;
 
             let formatValue = $scope.formatValue;
             if (!_.isFunction(formatValue)) {
-              let numberFormat = $.pivotUtilities.numberFormat;
+              let numberFormat = jQuery.pivotUtilities.numberFormat;
               formatValue = numberFormat({digitsAfterDecimal: 0});
             }
 
@@ -79,7 +80,7 @@ export class PivotTableDirective {
                 ) {
                   $scope.status.isTooMuchData = true;
                 } else {
-                  $(wrapper).pivot(
+                  jQuery(wrapper).pivot(
                     result.data,
                     {
                       rows: result.rows,
