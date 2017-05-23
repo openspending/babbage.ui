@@ -16,7 +16,8 @@ export class PieChartDirective {
             state: '=',
             downloader: '=?',
             formatValue: '=?',
-            messages: '=?'
+            messages: '=?',
+            colorScale: '&',
           },
           template: require('./template.html'),
           replace: false,
@@ -65,12 +66,14 @@ export class PieChartDirective {
 
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
+
             component.build(
               $scope.endpoint,
               $scope.cube,
               $scope.state,
               wrapper,
-              $scope.maxSlices
+              $scope.maxSlices,
+              $scope.colorScale()
             );
 
             $scope.$emit('babbage-ui.create');

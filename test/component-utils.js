@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 var _ = require('lodash');
 
 describe('Babbage.ui component utils', function() {
-  var Utils = require('../lib/components/utils.js');
+  var Utils = require('../src/components/utils.js');
   var data = require('./data/component-utils/data1');
 
   it('Should exists', function(done) {
@@ -26,16 +26,11 @@ describe('Babbage.ui component utils', function() {
     done();
   });
 
-  it('Should build `colors`', function(done) {
-    var result = Utils.buildC3Colors(data);
-    assert.deepEqual(result, [
-      [10, '#CF3D1E'],
-      [20, '#F15623'],
-      [30, '#F68B1F']
-    ]);
-    done();
+  describe('defaultColorScale', () => {
+    it('Should return a color scale', () => {
+      assert.isFunction(Utils.defaultColorScale());
+      assert.isString(Utils.defaultColorScale()(0));
+    });
   });
-
-
 });
 

@@ -64,7 +64,7 @@
     import TreeMapComponent from '../../components/treemap'
 
     export default {
-        props: ['cube', 'endpoint', 'treemapid', 'simulation'],
+        props: ['cube', 'endpoint', 'treemapid', 'simulation', 'colorScale'],
         components: {},
         data () {
             return {
@@ -128,7 +128,7 @@
                 const wrapper = document.querySelector("div#treemap-kpkt")
                 // Build and track events??
                 // Maybe assign it to a map; so can drill up and down; cached??
-                treeMap.build(endpoint, cube, state, wrapper)
+                treeMap.build(endpoint, cube, state, wrapper, this.colorScale)
                 treeMap.on('click', function (treeMapComponent, item) {
                             this.$emit('treemap-click', treeMapComponent, item)
                             // console.error("TREE:", util.inspect(treeMapComponent.treemap(), {depth: 4}))

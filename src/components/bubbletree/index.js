@@ -70,7 +70,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
     return result.amount > 0 ? result : null;
   };
 
-  build(endpoint, cube, params, wrapper, colorSchema) {
+  build(endpoint, cube, params, wrapper) {
     var that = this;
     this.wrapper = wrapper;
 

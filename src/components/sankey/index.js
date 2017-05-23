@@ -42,9 +42,13 @@ export class SanKeyChartComponent extends events.EventEmitter {
     };
   }
 
-  build(endpoint, cube, params, wrapper, colorSchema) {
+  build(endpoint, cube, params, wrapper, colorScale) {
     var that = this;
     this.wrapper = wrapper;
+
+    if (colorScale === undefined) {
+      colorScale = Utils.defaultColorScale();
+    }
 
     var unit = 15;
     var margin = {top: unit / 2, right: 1, bottom: 6, left: 1};
@@ -125,7 +129,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
             graph.nodes.push({
               key: source.keyValue,
               name: source.nameValue,
-              color: Utils.colorScale(sourceId),
+              color: colorScale(sourceId),
               isSource: true
             });
             objs[sourceId] = {idx: graph.nodes.length - 1};

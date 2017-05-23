@@ -39,11 +39,15 @@ export class ChartComponent extends events.EventEmitter {
     };
   }
 
-  build(chartType, endpoint, cube, params, wrapper, colorSchema) {
+  build(chartType, endpoint, cube, params, wrapper, colorScale) {
     params = _.cloneDeep(params);
 
     var that = this;
     this.wrapper = wrapper;
+
+    if (colorScale === undefined) {
+      colorScale = Utils.defaultColorScale();
+    }
 
     that.emit('loading', that);
 
@@ -94,7 +98,7 @@ export class ChartComponent extends events.EventEmitter {
               if ((chartType == 'bar') && !series) {
                 c = d.index;
               }
-              return Utils.colorScale(c);
+              return colorScale(c);
             },
             type: chartType || 'bar',
             x: _.first(_.first(columns)),

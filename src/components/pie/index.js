@@ -48,19 +48,22 @@ export class PieChartComponent extends events.EventEmitter {
     };
   }
 
-  build(endpoint, cube, params, wrapper, maxSlices=5, colorSchema) {
+  build(endpoint, cube, params, wrapper, maxSlices=5, colorScale) {
     params = _.cloneDeep(params);
 
     var that = this;
     this.wrapper = wrapper;
+
+    if (colorScale === undefined) {
+      colorScale = Utils.defaultColorScale();
+    }
 
     return this._getData(endpoint, cube, params, maxSlices)
       .then((data) => {
         var columns = Utils.buildC3PieColumns(data, params.aggregates);
         var colors = {};
         _.each(columns, (value, index) => {
-          // FIXME: colorSchema should be used here
-          colors[value[0]] = Utils.colorScale(index);
+          colors[value[0]] = colorScale(index);
         });
 
         var currency = data.currency[params.aggregates];
