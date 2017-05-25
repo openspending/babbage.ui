@@ -1,5 +1,6 @@
 import { Api } from '../../api/index'
 import d3 from 'd3'
+import 'd3-plugins/sankey/sankey'
 import * as Utils from '../utils.js'
 import _ from 'lodash'
 import events from 'events'
