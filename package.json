@@ -15,7 +15,8 @@
     "prepublish": "npm run build",
     "review": "jscs src test gulpfile.js webpack.config.base.js webpack.config.development.js webpack.config.production.js",
     "fix": "jscs lib test --fix",
-    "test": "mocha"
+    "test": "mocha",
+    "posttest": "npm run review"
   },
   "files": [
     "lib",
