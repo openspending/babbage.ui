@@ -3274,9 +3274,9 @@
       "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.3.4.tgz"
     },
     "bubbletree": {
-      "version": "2.0.4",
-      "from": "git+https://github.com/okfn/bubbletree.git#d797bff3ef22d22951acf6f55a83f6555d7a801a",
-      "resolved": "git+https://github.com/okfn/bubbletree.git#d797bff3ef22d22951acf6f55a83f6555d7a801a",
+      "version": "2.1.0",
+      "from": "git+https://github.com/okfn/bubbletree.git#1b16bc3934c494e32e0bff0fb2936a89770019aa",
+      "resolved": "git+https://github.com/okfn/bubbletree.git#1b16bc3934c494e32e0bff0fb2936a89770019aa",
       "dependencies": {
         "jquery": {
           "version": "1.12.4",
