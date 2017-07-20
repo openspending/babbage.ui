@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var path = require('path');
 var _ = require('lodash');
 
 module.exports = {
@@ -17,6 +18,9 @@ module.exports = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map',
+  resolve: {
+    fallback: path.join(__dirname, 'node_modules'),
+  },
   externals: {
     // require("jquery") is external and available
     // on the global var jQuery
