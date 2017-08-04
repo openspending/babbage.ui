@@ -242,6 +242,38 @@ export class Api {
     })
   }
 
+  buildAggregateUrl(endpoint, cube, originParams) {
+    const that = this;
+    const params = _.cloneDeep(originParams) || {};
+
+    params.page = params.page || 0;
+    params.pagesize = params.pagesize || 30;
+
+    return this.getPackageModel(endpoint, cube)
+      .then((model) => {
+        const measures = that.getMeasuresFromModel(model);
+
+        if (!params.aggregates) {
+          params.aggregates = _.first(measures).key;
+        }
+        params.order = params.order || [{key: params.aggregates, direction: 'desc'}];
+        delete params.aggregates;
+
+        var newExtendedGroup = [];
+        _.each(params.group, (dimensionKey) => {
+          newExtendedGroup.push(dimensionKey);
+          const dimensionDisplay = that.getDisplayField(model, dimensionKey);
+
+          if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
+            newExtendedGroup.push(dimensionDisplay);
+          }
+        });
+        params.group = newExtendedGroup;
+
+        return that.buildUrl(endpoint, cube, 'aggregate', params);
+    });
+  }
+
   aggregate(endpoint, cube, originParams) {
     var that = this;
     var params = _.cloneDeep(originParams) || {};
@@ -252,82 +284,69 @@ export class Api {
     var measures = [];
     var measureModelList;
 
-    return this.getPackageModel(endpoint, cube).then((model) => {
-        measures = that.getMeasuresFromModel(model);
-        measureModelList = _.values(model.measures);
+    return Promise.all([
+      that.getPackageModel(endpoint, cube),
+      that.buildAggregateUrl(endpoint, cube, originParams)
+    ]).then((values) => {
+      const model = values[0];
+      const aggregateUrl = values[1];
+      measures = that.getMeasuresFromModel(model);
+      measureModelList = _.values(model.measures);
 
-        if (!params.aggregates) {
-          params.aggregates = _.first(measures).key;
-        }
-        params.order = params.order || [{key: params.aggregates, direction: 'desc'}];
-        params.aggregates = undefined; //remove it
-
-        var newExtendedGroup = [];
-        _.each(params.group, (dimensionKey) => {
-          newExtendedGroup.push(dimensionKey);
-          var dimensionDisplay = that.getDisplayField(model, dimensionKey);
-
-          dimensions.push({
-            key: dimensionKey,
-            name: dimensionDisplay
-          });
-
-          if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
-            newExtendedGroup.push(dimensionDisplay);
-          }
+      (params.group || []).forEach((dimensionKey) => {
+        const dimensionDisplay = that.getDisplayField(model, dimensionKey);
+        dimensions.push({
+          key: dimensionKey,
+          name: dimensionDisplay
         });
-        params.group = newExtendedGroup;
+      });
 
-        var aggregateUrl = that.buildUrl(endpoint, cube, 'aggregate', params);
+      return that.getJson(aggregateUrl);
+    }).then((data) => {
+      var result = {
+        currency: {},
+        summary: {},
+        // jscs:disable
+        count: data.total_cell_count,
+        // jscs:enable
+        cells: []
+      };
 
-        return that.getJson(aggregateUrl);
-      })
-      .then((data) => {
+      _.each(measures, (measure) => {
+        let measureModel = _.find(measureModelList, {label: measure.value});
+        result.summary[measure.key] = data.summary[measure.key];
+        result.currency[measure.key] = measureModel.currency;
+      });
 
-        var result = {
-          currency: {},
-          summary: {},
-          // jscs:disable
-          count: data.total_cell_count,
-          // jscs:enable
-          cells: []
-        };
+      _.each(data.cells, (cell) => {
+        var dimensionsResult = [];
+        var measuresResult = [];
+
+        _.each(dimensions, (dimension) => {
+          dimensionsResult.push({
+            keyField: dimension.key,
+            nameField: dimension.name,
+            keyValue: cell[dimension.key],
+            nameValue: cell[dimension.name]
+          });
+        });
 
         _.each(measures, (measure) => {
-          let measureModel = _.find(measureModelList, {label: measure.value});
-          result.summary[measure.key] = data.summary[measure.key];
-          result.currency[measure.key] = measureModel.currency;
-        });
-
-        _.each(data.cells, (cell) => {
-          var dimensionsResult = [];
-          var measuresResult = [];
-
-          _.each(dimensions, (dimension) => {
-            dimensionsResult.push({
-              keyField: dimension.key,
-              nameField: dimension.name,
-              keyValue: cell[dimension.key],
-              nameValue: cell[dimension.name]
-            });
-          });
-
-          _.each(measures, (measure) => {
-            measuresResult.push({
-              key: measure.key,
-              name: measure.value,
-              value: cell[measure.key]
-            });
-          });
-
-          result.cells.push({
-            dimensions: dimensionsResult,
-            measures: measuresResult
+          measuresResult.push({
+            key: measure.key,
+            name: measure.value,
+            value: cell[measure.key]
           });
         });
-        exportResults('aggregate', result);
-        return result;
+
+        result.cells.push({
+          dimensions: dimensionsResult,
+          measures: measuresResult
+        });
       });
+      exportResults('aggregate', result);
+      return result;
+    });
   }
 
   loadGeoJson(cosmopolitanApiUrl, countryCode) {
