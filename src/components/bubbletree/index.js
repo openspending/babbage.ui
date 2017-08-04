@@ -16,6 +16,7 @@ export class BubbleTreeComponent extends events.EventEmitter {
     this.bubbleTree = null;
     this.downloader = null;
     this.formatValue = null;
+    this.getStyle = () => ({});
 
     // Prevent from throwing exception in EventEmitter
     this.on('error', (sender, error) => {
@@ -93,6 +94,9 @@ export class BubbleTreeComponent extends events.EventEmitter {
             data: bubbleTreeData,
             container: wrapper,
             formatValue: valueFormat,
+            bubbleStyles: {
+              getStyle: that.getStyle
+            },
             nodeClickCallback: (node) => {
               if (node.level > 0) {
                 that.emit('click', that, node);

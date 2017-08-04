@@ -16,7 +16,8 @@ export class BubbleTreeDirective {
             state: '=',
             downloader: '=?',
             formatValue: '=?',
-            messages: '=?'
+            messages: '=?',
+            getStyle: '=?'
           },
           template: require('./template.html'),
           replace: false,
@@ -42,6 +43,7 @@ export class BubbleTreeDirective {
             let wrapper = element.find('.bubbletree')[0];
 
             component.formatValue = $scope.formatValue;
+            component.getStyle = $scope.getStyle;
             component.on('loading', () => {
               $scope.status.isLoading = true;
               $scope.status.isEmpty = false;
