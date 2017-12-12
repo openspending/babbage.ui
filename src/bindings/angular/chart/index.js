@@ -58,6 +58,10 @@ export class ChartDirective {
               $scope.$applyAsync();
               $scope.$emit('babbage-ui.ready', component, data, error);
             });
+            component.on('click', function(component, item) {
+              $scope.$emit('babbage-ui.click', component, item);
+              $scope.$applyAsync();
+            });
 
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
