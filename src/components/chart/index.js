@@ -104,6 +104,9 @@ export class ChartComponent extends events.EventEmitter {
             x: _.first(_.first(columns)),
             groups: [c3Groups],
             types: types,
+            onclick: (d, element) => {
+              that.emit('click', that, d);
+            }
           },
           point: {
             show: false
