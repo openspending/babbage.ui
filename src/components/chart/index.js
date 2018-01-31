@@ -88,18 +88,17 @@ export class ChartComponent extends events.EventEmitter {
         var currency = data.currency[params.aggregates];
         var valueFormat = that.getValueFormatter(currency);
 
+        var colors = {};
+        _.each(columns, (value, index) => {
+          colors[value[0]] = colorScale(index);
+        });
+
         that.chart = c3.generate({
           bindto: that.wrapper,
           data: {
             names: Utils.buildC3BarNames(data, params.aggregates),
             columns: columns,
-            color: function(color, d) {
-              var c = d.id || d;
-              if ((chartType == 'bar') && !series) {
-                c = d.index;
-              }
-              return colorScale(c);
-            },
+            color: colors,
             type: chartType || 'bar',
             x: _.first(_.first(columns)),
             groups: [c3Groups],
