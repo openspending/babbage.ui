@@ -67,6 +67,7 @@ export class PieChartComponent extends events.EventEmitter {
         });
 
         var currency = data.currency[params.aggregates];
+        var title = data.summary[params.aggregates];
         var valueFormat = that.getValueFormatter(currency);
 
         var ratioFormat = d3.format('.1%');
@@ -87,6 +88,9 @@ export class PieChartComponent extends events.EventEmitter {
                 return valueFormat(value);
               }
             }
+          },
+          donut: {
+            title: valueFormat(title)
           },
           tooltip: {
             format: {
