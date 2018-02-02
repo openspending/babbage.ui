@@ -12,6 +12,7 @@ export class PieChartDirective {
           scope: {
             endpoint: '@',
             cube: '@',
+            type: '@',
             maxSlices: '@',
             state: '=',
             downloader: '=?',
@@ -68,6 +69,7 @@ export class PieChartDirective {
             $scope.$emit('babbage-ui.initialize', component);
 
             component.build(
+              $scope.type,
               $scope.endpoint,
               $scope.cube,
               $scope.state,

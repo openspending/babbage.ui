@@ -86,7 +86,9 @@ Other visualizations may require other additional parameters.
 
 <chart type="line" endpoint="http://example.com/api/" cube="demo" state="state"></pivot>
 
-<pie-chart endpoint="http://example.com/api/" cube="demo" state="state"></pie-chart>   
+<pie-chart endpoint="http://example.com/api/" cube="demo" state="state"></pie-chart>
+
+<pie-chart type="donut" endpoint="http://example.com/api/" cube="demo" state="state"></pie-chart>
 ```
 
 Additional required fields:

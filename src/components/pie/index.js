@@ -48,7 +48,7 @@ export class PieChartComponent extends events.EventEmitter {
     };
   }
 
-  build(endpoint, cube, params, wrapper, maxSlices=5, colorScale) {
+  build(chartType, endpoint, cube, params, wrapper, maxSlices=5, colorScale) {
     params = _.cloneDeep(params);
 
     var that = this;
@@ -76,7 +76,7 @@ export class PieChartComponent extends events.EventEmitter {
             names: Utils.buildC3Names(data),
             columns: columns,
             colors: colors,
-            type: 'pie',
+            type: chartType || 'pie',
             onclick: (d, element) => {
               that.emit('click', that, d);
             }
