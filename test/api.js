@@ -78,12 +78,12 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test/model')
+      .get('/cubes/test/model/')
       .reply(200, testPackageModel, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/model')
+      .get('/cubes/test2/model/')
       .reply(200, test2PackageModel, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
