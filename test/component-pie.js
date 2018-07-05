@@ -17,7 +17,7 @@ describe('Babbage.ui pie component', function() {
 
     nock('http://example.com/')
       .persist()
-      .get('/cubes/test2/aggregate')
+      .get('/cubes/test2/aggregate/')
       .query({
         drilldown: 'administrative_classification_admin3_code.admin3_code' +
           '|administrative_classification_admin3_code.admin3_label',

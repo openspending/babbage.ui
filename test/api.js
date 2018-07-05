@@ -38,21 +38,21 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test/aggregate?' +
+      .get('/cubes/test/aggregate/?' +
         'drilldown=administrative_classification.admin1&' +
         'pagesize=30')
       .reply(200, aggregate1, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test/aggregate?' +
+      .get('/cubes/test/aggregate/?' +
         'drilldown=administrative_classification.admin1&' +
         'pagesize=30&order=amount.sum%3Adesc')
       .reply(200, aggregate1, {'access-control-allow-origin': '*'});
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/aggregate?' +
+      .get('/cubes/test2/aggregate/?' +
         'drilldown=administrative_classification_admin3_code.admin3_code%7C' +
         'administrative_classification_admin3_code.admin3_label&' +
         'pagesize=30')
@@ -60,7 +60,7 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/aggregate?' +
+      .get('/cubes/test2/aggregate/?' +
         'drilldown=administrative_classification_admin2_code.admin2_code%7C' +
         'administrative_classification_admin2_code.admin2_label%7C' +
         'administrative_classification_admin3_code.admin3_code%7C' +
@@ -70,7 +70,7 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/aggregate?' +
+      .get('/cubes/test2/aggregate/?' +
         'drilldown=administrative_classification_admin3_code.admin3_code%7C' +
         'administrative_classification_admin3_code.admin3_label&' +
         'pagesize=30&order=executed.sum%3Adesc')
@@ -88,7 +88,7 @@ describe('Babbage.ui API', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/facts?pagesize=20')
+      .get('/cubes/test2/facts/?pagesize=20')
       .reply(200, facts2, {'access-control-allow-origin': '*'});
 
 
@@ -151,22 +151,22 @@ describe('Babbage.ui API', function() {
   });
 
   it('Should build URL', function(done) {
-    var url = api.buildUrl('http://api.com', 'test', 'aggregate');
-    assert.equal(url, 'http://api.com/cubes/test/aggregate');
+    var url = api.buildUrl('http://api.com', 'test', 'aggregate/');
+    assert.equal(url, 'http://api.com/cubes/test/aggregate/');
 
-    var url = api.buildUrl('http://api.com/', 'test', 'aggregate');
-    assert.equal(url, 'http://api.com/cubes/test/aggregate');
+    var url = api.buildUrl('http://api.com/', 'test', 'aggregate/');
+    assert.equal(url, 'http://api.com/cubes/test/aggregate/');
     done();
   });
 
   it('Should build URL with params', function(done) {
-    var url = api.buildUrl('http://api.com', 'test', 'aggregate', {
+    var url = api.buildUrl('http://api.com', 'test', 'aggregate/', {
       filter: 'filter',
       group: 'group'
     });
     assert.equal(
       url,
-      'http://api.com/cubes/test/aggregate?drilldown=group&cut=filter'
+      'http://api.com/cubes/test/aggregate/?drilldown=group&cut=filter'
     );
 
     done();

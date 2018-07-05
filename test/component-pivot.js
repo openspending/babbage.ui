@@ -11,7 +11,7 @@ describe('Babbage.ui pivot table component', function() {
   before(function(done) {
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/aggregate?' +
+      .get('/cubes/test2/aggregate/?' +
         'drilldown=administrative_classification_admin1.admin1%7C' +
         'other_exp_type.exp_type&' +
         'pagesize=2000&order=adjusted.sum%3Adesc')

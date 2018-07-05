@@ -202,7 +202,7 @@ export class Api {
         measureFields.push(key);
       });
 
-      var factsUrl = that.buildUrl(endpoint, cube, 'facts', params);
+      var factsUrl = that.buildUrl(endpoint, cube, 'facts/', params);
       return that.getJson(factsUrl);
     }).then((facts) => {
       var result = {};
@@ -270,7 +270,7 @@ export class Api {
         });
         params.group = newExtendedGroup;
 
-        return that.buildUrl(endpoint, cube, 'aggregate', params);
+        return that.buildUrl(endpoint, cube, 'aggregate/', params);
     });
   }
 
