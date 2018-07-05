@@ -28,7 +28,7 @@ describe('Babbage.ui pie component', function() {
 
     nock('http://example.com/')
       .persist()
-      .get('/cubes/test2/model')
+      .get('/cubes/test2/model/')
       .reply(200, test2PackageModel, {'access-control-allow-origin': '*'});
   });
 

@@ -71,7 +71,7 @@ export class Api {
 
   getPackageModel(endpoint, cube) {
     return this.getJson(
-      this.buildUrl(endpoint, cube, 'model')
+      this.buildUrl(endpoint, cube, 'model/')
     ).then((result) => {
       return result.model;
     });

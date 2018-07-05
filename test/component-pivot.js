@@ -19,7 +19,7 @@ describe('Babbage.ui pivot table component', function() {
 
     nock('http://site.com/')
       .persist()
-      .get('/cubes/test2/model')
+      .get('/cubes/test2/model/')
       .reply(200, test2PackageModel, {'access-control-allow-origin': '*'});
     done();
   });
