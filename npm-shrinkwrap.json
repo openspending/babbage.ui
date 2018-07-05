@@ -1,6 +1,6 @@
 {
   "name": "babbage.ui",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "dependencies": {
     "babel-cli": {
       "version": "6.24.1",
