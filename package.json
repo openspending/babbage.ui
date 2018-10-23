@@ -25,7 +25,7 @@
   "dependencies": {
     "bluebird": "^3.4.1",
     "bubbletree": "^2.1.0",
-    "c3": "git+https://github.com/masayuki0812/c3.git",
+    "c3": "^0.4.18",
     "d3": "^3.5.16",
     "d3-plugins-sankey-fixed": "^1.3.0",
     "isomorphic-fetch": "^2.2.1",
