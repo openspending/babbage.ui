@@ -89,7 +89,7 @@
             // pass props "simulation" = true to hardcode api +data source
             if (this.simulation) {
                 console.error("TREEMAP: Simulation Mode ON")
-                const endpoint = "http://next.openspending.org/api/3"
+                const endpoint = "http://openspending.org/api/3"
                 // const cube = "boost:boost-moldova-2005-2014"
                 const cube = "0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test"
                 const state = {
@@ -170,7 +170,7 @@
 
                  First level cut: ==> cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22
                  Request URL:
-                 http://next.openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/facts?drilldown=economic_classification_Level_2.Level_2_x_3&aggregates=Amount.sum&pagesize=20&cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22
+                 http://openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/facts?drilldown=economic_classification_Level_2.Level_2_x_3&aggregates=Amount.sum&pagesize=20&cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22
 
                  Params:
                  drilldown:economic_classification_Level_2.Level_2_x_3
@@ -180,7 +180,7 @@
 
                  First level aggregte:
                  Request URL:
-                 http://next.openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/aggregate?drilldown=economic_classification_Level_2.Level_2_x_3&pagesize=30&cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22&order=Amount.sum%3Adesc
+                 http://openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/aggregate?drilldown=economic_classification_Level_2.Level_2_x_3&pagesize=30&cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22&order=Amount.sum%3Adesc
                  Params:
                  drilldown:economic_classification_Level_2.Level_2_x_3
                  pagesize:30
@@ -189,7 +189,7 @@
 
                  ======= ******************** ======
                  Second level cut: ==>
-                 Request URL:http://next.openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/facts?
+                 Request URL:http://openspending.org/api/3/cubes/0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test/facts?
                  drilldown=economic_classification_Level_3.Level_3_x_4&aggregates=Amount.sum&pagesize=20&cut=economic_classification_Level.Level_1_x_2%3A%221.1.2%22%7C
                  economic_classification_Level_2.Level_2_x_3%3A%220%22
 
@@ -199,7 +199,7 @@
                  cut:economic_classification_Level.Level_1_x_2:"1.1.2"|economic_classification_Level_2.Level_2_x_3:"0"
 
                  */
-                const endpoint = "http://next.openspending.org/api/3"
+                const endpoint = "http://openspending.org/api/3"
                 // const cube = "boost:boost-moldova-2005-2014"
                 const cube = "0638aadc448427e8b617257ad01cd38a:kpkt-propose-2016-hierarchy-test"
                 const state = {
