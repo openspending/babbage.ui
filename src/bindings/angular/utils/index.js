@@ -21,6 +21,7 @@ export const defaultI18NMessages = {
   percentage: 'Share',
   total: 'Total',
   others: 'Others',
+  serverError: '<strong>{error}</strong>'
 };
 
 function getValueOrDefault(value, defaultValue) {

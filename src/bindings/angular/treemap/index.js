@@ -25,6 +25,7 @@ class TreemapDirective {
             $scope.status = {
               isLoading: true,
               isEmpty: false,
+              hasError: false,
               isCutOff: false,
               cutoff: 0
             };
@@ -78,6 +79,8 @@ class TreemapDirective {
               $scope.status.isLoading = false;
               $scope.status.isEmpty = !(_.isObject(data) && (data.cells.length > 0));
               $scope.status.isCutOff = false;
+              $scope.status.hasError = !!error;
+              $scope.error = !!error && error.message;
               $scope.$applyAsync();
               $scope.$emit('babbage-ui.ready', component, data, error);
             });
