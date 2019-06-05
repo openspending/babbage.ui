@@ -2,7 +2,7 @@
   <i class="babbage-loading-icon"></i><span ng-bind-html="trustAsHtml(i18n('loadingData'))"></span>
 </div>
 
-<div class="alert alert-warning" ng-if="status.isEmpty"
+<div class="alert alert-warning" ng-if="status.isEmpty && status.hasError == false"
   ng-bind-html="trustAsHtml(i18n('chooseRowsAndColumns'))"></div>
 
 <div class="alert alert-warning" ng-if="status.hasError"
