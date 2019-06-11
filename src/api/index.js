@@ -16,7 +16,12 @@ export class Api {
 
   getJson(url) {
     var downloader = this.downloader || getDefaultDownloader();
-    return downloader.getJson(url);
+    return downloader.getJson(url).then(function(result){
+      if (result.status == 'error') {
+        throw new Error(result.message);
+      }
+      return result;
+    });
   }
 
   flush() {
@@ -239,7 +244,9 @@ export class Api {
       });
       exportResults('facts', result);
       return result;
-    })
+    }).catch(function(error) {
+      throw error;
+    });
   }
 
   buildAggregateUrl(endpoint, cube, originParams) {
@@ -346,6 +353,8 @@ export class Api {
       });
       exportResults('aggregate', result);
       return result;
+    }).catch(function(error) {
+      throw error;
     });
   }
 

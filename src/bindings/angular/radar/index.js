@@ -24,6 +24,7 @@ export class RadarChartDirective {
             $scope.status = {
               isLoading: true,
               isEmpty: false,
+              hasError: false,
               isCutOff: false,
               cutoff: 0
             };
@@ -54,6 +55,8 @@ export class RadarChartDirective {
               $scope.status.isEmpty = !(_.isObject(data) &&
                 (data.data.length > 0));
               $scope.status.isCutOff = false;
+              $scope.status.hasError = !!error;
+              $scope.error = !!error && error.message;
               $scope.$applyAsync();
               $scope.$emit('babbage-ui.ready', component, data, error);
             });

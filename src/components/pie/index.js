@@ -123,6 +123,7 @@ export class PieChartComponent extends events.EventEmitter {
       .catch((error) => {
         that.emit('error', that, error);
         that.emit('ready', that, null, error);
+        throw error;
       });
   }
 
