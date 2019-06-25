@@ -54,7 +54,7 @@ export class TreeMapComponent extends events.EventEmitter {
     return formatValue;
   }
 
-  build(endpoint, cube, params, wrapper, colorScale) {
+  build(endpoint, cube, params, wrapper, colorScale, model) {
     params = _.cloneDeep(params);
     var that = this;
 
@@ -88,7 +88,7 @@ export class TreeMapComponent extends events.EventEmitter {
 
 
     var api = this.getApiInstance();
-    api.aggregate(endpoint, cube, params)
+    api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         var valueFormat = that.getValueFormatter();
         const ratioFormat = d3.format('.1%');

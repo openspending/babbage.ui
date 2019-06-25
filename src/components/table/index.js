@@ -54,7 +54,7 @@ export class TableComponent extends events.EventEmitter {
     return result;
   }
 
-  getTableData(endpoint, cube, params) {
+  getTableData(endpoint, cube, params, model) {
     params = _.cloneDeep(params);
     var result = {
       headers: [],
@@ -68,15 +68,10 @@ export class TableComponent extends events.EventEmitter {
     var dimensions = [];
 
     var api = this.getApiInstance();
-    return api.getDimensions(endpoint, cube)
-      .then((result) => {
-        dimensions = result;
-        return api.getMeasures(endpoint, cube);
-      })
-      .then((result) => {
-        measures = result;
-        return api.aggregate(endpoint, cube, params)
-      })
+    var dimensions = api.getDimensionsFromModel(model);
+    var measures = api.getMeasuresFromModel(model);
+
+    return api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         result.headers = that.getHeaders(dimensions, measures, data.cells);
         result.columns = data.cells;

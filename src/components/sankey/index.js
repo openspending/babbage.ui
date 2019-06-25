@@ -43,7 +43,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
     };
   }
 
-  build(endpoint, cube, params, wrapper, colorScale) {
+  build(endpoint, cube, params, wrapper, colorScale, model) {
     var that = this;
     this.wrapper = wrapper;
 
@@ -89,7 +89,7 @@ export class SanKeyChartComponent extends events.EventEmitter {
     }
 
     var api = this.getApiInstance();
-    api.aggregate(endpoint, cube, params)
+    api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         size.height = data.cells.length * unit;
         svg.attr('height', size.height + margin.top + margin.bottom);

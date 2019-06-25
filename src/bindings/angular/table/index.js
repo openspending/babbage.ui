@@ -13,6 +13,7 @@ export class BabbageTableDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?'
@@ -27,6 +28,7 @@ export class BabbageTableDirective {
               isCutOff: false,
               cutoff: 0
             };
+
 
             $scope.i18n = createI18NMapper($scope.messages);
             $scope.$watch('messages', function(newValue, oldValue) {
@@ -66,7 +68,7 @@ export class BabbageTableDirective {
             $q((resolve, reject) => {
               component.downloader = $scope.downloader;
               $scope.$emit('babbage-ui.initialize', component);
-              component.getTableData($scope.endpoint, $scope.cube, $scope.state)
+              component.getTableData($scope.endpoint, $scope.cube, $scope.state, $scope.model)
                 .then(resolve)
                 .catch(reject)
             })

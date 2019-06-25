@@ -74,14 +74,6 @@ export class Api {
     );
   }
 
-  getPackageModel(endpoint, cube) {
-    return this.getJson(
-      this.buildUrl(endpoint, cube, 'model/')
-    ).then((result) => {
-      return result.model;
-    });
-  }
-
   getDisplayField(model, field) {
     var result = field;
     var dimension = _.find(model.dimensions, {
@@ -101,33 +93,20 @@ export class Api {
 
   getMeasuresFromModel(model) {
     var result = [];
-    _.each(model.aggregates, function(value, key) {
-      if (value.measure) {
-        result.push({
-          key: key,
-          value: value.label
-        });
-      }
-    });
+    if (model.aggregates) {
+      _.each(model.aggregates, function(value, key) {
+        if (value.measure) {
+          result.push({
+            key: key,
+            value: value.label
+          });
+        }
+      });
+    } else {
+      console.error('No model!', model);
+    }
     return result;
   }
-
-  getMeasures(endpoint, cube) {
-    var that = this;
-    return this.getPackageModel(endpoint, cube)
-      .then((model) => {
-        return that.getMeasuresFromModel(model);
-      });
-  }
-
-  getDimensions(endpoint, cube) {
-    var that = this;
-    return this.getPackageModel(endpoint, cube)
-      .then((model) => {
-        return that.getDimensionsFromModel(model);
-      });
-  }
-
 
   getDimensionKeyById(model, id) {
     // jscs:disable
@@ -182,34 +161,32 @@ export class Api {
     return (parts.length == 2) ? parts[1] : key;
   }
 
-  facts(endpoint, cube, originParams) {
+  facts(endpoint, cube, originParams, model) {
     var that = this;
     var params = _.cloneDeep(originParams) || {};
     var measureFields = [];
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 20;
-    var model;
 
-    return this.getPackageModel(endpoint, cube).then((packageModel) => {
-      model = packageModel;
-      var dimensions = that.getDimensionsFromModel(model);
-      var measures = that.getMeasuresFromModel(model);
-      if (!originParams.fields){
-        originParams.fields = [];
-        _.each(dimensions, (dimension) => {
-          originParams.fields.push(dimension.key);
-        });
-        _.each(measures, (measure) => {
-          originParams.fields.push(measure.value);
-        });
-      }
-      _.each(model.measures, (measure, key) => {
-        measureFields.push(key);
+    var dimensions = that.getDimensionsFromModel(model);
+    var measures = that.getMeasuresFromModel(model);
+
+    if (!originParams.fields){
+      originParams.fields = [];
+      _.each(dimensions, (dimension) => {
+        originParams.fields.push(dimension.key);
       });
+      _.each(measures, (measure) => {
+        originParams.fields.push(measure.value);
+      });
+    }
+    _.each(model.measures, (measure, key) => {
+      measureFields.push(key);
+    });
 
-      var factsUrl = that.buildUrl(endpoint, cube, 'facts/', params);
-      return that.getJson(factsUrl);
-    }).then((facts) => {
+    var factsUrl = that.buildUrl(endpoint, cube, 'facts/', params);
+
+    return that.getJson(factsUrl).then((facts) => {
       var result = {};
       result.headers = [];
       result.columns = [];
@@ -249,39 +226,36 @@ export class Api {
     });
   }
 
-  buildAggregateUrl(endpoint, cube, originParams) {
+  buildAggregateUrl(endpoint, cube, originParams, model) {
     const that = this;
     const params = _.cloneDeep(originParams) || {};
 
     params.page = params.page || 0;
     params.pagesize = params.pagesize || 30;
 
-    return this.getPackageModel(endpoint, cube)
-      .then((model) => {
-        const measures = that.getMeasuresFromModel(model);
+    const measures = that.getMeasuresFromModel(model);
 
-        if (!params.aggregates) {
-          params.aggregates = _.first(measures).key;
-        }
-        params.order = params.order || [{key: params.aggregates, direction: 'desc'}];
-        delete params.aggregates;
+    if (!params.aggregates) {
+      params.aggregates = _.first(measures).key;
+    }
+    params.order = params.order || [{key: params.aggregates, direction: 'desc'}];
+    delete params.aggregates;
 
-        var newExtendedGroup = [];
-        _.each(params.group, (dimensionKey) => {
-          newExtendedGroup.push(dimensionKey);
-          const dimensionDisplay = that.getDisplayField(model, dimensionKey);
+    var newExtendedGroup = [];
+    _.each(params.group, (dimensionKey) => {
+      newExtendedGroup.push(dimensionKey);
+      const dimensionDisplay = that.getDisplayField(model, dimensionKey);
 
-          if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
-            newExtendedGroup.push(dimensionDisplay);
-          }
-        });
-        params.group = newExtendedGroup;
-
-        return that.buildUrl(endpoint, cube, 'aggregate/', params);
+      if (newExtendedGroup.indexOf(dimensionDisplay) == -1) {
+        newExtendedGroup.push(dimensionDisplay);
+      }
     });
+    params.group = newExtendedGroup;
+
+    return that.buildUrl(endpoint, cube, 'aggregate/', params);
   }
 
-  aggregate(endpoint, cube, originParams) {
+  aggregate(endpoint, cube, originParams, model) {
     var that = this;
     var params = _.cloneDeep(originParams) || {};
 
@@ -292,11 +266,9 @@ export class Api {
     var measureModelList;
 
     return Promise.all([
-      that.getPackageModel(endpoint, cube),
-      that.buildAggregateUrl(endpoint, cube, originParams)
+      that.buildAggregateUrl(endpoint, cube, originParams, model)
     ]).then((values) => {
-      const model = values[0];
-      const aggregateUrl = values[1];
+      const aggregateUrl = values[0];
       measures = that.getMeasuresFromModel(model);
       measureModelList = _.values(model.measures);
 

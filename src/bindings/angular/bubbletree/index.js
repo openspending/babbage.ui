@@ -14,6 +14,7 @@ export class BubbleTreeDirective {
             cube: '@',
             type: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -73,7 +74,7 @@ export class BubbleTreeDirective {
 
             $scope.$emit('babbage-ui.initialize', component);
             component.build($scope.endpoint, $scope.cube,
-              $scope.state, wrapper);
+              $scope.state, wrapper, $scope.model);
 
             $scope.$emit('babbage-ui.create');
             $scope.$on('$destroy', function() {

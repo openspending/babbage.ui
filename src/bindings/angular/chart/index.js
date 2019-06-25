@@ -14,6 +14,7 @@ export class ChartDirective {
             cube: '@',
             type: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -75,7 +76,8 @@ export class ChartDirective {
               $scope.cube,
               $scope.state,
               wrapper,
-              $scope.colorScale()
+              $scope.colorScale(),
+              $scope.model
             );
 
             $scope.$emit('babbage-ui.create');

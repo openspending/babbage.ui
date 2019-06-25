@@ -24,13 +24,13 @@ export class FactsComponent extends events.EventEmitter {
     return this._api;
   }
 
-  getTableData(endpoint, cube, params) {
+  getTableData(endpoint, cube, params, model) {
     params = _.cloneDeep(params);
     var that = this;
 
     that.emit('loading', that);
     var api = this.getApiInstance();
-    return api.facts(endpoint, cube, params)
+    return api.facts(endpoint, cube, params, model)
       .then((data) => {
         that.emit('loaded', that, data);
         that.emit('ready', that, data, null);

@@ -39,7 +39,7 @@ export class ChartComponent extends events.EventEmitter {
     };
   }
 
-  build(chartType, endpoint, cube, params, wrapper, colorScale) {
+  build(chartType, endpoint, cube, params, wrapper, colorScale, model) {
     params = _.cloneDeep(params);
 
     var that = this;
@@ -75,7 +75,7 @@ export class ChartComponent extends events.EventEmitter {
     params.pagesize = 2000;
 
     var api = this.getApiInstance();
-    api.aggregate(endpoint, cube, params)
+    api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         var columns = Utils.buildC3Columns(data, groupFields, series, params.aggregates);
         var types = {};
