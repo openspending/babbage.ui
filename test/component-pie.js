@@ -41,12 +41,13 @@ describe('Babbage.ui pie component', function() {
   });
 
   it('Should return some data', () => {
+    var model = test2PackageModel.model;
     const params = {
       aggregates: 'approved.sum',
       group: ['administrative_classification_admin3_code.admin3_code']
     };
 
-    return pieComponent._getData('http://example.com', 'test2', params)
+    return pieComponent._getData('http://example.com', 'test2', params, 100, model)
       .then(function(data) {
         assert.isDefined(data);
         assert.lengthOf(data.cells, 3);
