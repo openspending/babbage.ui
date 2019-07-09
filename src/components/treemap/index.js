@@ -56,6 +56,7 @@ export class TreeMapComponent extends events.EventEmitter {
 
   build(endpoint, cube, params, wrapper, colorScale) {
     params = _.cloneDeep(params);
+    params.pagesize = 5000;
     var that = this;
 
     if (colorScale === undefined) {
@@ -74,6 +75,9 @@ export class TreeMapComponent extends events.EventEmitter {
       .size([size.width, size.height])
       .sticky(true)
       .sort(function(a, b) {
+        if (a.key == 'Others') {
+          return -1;
+        }
         return a.value - b.value;
       })
       .value(function(d) {
@@ -101,27 +105,57 @@ export class TreeMapComponent extends events.EventEmitter {
         root.summaryFmtCurrency = Utils.moneyFormat(root.summaryFmt,
           root.currency);
 
-        _.each(data.cells, (item, index) => {
-          var dimension = _.first(item.dimensions);
-          var measure = _.find(item.measures, {key: params.aggregates});
-          var cell = {};
-          cell.areaFmt = valueFormat(measure.value);
-          cell.areaFmtCurrency = Utils.moneyFormat(cell.areaFmt, root.currency);
-          cell.value = measure.value;
-          cell.key = dimension.keyValue;
-          cell.name = dimension.nameValue;
-          cell.color = colorScale(index);
+        var currentRow = 0;
 
-          cell.percentage = (measure.value && data.summary && params.aggregates)
-            ? (measure.value / Math.max(data.summary[params.aggregates], 1))
-            : 0;
-          root.children.push(cell);
+        console.log('data cells', data);
+
+        _.each(data.cells, (item, index) => {
+          currentRow = currentRow + 1;
+          if (currentRow < 30) {
+            var dimension = _.first(item.dimensions);
+            var measure = _.find(item.measures, {key: params.aggregates});
+            var cell = {};
+            cell.areaFmt = valueFormat(measure.value);
+            cell.areaFmtCurrency = Utils.moneyFormat(cell.areaFmt, root.currency);
+            cell.value = measure.value;
+            cell.key = dimension.keyValue;
+            cell.name = dimension.nameValue;
+            cell.color = colorScale(index);
+
+            cell.percentage = (measure.value && data.summary && params.aggregates)
+              ? (measure.value / Math.max(data.summary[params.aggregates], 1))
+              : 0;
+            root.children.push(cell);
+          } else {
+            var rows = data.cells.slice(30);
+            var aggregateValue = 0;
+            _.each(rows, (row, idx) => {
+              var measure = _.find(item.measures, {key: params.aggregates});
+              aggregateValue = aggregateValue + measure.value;
+            });
+            var cell = {};
+            cell.areaFmt = valueFormat(aggregateValue);
+            cell.areaFmtCurrency = Utils.moneyFormat(cell.areaFmt, root.currency);
+            cell.value = aggregateValue;
+            cell.key = 'Others';
+            cell.name = 'Others';
+            cell.color = colorScale(index);
+
+            cell.percentage = (aggregateValue && data.summary && params.aggregates)
+                            ? (aggregateValue / Math.max(data.summary[params.aggregates], 1))
+                            : 0;
+            root.children.push(cell);
+            return false;
+          }
         });
 
         var node = div.datum(root).selectAll('.node')
           .data(that.treemap.nodes)
           .enter().append('a')
           .attr('href', function(d) {
+            if (d.key == 'Others') {
+              return '#';
+            }
             return d.href;
           })
           .attr('class', 'node')

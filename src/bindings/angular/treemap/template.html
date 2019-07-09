@@ -48,7 +48,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow" ng-click="treeMapTable.selectTableRow(item)">
+      <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow" ng-click="treeMapTable.selectTableRow(item)" ng-if="item.key!='Others'">
+      <td><span class="colorbox" ng-style="{'background-color':item.color}"></span>{{ item.name }}</td>
+      <td>{{ item.areaFmtCurrency }}</td>
+      <td>{{ (item.percentage * 100).toFixed(2) }}%</td>
+    </tr>
+    <tr ng-repeat="item in treeMapTable.data.children | orderBy:treeMapTable.sortAttr:treeMapTable.sortDesc" class="datarow" ng-if="item.key=='Others'">
       <td><span class="colorbox" ng-style="{'background-color':item.color}"></span>{{ item.name }}</td>
       <td>{{ item.areaFmtCurrency }}</td>
       <td>{{ (item.percentage * 100).toFixed(2) }}%</td>
