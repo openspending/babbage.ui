@@ -401,7 +401,7 @@ export class RadarChartComponent extends events.EventEmitter {
     };
   }
 
-  getPivotData(endpoint, cube, params) {
+  getPivotData(endpoint, cube, params, model) {
     params = _.cloneDeep(params);
 
     params.group = _.union(params.cols, params.rows);
@@ -415,25 +415,21 @@ export class RadarChartComponent extends events.EventEmitter {
     var dimensions = {};
 
     var api = this.getApiInstance();
-    return api.getDimensions(endpoint, cube)
-      .then((result) => {
-        dimensions = {};
-        _.each(result, (item) => {
-          dimensions[item.key] = item.code;
-        });
+    var dimensionsFromModel = api.getDimensionsFromModel(model);
+    dimensions = {};
+    _.each(dimensionsFromModel, (item) => {
+      dimensions[item.key] = item.code;
+    });
 
-        return api.getMeasures(endpoint, cube);
-      })
-      .then((result) => {
-        measures = {};
-        _.each(result, (item) => {
-          measures[item.key] = item.value;
-        });
+    var measuresFromModel = api.getMeasuresFromModel(model);
+    measures = {};
+    _.each(measuresFromModel, (item) => {
+      measures[item.key] = item.value;
+    });
 
-        params.page = 0;
-        params.pagesize = 2000;
-        return api.aggregate(endpoint, cube, params);
-      })
+    params.page = 0;
+    params.pagesize = 2000;
+    return api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         var result = {};
         result.data = [];
@@ -461,7 +457,7 @@ export class RadarChartComponent extends events.EventEmitter {
       });
   }
 
-  build(endpoint, cube, params, wrapper, colorScale) {
+  build(endpoint, cube, params, wrapper, colorScale, model) {
     var that = this;
     this.wrapper = wrapper;
 
@@ -471,7 +467,7 @@ export class RadarChartComponent extends events.EventEmitter {
 
     that.emit('loading', that);
 
-    this.getPivotData(endpoint, cube, params)
+    this.getPivotData(endpoint, cube, params, model)
       .then((result) => {
         var cells = result.data;
 

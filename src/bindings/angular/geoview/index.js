@@ -18,6 +18,7 @@ export class GeoViewDirective {
             cube: '@',
             type: '@',
             state: '=',
+            model: '=',
             countryCode: '@',
             currencySign: '@?',
             downloader: '=?',
@@ -70,7 +71,8 @@ export class GeoViewDirective {
               component.getGeoMapData(
                 $scope.endpoint,
                 $scope.cube,
-                $scope.state
+                $scope.state,
+                $scope.model
               ).then(resolve).catch(reject)
             })
             .then((result) => {

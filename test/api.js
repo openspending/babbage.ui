@@ -172,278 +172,266 @@ describe('Babbage.ui API', function() {
     done();
   });
 
-  it('Should return Package Model', function(done) {
-    api.getPackageModel('http://site.com/', 'test').then(function(model) {
-      assert.deepEqual(model, testPackageModel.model);
-      done();
-    });
-  });
-
   it('Should return `Display field`', function(done) {
-    api.getPackageModel('http://site.com/', 'test').then(function(model) {
-      var displayField = api.getDisplayField(model, 'to');
-      assert.equal(displayField, 'to');
-      done();
-    });
+    var model = testPackageModel;
+    var displayField = api.getDisplayField(model, 'to');
+    assert.equal(displayField, 'to');
+    done();
   });
 
   it('Should return `Display field` for field with `label-for`', function(done) {
-    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
-      var displayField = api.getDisplayField(model, 'administrative_classification_admin3_code.admin3_code');
-      assert.equal(displayField, 'administrative_classification_admin3_code.admin3_label');
-      done();
-    });
+    var model = test2PackageModel.model;
+    var displayField = api.getDisplayField(model, 'administrative_classification_admin3_code.admin3_code');
+    assert.equal(displayField, 'administrative_classification_admin3_code.admin3_label');
+    done();
   });
 
   it('Should return `Measures` by model', function(done) {
-    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
-      var measures = api.getMeasuresFromModel(model);
-      assert.deepEqual(measures, [
-        {key: 'executed.sum', value: 'Executed'},
-        {key: 'adjusted.sum', value: 'Adjusted'},
-        {key: 'approved.sum', value: 'Approved'}
-      ]);
-      done();
-    });
+    var model = test2PackageModel.model;
+    var measures = api.getMeasuresFromModel(model);
+    assert.deepEqual(measures, [
+      {key: 'executed.sum', value: 'Executed'},
+      {key: 'adjusted.sum', value: 'Adjusted'},
+      {key: 'approved.sum', value: 'Approved'}
+    ]);
+    done();
   });
 
   it('Should return `Measures` by endpoint and cube', function(done) {
-    api.getMeasures('http://site.com/', 'test2').then(function(measures) {
-      assert.deepEqual(measures, [
-        {key: 'executed.sum', value: 'Executed'},
-        {key: 'adjusted.sum', value: 'Adjusted'},
-        {key: 'approved.sum', value: 'Approved'}
-      ]);
-      done();
-    });
+    var model = test2PackageModel.model;
+    var measures = api.getMeasuresFromModel(model);
+    assert.deepEqual(measures, [
+      {key: 'executed.sum', value: 'Executed'},
+      {key: 'adjusted.sum', value: 'Adjusted'},
+      {key: 'approved.sum', value: 'Approved'}
+    ]);
+    done();
   });
 
   it('Should return dimension key by id', function(done) {
-    api.getPackageModel('http://site.com/', 'test').then(function(model) {
-      var dimensionKey = api.getDimensionKeyById(model, 'from');
-      assert.equal(dimensionKey, 'from.name');
+    var model = testPackageModel.model;
+    var dimensionKey = api.getDimensionKeyById(model, 'from');
+    assert.equal(dimensionKey, 'from.name');
 
-      var dimensionKey = api.getDimensionKeyById(model, 'time_day');
-      assert.equal(dimensionKey, 'time_day.day');
+    var dimensionKey = api.getDimensionKeyById(model, 'time_day');
+    assert.equal(dimensionKey, 'time_day.day');
 
-      done();
-    });
+    done();
   });
 
   it('Should return undefined  for dimension when model doesn\'t ' +
     'have hierarchy for that dimension', function(done) {
-    api.getPackageModel('http://site.com/', 'test').then(function(model) {
-      var dimensionKey = api.getDrillDownDimensionKey(model, 'from');
-      assert(_.isUndefined(dimensionKey));
-      done();
-    });
+    var model = testPackageModel.model;
+    var dimensionKey = api.getDrillDownDimensionKey(model, 'from');
+    assert(_.isUndefined(dimensionKey));
+    done();
   });
 
   it('Should return DrillDown Dimension Key for dimension', function(done) {
-    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
-      var dimensionKey = api.getDrillDownDimensionKey(
-        model,
-        'administrative_classification_admin1'
-      );
-      assert.equal(dimensionKey, 'administrative_classification_admin2_code.admin2_code');
-      done();
-    });
+    var model = test2PackageModel.model;
+    var dimensionKey = api.getDrillDownDimensionKey(
+      model,
+      'administrative_classification_admin1'
+    );
+    assert.equal(dimensionKey, 'administrative_classification_admin2_code.admin2_code');
+    done();
   });
 
   it('Should return dimensions from model', function(done) {
-    api.getPackageModel('http://site.com/', 'test').then(function(model) {
-      var dimensions = api.getDimensionsFromModel(model);
-      assert.isArray(dimensions);
-      assert.deepEqual(dimensions, [
-        {
-          id: 'from',
-          key: 'from.name',
-          code: 'From',
-          hierarchy: 'from',
-          name: 'from_name',
-          label: 'from.name',
-          drillDown: undefined
-        },
-        {
-          id: 'time_day',
-          key: 'time_day.day',
-          code: 'Time-Day',
-          hierarchy: 'time',
-          name: 'time_day',
-          label: 'time.day',
-          drillDown: undefined
-        },
-        {
-          id: 'time_month',
-          key: 'time_month.month',
-          code: 'Time-Month',
-          hierarchy: 'time',
-          name: 'time_month',
-          label: 'time.month',
-          drillDown: 'time_day.day'
-        },
-        {
-          id: 'time_year',
-          key: 'time_year.year',
-          code: 'Time-Year',
-          hierarchy: 'time',
-          name: 'time_year',
-          label: 'time.year',
-          drillDown: 'time_month.month'
-        },
-        {
-          id: 'to',
-          key: 'to.name',
-          code: 'To',
-          hierarchy: 'to',
-          name: 'to_name',
-          label: 'to.name',
-          drillDown: undefined
-        }]
-      );
-      done();
-    });
+    var model = testPackageModel.model;
+    var dimensions = api.getDimensionsFromModel(model);
+    assert.isArray(dimensions);
+    assert.deepEqual(dimensions, [
+      {
+        id: 'from',
+        key: 'from.name',
+        code: 'From',
+        hierarchy: 'from',
+        name: 'from_name',
+        label: 'from.name',
+        drillDown: undefined
+      },
+      {
+        id: 'time_day',
+        key: 'time_day.day',
+        code: 'Time-Day',
+        hierarchy: 'time',
+        name: 'time_day',
+        label: 'time.day',
+        drillDown: undefined
+      },
+      {
+        id: 'time_month',
+        key: 'time_month.month',
+        code: 'Time-Month',
+        hierarchy: 'time',
+        name: 'time_month',
+        label: 'time.month',
+        drillDown: 'time_day.day'
+      },
+      {
+        id: 'time_year',
+        key: 'time_year.year',
+        code: 'Time-Year',
+        hierarchy: 'time',
+        name: 'time_year',
+        label: 'time.year',
+        drillDown: 'time_month.month'
+      },
+      {
+        id: 'to',
+        key: 'to.name',
+        code: 'To',
+        hierarchy: 'to',
+        name: 'to_name',
+        label: 'to.name',
+        drillDown: undefined
+      }]
+    );
+    done();
   });
 
   it('Should return correct dimensions from model', function(done) {
-    api.getPackageModel('http://site.com/', 'test2').then(function(model) {
-      var dimensions = api.getDimensionsFromModel(model);
-      assert.isArray(dimensions);
+    var model = test2PackageModel.model;
+    var dimensions = api.getDimensionsFromModel(model);
+    assert.isArray(dimensions);
 
-      assert.deepEqual(dimensions, [
-        { id: 'administrative_classification_admin1',
-          key: 'administrative_classification_admin1.admin1',
-          code: 'Administrative_classification-Admin1',
-          hierarchy: 'administrative_classification',
-          name: 'admin1',
-          label: 'administrative_classification.admin1',
-          drillDown: 'administrative_classification_admin2_code.admin2_code' },
-        { id: 'administrative_classification_admin2_code',
-          key: 'administrative_classification_admin2_code.admin2_code',
-          code: 'Administrative_classification-Admin2_code',
-          hierarchy: 'administrative_classification',
-          name: 'admin2_code',
-          label: 'administrative_classification.admin2_label',
-          drillDown: 'administrative_classification_admin3_code.admin3_code' },
-        { id: 'administrative_classification_admin3_code',
-          key: 'administrative_classification_admin3_code.admin3_code',
-          code: 'Administrative_classification-Admin3_code',
-          hierarchy: 'administrative_classification',
-          name: 'admin3_code',
-          label: 'administrative_classification.admin3_label',
-          drillDown: undefined },
-        { id: 'location',
-          key: 'location.title',
-          code: 'Location',
-          hierarchy: 'location',
-          name: 'admin2_label',
-          label: 'location.title',
-          drillDown: undefined },
-        { id: 'other_exp_type',
-          key: 'other_exp_type.exp_type',
-          code: 'Other-Exp_type',
-          hierarchy: 'other',
-          name: 'exp_type',
-          label: 'other.exp_type',
-          drillDown: 'other_transfer.transfer' },
-        { id: 'other_fin_source',
-          key: 'other_fin_source.fin_source',
-          code: 'Other-Fin_source',
-          hierarchy: 'other',
-          name: 'fin_source',
-          label: 'other.fin_source',
-          drillDown: 'other_exp_type.exp_type' },
-        { id: 'other_transfer',
-          key: 'other_transfer.transfer',
-          code: 'Other-Transfer',
-          hierarchy: 'other',
-          name: 'transfer',
-          label: 'other.transfer',
-          drillDown: undefined }
-      ]);
-      done();
-    });
+    assert.deepEqual(dimensions, [
+      { id: 'administrative_classification_admin1',
+        key: 'administrative_classification_admin1.admin1',
+        code: 'Administrative_classification-Admin1',
+        hierarchy: 'administrative_classification',
+        name: 'admin1',
+        label: 'administrative_classification.admin1',
+        drillDown: 'administrative_classification_admin2_code.admin2_code' },
+      { id: 'administrative_classification_admin2_code',
+        key: 'administrative_classification_admin2_code.admin2_code',
+        code: 'Administrative_classification-Admin2_code',
+        hierarchy: 'administrative_classification',
+        name: 'admin2_code',
+        label: 'administrative_classification.admin2_label',
+        drillDown: 'administrative_classification_admin3_code.admin3_code' },
+      { id: 'administrative_classification_admin3_code',
+        key: 'administrative_classification_admin3_code.admin3_code',
+        code: 'Administrative_classification-Admin3_code',
+        hierarchy: 'administrative_classification',
+        name: 'admin3_code',
+        label: 'administrative_classification.admin3_label',
+        drillDown: undefined },
+      { id: 'location',
+        key: 'location.title',
+        code: 'Location',
+        hierarchy: 'location',
+        name: 'admin2_label',
+        label: 'location.title',
+        drillDown: undefined },
+      { id: 'other_exp_type',
+        key: 'other_exp_type.exp_type',
+        code: 'Other-Exp_type',
+        hierarchy: 'other',
+        name: 'exp_type',
+        label: 'other.exp_type',
+        drillDown: 'other_transfer.transfer' },
+      { id: 'other_fin_source',
+        key: 'other_fin_source.fin_source',
+        code: 'Other-Fin_source',
+        hierarchy: 'other',
+        name: 'fin_source',
+        label: 'other.fin_source',
+        drillDown: 'other_exp_type.exp_type' },
+      { id: 'other_transfer',
+        key: 'other_transfer.transfer',
+        code: 'Other-Transfer',
+        hierarchy: 'other',
+        name: 'transfer',
+        label: 'other.transfer',
+        drillDown: undefined }
+    ]);
+    done();
   });
 
   it('Should return dimenions by URL', function(done) {
-    api.getDimensions('http://site.com/', 'test').then(function(dimensions) {
-      var expected = [
-        {
-          id: 'from',
-          key: 'from.name',
-          code: 'From',
-          hierarchy: 'from',
-          name: 'from_name',
-          label: 'from.name',
-          drillDown: undefined
-        },
-        {
-          id: 'time_day',
-          key: 'time_day.day',
-          code: 'Time-Day',
-          hierarchy: 'time',
-          name: 'time_day',
-          label: 'time.day',
-          drillDown: undefined
-        },
-        {
-          id: 'time_month',
-          key: 'time_month.month',
-          code: 'Time-Month',
-          hierarchy: 'time',
-          name: 'time_month',
-          label: 'time.month',
-          drillDown: 'time_day.day'
-        },
-        {
-          id: 'time_year',
-          key: 'time_year.year',
-          code: 'Time-Year',
-          hierarchy: 'time',
-          name: 'time_year',
-          label: 'time.year',
-          drillDown: 'time_month.month'
-        },
-        {
-          id: 'to',
-          key: 'to.name',
-          code: 'To',
-          hierarchy: 'to',
-          name: 'to_name',
-          label: 'to.name',
-          drillDown: undefined
-        }
-      ];
-      assert.deepEqual(dimensions, expected);
-      done();
-    });
+    var model = testPackageModel.model;
+    var dimensions = api.getDimensionsFromModel(model);
+    var expected = [
+      {
+        id: 'from',
+        key: 'from.name',
+        code: 'From',
+        hierarchy: 'from',
+        name: 'from_name',
+        label: 'from.name',
+        drillDown: undefined
+      },
+      {
+        id: 'time_day',
+        key: 'time_day.day',
+        code: 'Time-Day',
+        hierarchy: 'time',
+        name: 'time_day',
+        label: 'time.day',
+        drillDown: undefined
+      },
+      {
+        id: 'time_month',
+        key: 'time_month.month',
+        code: 'Time-Month',
+        hierarchy: 'time',
+        name: 'time_month',
+        label: 'time.month',
+        drillDown: 'time_day.day'
+      },
+      {
+        id: 'time_year',
+        key: 'time_year.year',
+        code: 'Time-Year',
+        hierarchy: 'time',
+        name: 'time_year',
+        label: 'time.year',
+        drillDown: 'time_month.month'
+      },
+      {
+        id: 'to',
+        key: 'to.name',
+        code: 'To',
+        hierarchy: 'to',
+        name: 'to_name',
+        label: 'to.name',
+        drillDown: undefined
+      }
+    ];
+    assert.deepEqual(dimensions, expected);
+    done();
   });
 
   it('Should return aggregate data', function(done) {
+    var model = testPackageModel.model;
     api.aggregate('http://site.com/', 'test', {
       group: ['administrative_classification.admin1']
-    }).then(function(data) {
+    }, model).then(function(data) {
       assert.deepEqual(data, expectedAggregate1);
       done();
     });
   });
 
   it('Should return aggregate data grouped by field with `label-for`', function(done) {
+    var model = test2PackageModel.model;
     api.aggregate('http://site.com/', 'test2', {
       group: ['administrative_classification_admin3_code.admin3_code']
-    }).then(function(data) {
+    }, model).then(function(data) {
       assert.deepEqual(data, expectedAggregate2);
       done();
     });
   });
 
   it('Should return aggregate data grouped by many fields', function(done) {
+    var model = test2PackageModel.model;
     api.aggregate('http://site.com/', 'test2', {
       group: [
         'administrative_classification_admin2_code.admin2_code',
         'administrative_classification_admin3_code.admin3_code',
       ]
-    }).then(function(data) {
+    }, model).then(function(data) {
 
       assert.deepEqual(data, expectedMultiAggregate2);
       done();
@@ -451,10 +439,12 @@ describe('Babbage.ui API', function() {
   });
 
   it('Should return facts data', function(done) {
+    var model = test2PackageModel.model;
     api.facts(
       'http://site.com/',
       'test2',
-      {}
+      {},
+      model
     ).then(function(data) {
       assert.deepEqual(data, expectedFacts2);
       done();

@@ -71,14 +71,14 @@ export class BubbleTreeComponent extends events.EventEmitter {
     return result.amount > 0 ? result : null;
   };
 
-  build(endpoint, cube, params, wrapper) {
+  build(endpoint, cube, params, wrapper, model) {
     var that = this;
     this.wrapper = wrapper;
 
     that.emit('loading', that);
 
     var api = this.getApiInstance();
-    api.aggregate(endpoint, cube, params)
+    api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         var bubbleTreeData = that.generateBubbleTreeData(
           data.cells,

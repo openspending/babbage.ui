@@ -5,7 +5,7 @@ var _ = require('lodash');
 describe('Babbage.ui table component', function() {
   var tableComponent = new (require('../lib/components/table').TableComponent)();
   var aggregate2 = require('./data/component-table/aggregate2.json');
-  var test2PackageModel = require('./data/component-table/package2Model.json');
+  var test2PackageModel = require('./data/api/package2Model.json');
   var expectedAggregate2 = require('./data/component-table/expected/aggregate2.json');
   var expectedTable = require('./data/component-table/expected/table.json');
 
@@ -52,11 +52,12 @@ describe('Babbage.ui table component', function() {
   });
 
   it('Should build table data', function(done) {
+    var model = test2PackageModel.model;
     tableComponent.getTableData('http://site.com/', 'test2',
       {
         aggregates: 'approved.sum',
         group: ['administrative_classification_admin3_code.admin3_code']
-      }
+      }, model
     ).then(
       function (tableData) {
         assert.deepEqual(tableData, expectedTable);

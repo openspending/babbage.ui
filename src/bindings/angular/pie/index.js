@@ -15,6 +15,7 @@ export class PieChartDirective {
             type: '@',
             maxSlices: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -78,7 +79,8 @@ export class PieChartDirective {
               $scope.state,
               wrapper,
               $scope.maxSlices,
-              $scope.colorScale()
+              $scope.colorScale(),
+              $scope.model
             );
 
             $scope.$emit('babbage-ui.create');

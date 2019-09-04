@@ -13,6 +13,7 @@ export class FactsDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?'
@@ -48,7 +49,7 @@ export class FactsDirective {
               $q((resolve, reject) => {
                 component.downloader = $scope.downloader;
                 $scope.$emit('babbage-ui.initialize', component);
-                component.getTableData($scope.endpoint, $scope.cube, $scope.state)
+                component.getTableData($scope.endpoint, $scope.cube, $scope.state, $scope.model)
                   .then(resolve)
                   .catch(reject)
               })

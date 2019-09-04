@@ -13,6 +13,7 @@ export class SanKeyChartDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -73,7 +74,8 @@ export class SanKeyChartDirective {
               $scope.cube,
               $scope.state,
               wrapper,
-              $scope.colorScale()
+              $scope.colorScale(),
+              $scope.model
             );
 
             $scope.$emit('babbage-ui.create');

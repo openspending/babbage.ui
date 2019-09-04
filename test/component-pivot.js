@@ -6,7 +6,7 @@ describe('Babbage.ui pivot table component', function() {
   var pivotComponent = new (require('../lib/components/pivottable').PivotTableComponent)();
   var aggregate2 = require('./data/component-pivot/aggregate2.json');
   var expectedData = require('./data/component-pivot/expected/data.json');
-  var test2PackageModel = require('./data/component-table/package2Model.json');
+  var test2PackageModel = require('./data/api/package2Model.json');
 
   before(function(done) {
     nock('http://site.com/')
@@ -30,12 +30,13 @@ describe('Babbage.ui pivot table component', function() {
   });
 
   it('Should build pivot table data', function(done) {
+    var model = test2PackageModel.model;
     var params = {
       cols: ['administrative_classification_admin1.admin1'],
       rows: ['other_exp_type.exp_type'],
       aggregates: 'adjusted.sum'
     }
-    pivotComponent.getPivotData('http://site.com/', 'test2', params).then(function(data){
+    pivotComponent.getPivotData('http://site.com/', 'test2', params, model).then(function(data){
       assert.deepEqual(expectedData, data);
       done();
     }).catch(function(e){console.log(e);});

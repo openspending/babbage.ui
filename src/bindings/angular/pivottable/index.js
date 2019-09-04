@@ -17,6 +17,7 @@ export class PivotTableDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             maxValueLimit: '@?',
@@ -74,7 +75,7 @@ export class PivotTableDirective {
             let wrapper = element.find('.pivot-table')[0];
             component.downloader = $scope.downloader;
             $scope.$emit('babbage-ui.initialize', component);
-            component.getPivotData($scope.endpoint, $scope.cube, $scope.state)
+            component.getPivotData($scope.endpoint, $scope.cube, $scope.state, $scope.model)
               .then((result) => {
                 let limit = parseInt($scope.maxValueLimit, 10) || 0;
                 if (

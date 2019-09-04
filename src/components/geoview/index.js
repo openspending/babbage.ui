@@ -25,7 +25,7 @@ export class GeoViewComponent extends events.EventEmitter {
     return this._api;
   }
 
-  getGeoMapData(endpoint, cube, params) {
+  getGeoMapData(endpoint, cube, params, model) {
     params = _.cloneDeep(params);
     var result = {};
 
@@ -34,7 +34,7 @@ export class GeoViewComponent extends events.EventEmitter {
     that.emit('loading', that);
 
     var api = this.getApiInstance();
-    return api.aggregate(endpoint, cube, params)
+    return api.aggregate(endpoint, cube, params, model)
       .then((data) => {
         _.each(data.cells, (cell) => {
           var dimension = _.first(cell.dimensions);

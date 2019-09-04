@@ -14,6 +14,7 @@ class TreemapDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -98,7 +99,8 @@ class TreemapDirective {
               $scope.cube,
               $scope.state,
               wrapper,
-              $scope.colorScale()
+              $scope.colorScale(),
+              $scope.model
             );
 
             $scope.$emit('babbage-ui.create');

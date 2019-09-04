@@ -48,7 +48,7 @@ export class PieChartComponent extends events.EventEmitter {
     };
   }
 
-  build(chartType, endpoint, cube, params, wrapper, maxSlices=5, colorScale) {
+  build(chartType, endpoint, cube, params, wrapper, maxSlices=5, colorScale, model) {
     params = _.cloneDeep(params);
 
     var that = this;
@@ -58,7 +58,7 @@ export class PieChartComponent extends events.EventEmitter {
       colorScale = Utils.defaultColorScale();
     }
 
-    return this._getData(endpoint, cube, params, maxSlices)
+    return this._getData(endpoint, cube, params, maxSlices, model)
       .then((data) => {
         var columns = Utils.buildC3PieColumns(data, params.aggregates);
         var colors = {};
@@ -109,12 +109,12 @@ export class PieChartComponent extends events.EventEmitter {
       });
   }
 
-  _getData(endpoint, cube, params, maxSlices) {
+  _getData(endpoint, cube, params, maxSlices, model) {
     var that = this;
     that.emit('loading', that);
 
     var api = this.getApiInstance();
-    return api.aggregate(endpoint, cube, params)
+    return api.aggregate(endpoint, cube, params, model)
       .then((data) => that._groupSlicesIfMoreThan(data, maxSlices))
       .then((data) => {
         that.emit('loaded', that, data);

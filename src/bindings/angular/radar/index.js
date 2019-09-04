@@ -13,6 +13,7 @@ export class RadarChartDirective {
             endpoint: '@',
             cube: '@',
             state: '=',
+            model: '=',
             downloader: '=?',
             formatValue: '=?',
             messages: '=?',
@@ -68,7 +69,8 @@ export class RadarChartDirective {
               $scope.cube,
               $scope.state,
               wrapper,
-              $scope.colorScale()
+              $scope.colorScale(),
+              $scope.model
             );
 
             $scope.$emit('babbage-ui.create');
